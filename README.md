@@ -66,12 +66,6 @@
 * **Leaflet.js**: 轻量、高效的开源地图库。
 * **高德地图**: 提供底图瓦片服务。
 
-## 🌐 API 参考
-本应用的数据来源于公开的API接口，无需身份验证。
-* **获取附近充电站列表**: `POST https://wemp.issks.com/device/v1/near/station`
-* **获取站点插座列表**: `GET https://wemp.issks.com/charge/v1/outlet/station/outlets/{stationId}`
-* **获取插座详细状态**: `GET https://wemp.issks.com/charge/v1/charging/outlet/{outletNo}`
-
 ---
 
 ## 🤝 贡献与共建
