@@ -78,7 +78,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex flex-col h-screen overflow-hidden">
+<body class="bg-gray-100 text-gray-800 flex flex-col h-screen">
 
     <header class="bg-white/80 backdrop-blur-sm shadow-sm z-[1100] border-b border-gray-200"><nav class="container mx-auto px-4 py-3 flex justify-between items-center"><h1 class="text-xl font-bold text-gray-900">EndlessPower</p>成电清水河充电桩查询</h1><div class="flex space-x-1 bg-gray-200/80 p-1 rounded-lg"><button id="nav-map" class="nav-button px-4 py-1.5 rounded-md text-sm font-semibold transition-all">地图</button><button id="nav-favorites" class="nav-button px-4 py-1.5 rounded-md text-sm font-semibold transition-all">收藏</button></div></nav></header>
     
@@ -113,6 +113,18 @@
             </div>
         </div>
     </main>
+
+    <footer class="text-center py-4 text-xs text-gray-500 bg-white border-t border-gray-200 z-10 shrink-0">
+        <div class="space-y-2">
+            <div id="visitor-stats" class="inline-block"></div>
+            <p>
+                <a href="https://github.com/jasonmumiao/EndlessPower" target="_blank" rel="noopener noreferrer" class="inline-flex items-center hover:text-gray-800 transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"></path></svg>
+                    View Project on GitHub
+                </a>
+            </p>
+        </div>
+    </footer>
 
     <div id="station-detail-panel" class="fixed bottom-4 right-4 w-full max-w-md rounded-xl transform translate-y-full opacity-0 pointer-events-none z-[1200]">
         <div class="p-5 border-b border-gray-200/80">
@@ -164,9 +176,8 @@
             add: (stationId) => {
                 const favs = FavoritesManager.get();
                 if (favs.includes(stationId)) return;
-                // ✨ FIX: Correctly check favorite limit and provide a subtle error message
                 if (favs.length >= FAVORITE_LIMIT) {
-                    showError('添加收藏失败，请稍后重试。');
+                    showError('收藏夹已满，请先移除一些站点。');
                     return;
                 }
                 favs.push(stationId);
@@ -187,40 +198,32 @@
             searchInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') performSearch(); });
             searchInput.addEventListener('input', () => clearSearchBtn.classList.toggle('hidden', !searchInput.value));
             clearSearchBtn.addEventListener('click', clearSearch);
-            const localStations = StationDB.get();
-            if (!localStations || localStations.length === 0) await initialFetchAndStoreStations();
+            
+            await initialFetchAndStoreStations();
             switchView('map');
         }
 
         function switchView(view) {
             hideStationDetailPanel(); 
+            document.body.classList.toggle('overflow-hidden', view === 'map');
             for (const key in pages) pages[key].classList.toggle('hidden', key !== view); 
             for (const key in navButtons) navButtons[key].classList.remove('active'); 
             navButtons[view].classList.add('active'); 
             if (view === 'map') { 
-                document.body.classList.add('overflow-hidden'); 
                 if (map) map.invalidateSize(); 
                 clearSearch(); 
-                // ✨ REMOVED: Automatic polling interval
             } else if (view === 'favorites') { 
-                document.body.classList.remove('overflow-hidden'); 
                 renderFavoritesPage(); 
             } 
         }
 
-        // --- 刷新逻辑 ---
         function handleMapRefresh() {
             const now = Date.now();
             if (now - lastMapRefresh < REFRESH_COOLDOWN) return;
             lastMapRefresh = now;
             refreshMarkersStatus();
-            // Visual feedback
             refreshBtn.disabled = true;
-            refreshBtn.classList.add("cursor-not-allowed");
-            setTimeout(() => { 
-                refreshBtn.disabled = false;
-                refreshBtn.classList.remove("cursor-not-allowed");
-            }, REFRESH_COOLDOWN);
+            setTimeout(() => { refreshBtn.disabled = false; }, REFRESH_COOLDOWN);
         }
 
         function handleFavoritesRefresh() {
@@ -228,16 +231,20 @@
             if (now - lastFavoritesRefresh < REFRESH_COOLDOWN) return;
             lastFavoritesRefresh = now;
             renderFavoritesPage();
-             // Visual feedback
             refreshFavoritesBtn.disabled = true;
-            refreshFavoritesBtn.classList.add("cursor-not-allowed");
-            setTimeout(() => { 
-                refreshFavoritesBtn.disabled = false;
-                refreshFavoritesBtn.classList.remove("cursor-not-allowed");
-            }, REFRESH_COOLDOWN);
+            setTimeout(() => { refreshFavoritesBtn.disabled = false; }, REFRESH_COOLDOWN);
         }
 
-        async function initialFetchAndStoreStations() { mapLoader.classList.remove('hidden'); const nearStations = await fetchNearStationsAPI(); if (nearStations && nearStations.length > 0) StationDB.set(applyJitter(nearStations)); mapLoader.classList.add('hidden'); }
+        async function initialFetchAndStoreStations() {
+            const localStations = StationDB.get();
+            if (!localStations || localStations.length === 0) {
+                 mapLoader.classList.remove('hidden'); 
+                 const nearStations = await fetchNearStationsAPI(); 
+                 if (nearStations && nearStations.length > 0) StationDB.set(applyJitter(nearStations)); 
+                 mapLoader.classList.add('hidden');
+            }
+            renderMarkers();
+        }
         function renderMarkers(filterKeyword = '') { const stations = StationDB.get() || []; if (!stations) return; const lowerCaseKeyword = filterKeyword.trim().toLowerCase(); const filteredStations = lowerCaseKeyword ? stations.filter(s => s.stationName.toLowerCase().includes(lowerCaseKeyword)) : stations; for (const key in markers) if (map.hasLayer(markers[key])) map.removeLayer(markers[key]); markers = {}; filteredStations.forEach(station => { const icon = createMarkerIcon('#9ca3af'); const marker = L.marker([station.latitude, station.longitude], { icon }).addTo(map); marker.bindTooltip(station.stationName, { permanent: false, direction: 'top', offset: [0, -12], className: 'station-tooltip' }); marker.on('click', () => showStationDetailPanel(station)); markers[station.stationId] = marker; }); refreshMarkersStatus(); }
         async function refreshMarkersStatus() { mapLoader.classList.remove('hidden'); const dynamicData = await fetchNearStationsAPI(); if (dynamicData) { const statusMap = new Map(dynamicData.map(s => [s.stationId, {freeNum: s.freeNum, switchType: s.switchType}])); for (const stationId in markers) { if (map.hasLayer(markers[stationId])) { const status = statusMap.get(parseInt(stationId, 10)); const marker = markers[stationId]; const ratio = status && status.switchType > 0 ? status.freeNum / status.switchType : -1; marker.setIcon(createMarkerIcon(getColorForAvailability(ratio))); } } } mapLoader.classList.add('hidden'); }
         function performSearch() { hideStationDetailPanel(); renderMarkers(searchInput.value); }
@@ -246,16 +253,18 @@
         function createMarkerIcon(color) { return L.divIcon({ className: 'leaflet-div-icon', html: `<div class="map-marker" style="background-color: ${color};"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] }); }
         function initMaps() { map = L.map('map', { zoomControl: false }).setView(MAP_CENTER, 16); L.control.zoom({ position: 'bottomright' }).addTo(map); L.tileLayer('https://wprd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', { subdomains: ['1', '2', '3', '4'], attribution: '&copy; 高德地图' }).addTo(map); }
         
+        // ✨ 2. 修复了CORS跨域问题，不再需要浏览器插件 ✨
         async function fetchAPI(url, options = {}) {
             try {
-                const response = await fetch(url, options);
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                const response = await fetch(proxyUrl, options);
                 if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
                 const data = await response.json();
                 if (data.code !== "1") throw new Error(data.msg || 'API error');
                 return data.data;
             } catch (error) {
                 console.error(`Fetch error for ${url}:`, error);
-                showError(`数据加载失败: ${error.message}。请确保浏览器安装并开启了CORS跨域插件。`);
+                showError(`数据加载失败: ${error.message}。`);
                 return null;
             }
         }
@@ -279,7 +288,17 @@
             const favBtn = document.getElementById('detail-favorite-btn');
             const updateFavBtnStyle = () => favBtn.classList.toggle('text-yellow-400', FavoritesManager.isFavorite(station.stationId));
             updateFavBtnStyle();
-            favBtn.onclick = () => { FavoritesManager.add(station.stationId); updateFavBtnStyle(); };
+
+            // ✨ 3. 修正了收藏按钮的添加/移除逻辑 ✨
+            favBtn.onclick = () => {
+                if (FavoritesManager.isFavorite(station.stationId)) {
+                    FavoritesManager.remove(station.stationId);
+                } else {
+                    FavoritesManager.add(station.stationId);
+                }
+                updateFavBtnStyle();
+            };
+
             document.getElementById('detail-close-btn').onclick = hideStationDetailPanel;
             const outletsGrid = document.getElementById('detail-outlets-grid');
             outletsGrid.innerHTML = '<div class="col-span-full flex justify-center p-8"><div class="loader"></div></div>';
@@ -375,7 +394,6 @@
                 container.appendChild(stationCardEl);
                 updateFavoriteStationCard(station.stationId, stationCard);
             });
-            // ✨ REMOVED: Automatic polling interval
         }
         
         function getColorForAvailability(ratio) { if (ratio < 0 || isNaN(ratio)) return '#9ca3af'; if (ratio === 0) return '#b91c1c'; const hue = ratio * 120; const lightness = 45 + (ratio * 15); const saturation = 75 + (ratio * 20); return `hsl(${hue}, ${saturation}%, ${lightness}%)`; }
@@ -383,6 +401,19 @@
 
         initApp();
     });
+    </script>
+    
+    <script>
+        var t = setInterval(function() {
+            if (window.goatcounter && window.goatcounter.visit_count) {
+                clearInterval(t);
+                window.goatcounter.visit_count({
+                    append: '#visitor-stats',
+                    path: 'TOTAL',
+                    type: 'html'
+                });
+            }
+        }, 100);
     </script>
     <script data-goatcounter="https://mumiao.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
