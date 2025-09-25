@@ -548,20 +548,38 @@
         initApp();
     });
     </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const statsContainer = document.getElementById('visitor-stats');
+    if (!statsContainer) return;
 
-    <script>
-        var t = setInterval(function() {
-            if (window.goatcounter && window.goatcounter.visit_count) {
-                clearInterval(t);
-                window.goatcounter.visit_count({
-                    append: '#visitor-stats',
-                    path: 'TOTAL',
-                    type: 'html'
-                });
-            }
-        }, 100);
-    </script>
-    <script data-goatcounter="https://mumiao.goatcounter.com/count"
+    // 创建一个“侦探”（Observer），监视 #visitor-stats 容器的变化
+    const observer = new MutationObserver((mutationsList, observer) => {
+        // 尝试寻找 GoatCounter 添加的那个 div 框
+        const widget = statsContainer.querySelector('div');
+        if (!widget) return;
+
+        // 尝试从框里提取出数字（通常在 <strong> 标签里）
+        const numberNode = widget.querySelector('strong')?.textContent.trim();
+        
+        if (numberNode) {
+            // 如果成功提取到数字，我们就创建一个干净的文本
+            const cleanText = '总访问量: ' + numberNode;
+            
+            // 用我们干净的文本彻底替换掉原来的丑框框
+            statsContainer.innerHTML = cleanText;
+            
+            // 任务完成，让“侦探”下班
+            observer.disconnect();
+        }
+    });
+
+    // 让“侦探”开始工作
+    observer.observe(statsContainer, { childList: true });
+});
+</script>
+
+<script data-goatcounter="https://mumiao.goatcounter.com/count" 
         async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
