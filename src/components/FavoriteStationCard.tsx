@@ -17,13 +17,14 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
   const [outlets, setOutlets] = useState<Outlet[]>([])
   const [outletStatuses, setOutletStatuses] = useState<(OutletStatus | null)[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const [summary, setSummary] = useState({
     total: 0,
     available: 0,
     occupied: 0
   })
 
-  const { removeFavorite } = useFavoritesStore()
+  const { removeFavorite, pinFavorite, unpinFavorite, isPinned } = useFavoritesStore()
   const { showError } = useErrorStore()
 
   useEffect(() => {
@@ -67,6 +68,14 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
 
   const handleRemoveFavorite = () => {
     removeFavorite(station.stationId)
+  }
+
+  const handleTogglePin = () => {
+    if (isPinned(station.stationId)) {
+      unpinFavorite(station.stationId)
+    } else {
+      pinFavorite(station.stationId)
+    }
   }
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
@@ -128,32 +137,69 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div className="min-w-0 flex-1">
-            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
-              {station.stationName}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
+                {station.stationName}
+              </h2>
+              {isPinned(station.stationId) && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200">
+                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                  置顶
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 truncate">
               {station.address}
             </p>
           </div>
           
-          <button
-            onClick={handleRemoveFavorite}
-            className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors ml-2"
-            title="移除收藏"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-5 w-5" 
-              viewBox="0 0 20 20" 
-              fill="currentColor"
+          <div className="flex items-center gap-1 ml-2">
+            <button
+              onClick={handleTogglePin}
+              className={`p-1.5 rounded-full transition-colors ${
+                isPinned(station.stationId)
+                  ? 'text-yellow-500 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'
+                  : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'
+              }`}
+              title={isPinned(station.stationId) ? '取消置顶' : '置顶'}
             >
-              <path 
-                fillRule="evenodd" 
-                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" 
-                clipRule="evenodd" 
-              />
-            </svg>
-          </button>
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5" 
+                fill={isPinned(station.stationId) ? 'currentColor' : 'none'}
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth="2" 
+                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" 
+                />
+              </svg>
+            </button>
+            
+            <button
+              onClick={handleRemoveFavorite}
+              className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+              title="移除收藏"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-5 w-5" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+              >
+                <path 
+                  fillRule="evenodd" 
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" 
+                  clipRule="evenodd" 
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Summary */}
@@ -172,25 +218,53 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
           </div>
         </div>
 
+        {/* 展开/收起按钮 */}
+        {outlets.length > 0 && (
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+            >
+              {isExpanded ? (
+                <>
+                  <span>收起详情</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
+                  </svg>
+                </>
+              ) : (
+                <>
+                  <span>展开详情</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* Outlets Grid */}
-        <div className="space-y-3">
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <LoadingSpinner text="加载中..." />
-            </div>
-          ) : outlets.length === 0 ? (
-            <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
-              该充电站暂无插座信息。
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {outlets
-                .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
-                .map((outlet, index) => renderOutletCard(outlet, outletStatuses[index]))
-              }
-            </div>
-          )}
-        </div>
+        {isExpanded && (
+          <div className="space-y-3">
+            {isLoading ? (
+              <div className="flex justify-center py-8">
+                <LoadingSpinner text="加载中..." />
+              </div>
+            ) : outlets.length === 0 ? (
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
+                该充电站暂无插座信息。
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {outlets
+                  .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
+                  .map((outlet, index) => renderOutletCard(outlet, outletStatuses[index]))
+                }
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

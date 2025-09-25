@@ -144,9 +144,21 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   if (!station) return null
 
   return (
-    <div className={`fixed bottom-4 left-4 right-4 sm:bottom-4 sm:right-4 sm:left-auto w-full sm:max-w-md rounded-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl z-[1200] transition-all duration-300 ${
-      station ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'
-    }`}>
+    <div 
+      className={`fixed inset-0 bg-black/40 z-[1200] transition-all duration-300 ${
+        station ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+      }`}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px'
+      }}
+    >
+      <div className={`w-full max-w-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 ${
+        station ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+      }`} style={{ maxHeight: '80vh' }}>
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/30 dark:to-indigo-900/30">
         <div className="flex justify-between items-center">
@@ -208,7 +220,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5 max-h-[50vh] sm:max-h-72 overflow-y-auto">
+      <div className="p-4 sm:p-5 flex-1 overflow-y-auto">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
             <LoadingSpinner />
@@ -218,7 +230,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             该充电站暂无插座信息。
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {outlets
               .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
               .map((outlet, index) => (
@@ -229,6 +241,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             }
           </div>
         )}
+      </div>
       </div>
     </div>
   )

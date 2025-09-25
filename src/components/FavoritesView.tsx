@@ -7,12 +7,23 @@ const REFRESH_COOLDOWN = 15000
 
 const FavoritesView: React.FC = () => {
   const [lastRefresh, setLastRefresh] = useState(0)
-  const { favoriteIds } = useFavoritesStore()
+  const { favoriteIds, isPinned } = useFavoritesStore()
   const { stations } = useStationStore()
 
   const favoriteStations = favoriteIds
     .map(id => stations.find(station => station.stationId === id))
     .filter(Boolean)
+    .sort((a, b) => {
+      const aIsPinned = isPinned(a!.stationId)
+      const bIsPinned = isPinned(b!.stationId)
+      
+      // 置顶的排在前面
+      if (aIsPinned && !bIsPinned) return -1
+      if (!aIsPinned && bIsPinned) return 1
+      
+      // 如果都置顶或都不置顶，保持原顺序（按收藏时间）
+      return 0
+    })
 
   const canRefresh = () => {
     return Date.now() - lastRefresh >= REFRESH_COOLDOWN
