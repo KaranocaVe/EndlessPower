@@ -66,7 +66,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
-    const serial = `插座 ${outlet.vOutletName.replace('插座', '') || 'N/A'}`
+    const serial = `插座 ${outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'}`
     
     if (!status || !status.outlet) {
       return (

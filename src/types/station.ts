@@ -12,7 +12,7 @@ export interface Outlet {
   outletId: number
   outletNo: string
   outletSerialNo: number
-  vOutletName: string
+  vOutletName?: string
   iCurrentChargingRecordId: number
 }
 
