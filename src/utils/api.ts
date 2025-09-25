@@ -95,9 +95,9 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
         if (typeof contents === 'string') {
           try {
             contents = JSON.parse(contents)
-          } catch (e) {
-            throw new Error('JSON 解析失败')
-          }
+        } catch {
+          throw new Error('JSON 解析失败')
+        }
         }
         
         const data: ApiResponse<T> = contents
