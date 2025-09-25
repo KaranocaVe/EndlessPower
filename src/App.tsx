@@ -24,8 +24,25 @@ function App() {
     applyTheme()
   }, [applyTheme])
 
+  // 修复移动端视口高度问题
+  useEffect(() => {
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+    }
+    
+    setVH()
+    window.addEventListener('resize', setVH)
+    window.addEventListener('orientationchange', setVH)
+    
+    return () => {
+      window.removeEventListener('resize', setVH)
+      window.removeEventListener('orientationchange', setVH)
+    }
+  }, [])
+
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200 flex flex-col h-screen transition-colors duration-300">
+    <div className="bg-gradient-to-br from-slate-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-200 flex flex-col transition-colors duration-300" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
       <Header currentView={currentView} onViewChange={setCurrentView} />
       
       <main className="flex-grow relative overflow-hidden">
