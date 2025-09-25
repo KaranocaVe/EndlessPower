@@ -148,12 +148,6 @@ const MapView: React.FC = () => {
 
   // 根据设置过滤充电桩 - 使用 useMemo 确保响应式更新
   const displayStations = useMemo(() => {
-    console.log('重新计算显示充电桩:', { 
-      totalStations: stations.length, 
-      showUnavailableStations,
-      availableStations: stations.filter(hasAvailableOutlets).length 
-    })
-    
     if (showUnavailableStations) {
       return stations // 显示所有充电桩
     } else {
