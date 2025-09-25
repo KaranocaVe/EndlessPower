@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet'
 import L from 'leaflet'
 import { Station } from '../types/station'
@@ -146,16 +146,20 @@ const MapView: React.FC = () => {
     return station.freeNum && station.freeNum > 0
   }
 
-  // 根据设置过滤充电桩
-  const getDisplayStations = () => {
+  // 根据设置过滤充电桩 - 使用 useMemo 确保响应式更新
+  const displayStations = useMemo(() => {
+    console.log('重新计算显示充电桩:', { 
+      totalStations: stations.length, 
+      showUnavailableStations,
+      availableStations: stations.filter(hasAvailableOutlets).length 
+    })
+    
     if (showUnavailableStations) {
       return stations // 显示所有充电桩
     } else {
       return stations.filter(hasAvailableOutlets) // 只显示有可用插座的充电桩
     }
-  }
-
-  const displayStations = getDisplayStations()
+  }, [stations, showUnavailableStations])
 
   return (
     <div className="w-full h-full relative">

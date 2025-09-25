@@ -67,27 +67,37 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
     const outletName = outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'
-    const serial = `插座 ${outletName.length > 12 ? outletName.substring(0, 12) + '...' : outletName}`
+    
+    // 智能截断：保留尾部不同信息，省略前面相同部分
+    const formatOutletName = (name: string) => {
+      if (name.length <= 8) return `插座 ${name}`
+      // 如果名称很长，显示前3个字符...后4个字符
+      if (name.length > 12) {
+        return `插座 ${name.substring(0, 3)}...${name.slice(-4)}`
+      }
+      return `插座 ${name}`
+    }
+    const serial = formatOutletName(outletName)
     
     if (!status || !status.outlet) {
       return (
-        <div key={outlet.outletId} className="bg-gray-100 rounded-xl p-3 border border-gray-200 h-28">
-          <h3 className="text-sm font-semibold text-gray-500 truncate" title={`插座 ${outletName}`}>{serial}</h3>
-          <p className="text-xs text-red-500 mt-1">数据加载失败</p>
+        <div key={outlet.outletId} className="bg-gray-100 dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 h-28">
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate" title={`插座 ${outletName}`}>{serial}</h3>
+          <p className="text-xs text-red-500 dark:text-red-400 mt-1">数据加载失败</p>
         </div>
       )
     }
 
     const cardClasses = isAvailable 
-      ? 'bg-green-50/80 border-green-200' 
-      : 'bg-blue-50/80 border-blue-200'
+      ? 'bg-green-50/80 dark:bg-green-900/30 border-green-200 dark:border-green-700' 
+      : 'bg-blue-50/80 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700'
     
     const statusBadge = isAvailable ? (
-      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-green-100 text-green-800">
+      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 whitespace-nowrap flex-shrink-0">
         可用
       </span>
     ) : (
-      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-blue-100 text-blue-800">
+      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 whitespace-nowrap flex-shrink-0">
         占用中
       </span>
     )
@@ -101,10 +111,10 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
     const details = isAvailable ? (
       <div className="mt-2 text-center">
-        <p className="text-xs font-semibold text-green-700">空闲中</p>
+        <p className="text-xs font-semibold text-green-700 dark:text-green-400">空闲中</p>
       </div>
     ) : (
-      <div className="mt-1 text-xs space-y-0.5 text-gray-600">
+      <div className="mt-1 text-xs space-y-0.5 text-gray-600 dark:text-gray-300">
         <div className="flex justify-between">
           <span><strong>已充:</strong> {status.usedmin || 0}分钟</span>
           <span><strong>消费:</strong> {status.usedfee?.toFixed(2) || '0.00'}元</span>
@@ -118,8 +128,8 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
     return (
       <div key={outlet.outletId} className={`rounded-xl p-3 border transition-all h-28 ${cardClasses}`}>
-        <div className="flex justify-between items-center">
-          <h3 className="text-sm font-semibold text-gray-800 truncate mr-2" title={`插座 ${outletName}`}>{serial}</h3>
+        <div className="flex justify-between items-center gap-2">
+          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate flex-1 min-w-0" title={`插座 ${outletName}`}>{serial}</h3>
           {statusBadge}
         </div>
         {details}
@@ -130,17 +140,17 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   if (!station) return null
 
   return (
-    <div className={`fixed bottom-4 right-4 w-full max-w-md rounded-2xl bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl z-[1200] transition-all duration-300 ${
+    <div className={`fixed bottom-4 left-4 right-4 sm:bottom-4 sm:right-4 sm:left-auto w-full sm:max-w-md rounded-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl z-[1200] transition-all duration-300 ${
       station ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'
     }`}>
       {/* Header */}
-      <div className="p-5 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50">
+      <div className="p-4 sm:p-5 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/30 dark:to-indigo-900/30">
         <div className="flex justify-between items-center">
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
               {station.stationName}
             </h2>
-            <p className="text-sm text-gray-600 truncate mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-300 truncate mt-1">
               {station.address}
             </p>
           </div>
@@ -150,8 +160,8 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
               onClick={handleFavoriteToggle}
               className={`p-2 rounded-full transition-colors ${
                 isFavorite(station.stationId)
-                  ? 'text-yellow-400 hover:text-yellow-500 hover:bg-yellow-100'
-                  : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-100'
+                  ? 'text-yellow-400 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
+                  : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
               }`}
             >
               <svg 
@@ -172,7 +182,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-white/60 transition-all duration-200"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-2 rounded-full hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-200"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -194,17 +204,17 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       </div>
 
       {/* Content */}
-      <div className="p-5 h-72 overflow-y-auto">
+      <div className="p-4 sm:p-5 max-h-[50vh] sm:max-h-72 overflow-y-auto">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
             <LoadingSpinner />
           </div>
         ) : outlets.length === 0 ? (
-          <p className="text-center text-gray-500 py-4">
+          <p className="text-center text-gray-500 dark:text-gray-400 py-4">
             该充电站暂无插座信息。
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {outlets
               .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
               .map((outlet, index) => (
