@@ -17,7 +17,7 @@ interface SettingsState {
 }
 
 const defaultSettings = {
-  autoRefresh: false,
+  autoRefresh: true,
   showUnavailableStations: false,
   refreshInterval: 30
 }

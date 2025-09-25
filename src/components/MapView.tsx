@@ -28,7 +28,7 @@ const MapView: React.FC = () => {
   
   const { showError } = useErrorStore()
   const { isDark } = useThemeStore()
-  const { showUnavailableStations } = useSettingsStore()
+  const { showUnavailableStations, autoRefresh, refreshInterval } = useSettingsStore()
   
   const stations = getFilteredStations()
 
@@ -58,6 +58,21 @@ const MapView: React.FC = () => {
       )
     }
   }, [setStoreUserLocation])
+
+  // 自动刷新功能
+  useEffect(() => {
+    if (!autoRefresh) return
+
+    const intervalId = setInterval(async () => {
+      if (canRefresh()) {
+        const lat = userLocation?.[0]
+        const lng = userLocation?.[1]
+        await refreshStations(lat, lng)
+      }
+    }, refreshInterval * 1000) // 转换为毫秒
+
+    return () => clearInterval(intervalId)
+  }, [autoRefresh, refreshInterval, userLocation, canRefresh, refreshStations])
 
   const createMarkerIcon = (color: string) => {
     return L.divIcon({
