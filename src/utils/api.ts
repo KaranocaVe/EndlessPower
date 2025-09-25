@@ -11,6 +11,7 @@ import {
   extractMergedStations, 
   debugLocationMerge 
 } from './locationMerger'
+import { ENABLE_DEBUG } from '../config/environment'
 
 const JITTER_AMOUNT = 0.0004
 
@@ -44,7 +45,7 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
   
   // 首先尝试直接请求（可能在某些环境下可行）
   try {
-    console.log(`🔄 尝试直接请求: ${url}`)
+    if (ENABLE_DEBUG) console.log(`🔄 尝试直接请求: ${url}`)
     const response = await fetch(url, {
       ...options,
       mode: 'cors',
@@ -57,7 +58,7 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
     if (response.ok) {
       const data: ApiResponse<T> = await response.json()
       if (data.code === "1") {
-        console.log(`✅ 直接请求成功`)
+        if (ENABLE_DEBUG) console.log(`✅ 直接请求成功`)
         return data.data
       }
     }

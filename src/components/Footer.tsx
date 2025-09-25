@@ -2,7 +2,7 @@ import React from 'react'
 
 const Footer: React.FC = () => {
   return (
-    <footer className="text-center py-4 text-xs text-gray-500 bg-white/80 backdrop-blur-sm border-t border-gray-200/50 z-10 shrink-0">
+    <footer className="text-center py-4 text-xs text-gray-500 dark:text-gray-400 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-700/50 z-10 shrink-0">
       <div className="max-w-6xl mx-auto px-4">
         <div className="space-y-2">
         <div id="visitor-stats" className="inline-block"></div>
@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
             href="https://github.com/jasonmumiao/EndlessPower" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="inline-flex items-center hover:text-blue-600 transition-all duration-200 hover:scale-105"
+            className="inline-flex items-center hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105"
           >
             <svg 
               className="w-4 h-4 mr-1" 

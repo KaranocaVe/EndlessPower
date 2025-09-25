@@ -23,7 +23,7 @@ const SearchBar: React.FC = () => {
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <svg 
-            className="h-5 w-5 text-gray-400" 
+            className="h-5 w-5 text-gray-400 dark:text-gray-500" 
             xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 20 20" 
             fill="currentColor"
@@ -42,14 +42,14 @@ const SearchBar: React.FC = () => {
           onChange={(e) => setSearchKeyword(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={isUsingSimulatedData ? "搜索充电站（模拟数据）..." : "搜索充电站..."}
-          className="w-full h-12 pl-12 pr-24 rounded-full bg-white/95 backdrop-blur-sm border border-gray-200/50 shadow-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 outline-none transition-all duration-200 placeholder-gray-400"
+          className="w-full h-12 pl-12 pr-24 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 dark:focus:ring-blue-500/50 dark:focus:border-blue-500 outline-none transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"
         />
         
         <div className="absolute inset-y-0 right-0 flex items-center">
           {searchKeyword && (
             <button
               onClick={clearSearch}
-              className="h-full px-3 text-gray-400 hover:text-gray-600 transition-colors"
+              className="h-full px-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -68,7 +68,7 @@ const SearchBar: React.FC = () => {
           
           <button
             onClick={handleSearch}
-            className="h-full px-4 text-gray-500 hover:text-blue-600 transition-colors"
+            className="h-full px-4 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 

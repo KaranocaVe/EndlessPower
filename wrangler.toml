@@ -1,5 +1,39 @@
+# Cloudflare Workers 配置 (wrangler v3.88.0^)
 name = "endlesspower"
 compatibility_date = "2025-09-25"
 
+# 静态资源配置
 [assets]
 directory = "./dist"
+
+# 日志观察性配置
+[observability.logs]
+enabled = true
+
+# 构建配置
+[build]
+command = "npm run build"
+
+# 开发环境配置
+[env.dev]
+name = "endlesspower-dev"
+compatibility_date = "2025-09-25"
+vars = { NODE_ENV = "development", DEBUG = "true" }
+
+[env.dev.assets]
+directory = "./dist"
+
+[env.dev.observability.logs]
+enabled = true
+
+# 生产环境配置  
+[env.production]
+name = "endlesspower"
+compatibility_date = "2025-09-25"
+vars = { NODE_ENV = "production", DEBUG = "false" }
+
+[env.production.assets]
+directory = "./dist"
+
+[env.production.observability.logs]
+enabled = true
