@@ -1,5 +1,15 @@
 {
   "version": 1,
   "include": ["/*"],
-  "exclude": []
+  "exclude": [
+    "/assets/*",
+    "/manifest.webmanifest", 
+    "/sw.js",
+    "/sw.js.map",
+    "/workbox-*.js",
+    "/workbox-*.js.map",
+    "/*.svg",
+    "/*.png",
+    "/*.ico"
+  ]
 }
