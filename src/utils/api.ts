@@ -14,27 +14,71 @@ import {
 
 const JITTER_AMOUNT = 0.0004
 
+// CORS代理列表（按优先级排序）
+const CORS_PROXIES = [
+  'https://api.allorigins.win/get?url=',
+  'https://proxy.cors.sh/',
+  'https://corsproxy.io/?'
+]
+
 // CORS代理和基础API函数
 async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | null> {
-  try {
-    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url)
-    const response = await fetch(proxyUrl, options)
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error: ${response.status}`)
+  let lastError: Error | null = null
+  
+  // 尝试每个代理服务
+  for (const proxy of CORS_PROXIES) {
+    try {
+      console.log(`🔄 尝试代理: ${proxy}`)
+      let response: Response
+      
+      if (proxy.includes('allorigins.win')) {
+        // AllOrigins 需要特殊处理
+        const proxyUrl = `${proxy}${encodeURIComponent(url)}`
+        response = await fetch(proxyUrl, { ...options })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`)
+        }
+        
+        const result = await response.json()
+        if (result.status?.http_code !== 200) {
+          throw new Error(`Proxy error: ${result.status?.http_code}`)
+        }
+        
+        const data: ApiResponse<T> = JSON.parse(result.contents)
+        if (data.code !== "1") {
+          throw new Error(data.msg || 'API error')
+        }
+        
+        console.log(`✅ 代理成功: ${proxy}`)
+        return data.data
+      } else {
+        // 其他代理服务的标准处理
+        const proxyUrl = `${proxy}${encodeURIComponent(url)}`
+        response = await fetch(proxyUrl, { ...options })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`)
+        }
+        
+        const data: ApiResponse<T> = await response.json()
+        if (data.code !== "1") {
+          throw new Error(data.msg || 'API error')
+        }
+        
+        console.log(`✅ 代理成功: ${proxy}`)
+        return data.data
+      }
+    } catch (error) {
+      console.warn(`❌ 代理失败: ${proxy}`, error)
+      lastError = error as Error
+      continue
     }
-    
-    const data: ApiResponse<T> = await response.json()
-    
-    if (data.code !== "1") {
-      throw new Error(data.msg || 'API error')
-    }
-    
-    return data.data
-  } catch (error) {
-    console.error(`Fetch error for ${url}:`, error)
-    throw error
   }
+  
+  // 所有代理都失败了
+  console.error(`💥 所有CORS代理都失败了，最后错误:`, lastError)
+  throw lastError || new Error('所有CORS代理服务都不可用')
 }
 
 // 获取附近充电站
