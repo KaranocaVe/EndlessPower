@@ -246,8 +246,7 @@ const MapView: React.FC = () => {
       {/* Control Buttons */}
       <button
         onClick={handleRefresh}
-        disabled={!canRefresh() || isLoading}
-        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
