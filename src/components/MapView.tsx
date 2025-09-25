@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet'
 import L from 'leaflet'
 import { Station } from '../types/station'
 import { useStationStore } from '../store/stationStore'
 import { useErrorStore } from '../store/errorStore'
 import { useThemeStore } from '../store/themeStore'
+import { useSettingsStore } from '../store/settingsStore'
 import { getColorForAvailability } from '../utils/api'
 import SearchBar from './SearchBar'
 import StationDetailPanel from './StationDetailPanel'
@@ -27,6 +28,7 @@ const MapView: React.FC = () => {
   
   const { showError } = useErrorStore()
   const { isDark } = useThemeStore()
+  const { showUnavailableStations, autoRefresh, refreshInterval } = useSettingsStore()
   
   const stations = getFilteredStations()
 
@@ -56,6 +58,21 @@ const MapView: React.FC = () => {
       )
     }
   }, [setStoreUserLocation])
+
+  // 自动刷新功能
+  useEffect(() => {
+    if (!autoRefresh) return
+
+    const intervalId = setInterval(async () => {
+      if (canRefresh()) {
+        const lat = userLocation?.[0]
+        const lng = userLocation?.[1]
+        await refreshStations(lat, lng)
+      }
+    }, refreshInterval * 1000) // 转换为毫秒
+
+    return () => clearInterval(intervalId)
+  }, [autoRefresh, refreshInterval, userLocation, canRefresh, refreshStations])
 
   const createMarkerIcon = (color: string) => {
     return L.divIcon({
@@ -139,6 +156,20 @@ const MapView: React.FC = () => {
     return getColorForAvailability(ratio)
   }
 
+  // 判断充电桩是否有可用插座
+  const hasAvailableOutlets = (station: Station) => {
+    return station.freeNum && station.freeNum > 0
+  }
+
+  // 根据设置过滤充电桩 - 使用 useMemo 确保响应式更新
+  const displayStations = useMemo(() => {
+    if (showUnavailableStations) {
+      return stations // 显示所有充电桩
+    } else {
+      return stations.filter(hasAvailableOutlets) // 只显示有可用插座的充电桩
+    }
+  }, [stations, showUnavailableStations])
+
   return (
     <div className="w-full h-full relative">
       <SearchBar />
@@ -158,7 +189,7 @@ const MapView: React.FC = () => {
         />
         
         {/* Station Markers */}
-        {stations.map((station) => (
+        {displayStations.map((station) => (
           <Marker
             key={station.stationId}
             position={[station.latitude, station.longitude]}
@@ -198,23 +229,6 @@ const MapView: React.FC = () => {
         />
       )}
 
-      {/* 开发模式调试信息 */}
-      {import.meta.env.DEV && (
-        <div className="absolute top-20 left-4 z-[999] bg-black/80 text-white p-2 rounded text-xs">
-          <div>暗色模式: {isDark ? '开启' : '关闭'}</div>
-          <div>覆盖层: {isDark ? '显示' : '隐藏'}</div>
-          <button 
-            onClick={() => {
-              const overlay = document.querySelector('[style*="mixBlendMode"]')
-              console.log('覆盖层元素:', overlay)
-              console.log('覆盖层样式:', overlay ? window.getComputedStyle(overlay) : '未找到')
-            }}
-            className="mt-1 px-2 py-1 bg-blue-500 text-white rounded text-xs"
-          >
-            调试覆盖层
-          </button>
-        </div>
-      )}
 
       {/* Control Buttons */}
       <button

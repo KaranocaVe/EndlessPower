@@ -81,10 +81,10 @@ const PWAInstallPrompt: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 z-[2000] max-w-sm mx-auto">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-xl p-4 backdrop-blur-lg">
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-4 backdrop-blur-lg">
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-blue-500 dark:bg-blue-600 rounded-xl flex items-center justify-center">
               <svg 
                 className="w-6 h-6 text-white" 
                 fill="none" 
@@ -102,17 +102,17 @@ const PWAInstallPrompt: React.FC = () => {
           </div>
           
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
               安装 EndlessPower
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               添加到主屏幕，随时查看充电桩信息
             </p>
           </div>
           
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 p-1"
+            className="flex-shrink-0 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
               <path 
@@ -127,13 +127,13 @@ const PWAInstallPrompt: React.FC = () => {
         <div className="mt-3 flex space-x-2">
           <button
             onClick={handleInstallClick}
-            className="flex-1 bg-primary text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+            className="flex-1 bg-blue-500 dark:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
           >
             安装
           </button>
           <button
             onClick={handleDismiss}
-            className="flex-1 bg-gray-100 text-gray-700 text-sm font-medium py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium py-2 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
             稍后
           </button>
