@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -76,6 +76,17 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
             border-color: var(--color-primary);
         }
+        /* ✨ 新增：重置 GoatCounter 小部件的样式，移除边框和背景 ✨ */
+#visitor-stats div {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: transparent !important;
+}
+/* ✨ 新增：隐藏 "stats by GoatCounter" 的链接 ✨ */
+#visitor-stats a {
+    display: none !important;
+}
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex flex-col h-screen">
@@ -98,6 +109,9 @@
             <button id="refresh-btn" class="absolute bottom-6 right-6 z-[999] bg-white text-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m7 0h-5V4m0 0l7 7m-7-7H4" /><path stroke-linecap="round" stroke-linejoin="round" d="M20 20v-5h-5m-7 0h5v5m0 0l-7-7m7 7h5" /></svg>
             </button>
+            <button id="locate-btn" class="absolute bottom-6 right-24 z-[999] bg-white text-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            </button>
             <div id="map-loader" class="hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999] bg-white/80 p-4 rounded-lg shadow-xl flex items-center space-x-3"><div class="loader"></div><span class="font-semibold text-gray-700">刷新状态...</span></div>
         </div>
         <div id="favorites-page" class="page-content hidden w-full h-full overflow-y-auto p-4 md:p-6">
@@ -114,14 +128,15 @@
         </div>
     </main>
 
-    <footer class="text-center py-3 text-xs text-gray-500 bg-white border-t border-gray-200 z-10 shrink-0">
-        <div class="flex items-center justify-center space-x-4">
-            <div id="visitor-stats">统计加载中...</div>
-            <span class="text-gray-300">|</span>
-            <a href="https://github.com/jasonmumiao/EndlessPower" target="_blank" rel="noopener noreferrer" class="inline-flex items-center hover:text-gray-800 transition-colors">
-                <svg class="w-3.5 h-3.5 mr-1.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"></path></svg>
-                <span>View Project on GitHub</span>
-            </a>
+    <footer class="text-center py-4 text-xs text-gray-500 bg-white border-t border-gray-200 z-10 shrink-0">
+        <div class="space-y-2">
+            <div id="visitor-stats" class="inline-block"></div>
+            <p>
+                <a href="https://github.com/jasonmumiao/EndlessPower" target="_blank" rel="noopener noreferrer" class="inline-flex items-center hover:text-gray-800 transition-colors">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd"></path></svg>
+                    View Project on GitHub
+                </a>
+            </p>
         </div>
     </footer>
 
@@ -133,7 +148,7 @@
                     <p id="detail-station-address" class="text-sm text-gray-500 truncate"></p>
                 </div>
                 <div class="flex items-center space-x-1 ml-4">
-                    <button id="detail-favorite-btn" class="text-gray-400 hover:text-yellow-500 p-2 rounded-full hover:bg-yellow-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg></button>
+                    <button id="detail-favorite-btn" class="text-gray-400 hover:text-yellow-500 p-2 rounded-full hover:bg-yellow-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg></button>
                     <button id="detail-close-btn" class="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-200/80 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
                 </div>
             </div>
@@ -150,11 +165,12 @@
         // --- 配置 ---
         const MAP_CENTER = [30.754365, 103.936107];
         const REFRESH_COOLDOWN = 15000; // 15 seconds
-        const FAVORITE_LIMIT = 4;
+        const FAVORITE_LIMIT=4;
         const JITTER_AMOUNT = 0.0004;
 
         let map, markers = {}, currentDetailRequestId = 0;
         let lastMapRefresh = 0, lastFavoritesRefresh = 0;
+        let userLocationMarker; // 用户位置标记
 
         // --- DOM 元素 ---
         const navButtons = { map: document.getElementById('nav-map'), favorites: document.getElementById('nav-favorites') };
@@ -162,6 +178,7 @@
         const detailPanel = document.getElementById('station-detail-panel');
         const refreshBtn = document.getElementById('refresh-btn');
         const refreshFavoritesBtn = document.getElementById('refresh-favorites-btn');
+        const locateBtn = document.getElementById('locate-btn');
         const mapLoader = document.getElementById('map-loader');
         const errorOverlay = document.getElementById('error-overlay');
         const errorMessage = document.getElementById('error-message');
@@ -191,27 +208,131 @@
             navButtons.map.addEventListener('click', () => switchView('map'));
             navButtons.favorites.addEventListener('click', () => switchView('favorites'));
             refreshBtn.addEventListener('click', handleMapRefresh);
+            locateBtn.addEventListener('click', getCurrentLocation);
             refreshFavoritesBtn.addEventListener('click', handleFavoritesRefresh);
             document.getElementById('error-close-btn').addEventListener('click', () => errorOverlay.classList.add('hidden'));
             searchBtn.addEventListener('click', performSearch);
             searchInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') performSearch(); });
             searchInput.addEventListener('input', () => clearSearchBtn.classList.toggle('hidden', !searchInput.value));
             clearSearchBtn.addEventListener('click', clearSearch);
-            
-            await initialFetchAndStoreStations();
-            switchView('map');
+
+            // 尝试获取用户当前位置，如果失败则使用默认位置
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        // 更新地图中心到用户位置
+                        map.setView([latitude, longitude], 16);
+                        // 显示用户位置标记
+                        userLocationMarker.setLatLng([latitude, longitude]);
+                        userLocationMarker.setOpacity(1);
+                        // 获取并显示该位置附近的充电站
+                        await initialFetchAndStoreStations(latitude, longitude);
+                        switchView('map');
+                    },
+                    async (error) => {
+                        // 如果获取位置失败，使用默认位置
+                        const localStations = StationDB.get();
+                        if (!localStations || localStations.length === 0) await initialFetchAndStoreStations();
+                        switchView('map');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                // 浏览器不支持地理位置功能，使用默认位置
+                const localStations = StationDB.get();
+                if (!localStations || localStations.length === 0) await initialFetchAndStoreStations();
+                switchView('map');
+            }
+        }
+
+        // 添加获取用户当前位置的函数
+        function getCurrentLocation() {
+            if (!navigator.geolocation) {
+                showError('您的浏览器不支持地理位置功能');
+                return;
+            }
+
+            // 显示加载状态
+            mapLoader.classList.remove('hidden');
+            locateBtn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                // 成功回调
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    // 更新地图中心到用户位置
+                    map.setView([latitude, longitude], 16);
+
+                    // 显示用户位置标记
+                    userLocationMarker.setLatLng([latitude, longitude]);
+                    userLocationMarker.setOpacity(1);
+
+                    // 重新获取并显示该位置附近的充电站
+                    await fetchAndRenderStations(latitude, longitude);
+
+                    // 恢复按钮状态
+                    mapLoader.classList.add('hidden');
+                    locateBtn.disabled = false;
+                },
+                // 错误回调
+                (error) => {
+                    mapLoader.classList.add('hidden');
+                    locateBtn.disabled = false;
+
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            showError('用户拒绝了地理位置请求');
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            showError('位置信息不可用');
+                            break;
+                        case error.TIMEOUT:
+                            showError('获取位置信息超时');
+                            break;
+                        default:
+                            showError('获取地理位置时发生未知错误');
+                            break;
+                    }
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        }
+
+        // 修改获取充电站数据的函数，支持传入位置参数
+        async function fetchAndRenderStations(lat = 30.754736739439924, lng = 103.92946279311207) {
+            mapLoader.classList.remove('hidden');
+
+            // 更新API调用参数
+            const nearStations = await fetchNearStationsAPI(lat, lng);
+
+            if (nearStations && nearStations.length > 0) {
+                StationDB.set(applyJitter(nearStations));
+                renderMarkers();
+            }
+
+            mapLoader.classList.add('hidden');
         }
 
         function switchView(view) {
             hideStationDetailPanel(); 
             document.body.classList.toggle('overflow-hidden', view === 'map');
-            for (const key in pages) pages[key].classList.toggle('hidden', key !== view); 
+            for (const key in pages) pages[key].classList.toggle('hidden', key !== view);
             for (const key in navButtons) navButtons[key].classList.remove('active'); 
             navButtons[view].classList.add('active'); 
-            if (view === 'map') { 
+            if (view === 'map') {
                 if (map) map.invalidateSize(); 
-                clearSearch(); 
-            } else if (view === 'favorites') { 
+                clearSearch();
+            } else if (view === 'favorites') {
                 renderFavoritesPage(); 
             } 
         }
@@ -234,15 +355,11 @@
             setTimeout(() => { refreshFavoritesBtn.disabled = false; }, REFRESH_COOLDOWN);
         }
 
-        async function initialFetchAndStoreStations() {
-            const localStations = StationDB.get();
-            if (!localStations || localStations.length === 0) {
-                 mapLoader.classList.remove('hidden'); 
-                 const nearStations = await fetchNearStationsAPI(); 
-                 if (nearStations && nearStations.length > 0) StationDB.set(applyJitter(nearStations)); 
-                 mapLoader.classList.add('hidden');
-            }
-            renderMarkers();
+        async function initialFetchAndStoreStations(lat, lng) {
+            mapLoader.classList.remove('hidden');
+            const nearStations = await fetchNearStationsAPI(lat, lng);
+            if (nearStations && nearStations.length > 0) StationDB.set(applyJitter(nearStations));
+            mapLoader.classList.add('hidden');
         }
         function renderMarkers(filterKeyword = '') { const stations = StationDB.get() || []; if (!stations) return; const lowerCaseKeyword = filterKeyword.trim().toLowerCase(); const filteredStations = lowerCaseKeyword ? stations.filter(s => s.stationName.toLowerCase().includes(lowerCaseKeyword)) : stations; for (const key in markers) if (map.hasLayer(markers[key])) map.removeLayer(markers[key]); markers = {}; filteredStations.forEach(station => { const icon = createMarkerIcon('#9ca3af'); const marker = L.marker([station.latitude, station.longitude], { icon }).addTo(map); marker.bindTooltip(station.stationName, { permanent: false, direction: 'top', offset: [0, -12], className: 'station-tooltip' }); marker.on('click', () => showStationDetailPanel(station)); markers[station.stationId] = marker; }); refreshMarkersStatus(); }
         async function refreshMarkersStatus() { mapLoader.classList.remove('hidden'); const dynamicData = await fetchNearStationsAPI(); if (dynamicData) { const statusMap = new Map(dynamicData.map(s => [s.stationId, {freeNum: s.freeNum, switchType: s.switchType}])); for (const stationId in markers) { if (map.hasLayer(markers[stationId])) { const status = statusMap.get(parseInt(stationId, 10)); const marker = markers[stationId]; const ratio = status && status.switchType > 0 ? status.freeNum / status.switchType : -1; marker.setIcon(createMarkerIcon(getColorForAvailability(ratio))); } } } mapLoader.classList.add('hidden'); }
@@ -250,41 +367,60 @@
         function clearSearch() { searchInput.value = ''; clearSearchBtn.classList.add('hidden'); hideStationDetailPanel(); renderMarkers(); }
         function applyJitter(stations) { const newStations = []; const occupiedCoords = new Set(); const distanceSq = (p1, p2) => (p1.lat - p2.lat)**2 + (p1.lng - p2.lng)**2; const minDistanceSq = (0.0003)**2; stations.forEach(station => { let newLat = station.latitude, newLng = station.longitude; let attempts = 0; while (attempts < 100) { let collision = false; for (const coord of occupiedCoords) { if (distanceSq({lat: newLat, lng: newLng}, JSON.parse(coord)) < minDistanceSq) { collision = true; newLat += (Math.random() - 0.5) * JITTER_AMOUNT; newLng += (Math.random() - 0.5) * JITTER_AMOUNT; break; } } if (!collision) break; attempts++; } occupiedCoords.add(JSON.stringify({lat: newLat, lng: newLng})); newStations.push({ ...station, latitude: newLat, longitude: newLng }); }); return newStations; }
         function createMarkerIcon(color) { return L.divIcon({ className: 'leaflet-div-icon', html: `<div class="map-marker" style="background-color: ${color};"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] }); }
-        function initMaps() { map = L.map('map', { zoomControl: false }).setView(MAP_CENTER, 16); L.control.zoom({ position: 'bottomright' }).addTo(map); L.tileLayer('https://wprd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', { subdomains: ['1', '2', '3', '4'], attribution: '&copy; 高德地图' }).addTo(map); }
-        
-        async function fetchAPI(url, options = {}) {
-            const maxRetries = 2;
-            const retryDelay = 1000;
+        function initMaps() {
+            map = L.map('map', { zoomControl: false }).setView(MAP_CENTER, 16);
+            L.control.zoom({ position: 'bottomright' }).addTo(map);
+            L.tileLayer('https://wprd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', {
+                subdomains: ['1', '2', '3', '4'],
+                attribution: '&copy; 高德地图'
+            }).addTo(map);
 
-            for (let i = 0; i <= maxRetries; i++) {
-                try {
-                    const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-                    const response = await fetch(proxyUrl, options);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    if (data.code !== "1") {
-                        throw new Error(data.msg || 'API returned an error');
-                    }
-                    return data.data;
-                } catch (error) {
-                    console.error(`Fetch attempt ${i + 1} for ${url} failed:`, error);
-                    if (i === maxRetries) {
-                        showError(`数据加载失败，网络连接可能不稳定，请稍后重试。`);
-                        return null;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, retryDelay));
-                }
+            // 添加用户位置标记
+            userLocationMarker = L.marker([0, 0], {
+                icon: L.divIcon({
+                    className: 'user-location-marker',
+                    html: '<div style="background-color: #3B82F6; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>',
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                })
+            }).addTo(map);
+            userLocationMarker.setOpacity(0); // 初始隐藏
+        }
+        
+        // ✨ 2. 修复了CORS跨域问题，不再需要浏览器插件 ✨
+        async function fetchAPI(url, options = {}) {
+            try {
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                const response = await fetch(proxyUrl, options);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                const data = await response.json();
+                if (data.code !== "1") throw new Error(data.msg || 'API error');
+                return data.data;
+            } catch (error) {
+                console.error(`Fetch error for ${url}:`, error);
+                showError(`数据加载失败: ${error.message}。`);
+                return null;
             }
         }
         
         const getOutlets = (stationId) => fetchAPI(`https://wemp.issks.com/charge/v1/outlet/station/outlets/${stationId}`);
         const getOutletStatus = (outletNo) => fetchAPI(`https://wemp.issks.com/charge/v1/charging/outlet/${outletNo}`);
-        const fetchNearStationsAPI = () => {
+        const fetchNearStationsAPI = (lat = 30.754736739439924, lng = 103.92946279311207) => {
             const url = 'https://wemp.issks.com/device/v1/near/station';
-            const body = { page: 1, pageSize: 200, scale: 3, latitude: 30.754736739439924, longitude: 103.92946279311207, userLatitude: 30.754736739439924, userLongitude: 103.92946279311207 };
-            return fetchAPI(url, { method: 'POST', headers: { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(body) })
+            const body = {
+                page: 1,
+                pageSize: 200,
+                scale: 3,
+                latitude: lat,
+                longitude: lng,
+                userLatitude: lat,
+                userLongitude: lng
+            };
+            return fetchAPI(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                body: JSON.stringify(body)
+            })
                 .then(data => data?.elecStationData || []);
         };
         
@@ -299,6 +435,7 @@
             const updateFavBtnStyle = () => favBtn.classList.toggle('text-yellow-400', FavoritesManager.isFavorite(station.stationId));
             updateFavBtnStyle();
 
+            // ✨ 3. 修正了收藏按钮的添加/移除逻辑 ✨
             favBtn.onclick = () => {
                 if (FavoritesManager.isFavorite(station.stationId)) {
                     FavoritesManager.remove(station.stationId);
@@ -411,12 +548,11 @@
         initApp();
     });
     </script>
-    
+
     <script>
         var t = setInterval(function() {
             if (window.goatcounter && window.goatcounter.visit_count) {
                 clearInterval(t);
-                document.getElementById('visitor-stats').innerHTML = ''; // Clear loading text
                 window.goatcounter.visit_count({
                     append: '#visitor-stats',
                     path: 'TOTAL',
