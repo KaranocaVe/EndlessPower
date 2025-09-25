@@ -119,39 +119,39 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     }
 
     const details = isAvailable ? (
-      <div className="mt-3 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100/80 dark:bg-green-800/30">
-          <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mt-2 text-center">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-100/80 dark:bg-green-800/30">
+          <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
           </svg>
           <p className="text-xs font-semibold text-green-700 dark:text-green-400">空闲中</p>
         </div>
       </div>
     ) : (
-      <div className="mt-2 space-y-1.5">
-        <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/30 rounded-lg px-3 py-1.5">
-          <div className="flex items-center gap-1.5">
-            <svg className="w-3 h-3 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mt-1.5 space-y-1">
+        <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/30 rounded-lg px-2.5 py-1">
+          <div className="flex items-center gap-1">
+            <svg className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span className="text-xs text-gray-700 dark:text-gray-300">已充: <span className="font-semibold text-blue-600 dark:text-blue-400">{status.usedmin || 0}分钟</span></span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-1">
+            <svg className="w-2.5 h-2.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
             </svg>
             <span className="text-xs text-gray-700 dark:text-gray-300">消费: <span className="font-semibold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}元</span></span>
           </div>
         </div>
-        <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/30 rounded-lg px-3 py-1.5">
-          <div className="flex items-center gap-1.5">
-            <svg className="w-3 h-3 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/30 rounded-lg px-2.5 py-1">
+          <div className="flex items-center gap-1">
+            <svg className="w-2.5 h-2.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
             <span className="text-xs text-gray-700 dark:text-gray-300">功率: <span className="font-semibold text-orange-600 dark:text-orange-400">{status.powerFee?.billingPower || '未知'}</span></span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <svg className="w-3 h-3 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-1">
+            <svg className="w-2.5 h-2.5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <span className="text-xs text-gray-700 dark:text-gray-300">开始: <span className="font-semibold text-purple-600 dark:text-purple-400">{formatTime(status.chargingBeginTime || '未知')}</span></span>
@@ -161,8 +161,8 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     )
 
     return (
-      <div key={outlet.outletId} className={`rounded-2xl p-4 border transition-all duration-300 h-36 shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${cardClasses}`}>
-        <div className="flex justify-between items-start gap-3 mb-3">
+      <div key={outlet.outletId} className={`rounded-2xl p-3 border transition-all duration-300 h-32 shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${cardClasses}`}>
+        <div className="flex justify-between items-start gap-2 mb-2">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${isAvailable ? 'bg-green-500' : 'bg-blue-500'} shadow-lg`}></div>
             <h3 className="text-sm font-bold text-gray-800 dark:text-gray-100 truncate flex-1" title={`插座 ${outletName}`}>{serial}</h3>
@@ -189,9 +189,9 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
         padding: '16px'
       }}
     >
-      <div className={`w-full max-w-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 ${
+      <div className={`w-full max-w-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 flex flex-col ${
         station ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-      }`} style={{ maxHeight: '80vh' }}>
+      }`} style={{ maxHeight: '85vh' }}>
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/30 dark:to-indigo-900/30">
         <div className="flex justify-between items-center">
