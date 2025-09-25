@@ -16,7 +16,7 @@ command = "npm run build"
 
 # 开发环境配置
 [env.dev]
-name = "endlesspower-dev"
+name = "endlesspower"
 compatibility_date = "2025-09-25"
 vars = { NODE_ENV = "development", DEBUG = "true" }
 
