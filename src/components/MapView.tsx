@@ -48,7 +48,7 @@ const MapView: React.FC = () => {
           }
         },
         (error) => {
-          console.warn('Failed to get user location:', error)
+          if (import.meta.env.DEV) console.warn('Failed to get user location:', error)
         },
         {
           enableHighAccuracy: true,
@@ -170,9 +170,22 @@ const MapView: React.FC = () => {
     }
   }, [stations, showUnavailableStations])
 
+  // 处理搜索框选择充电桩
+  const handleStationSelectFromSearch = (station: Station) => {
+    // 定位地图到选择的充电桩
+    if (mapRef.current) {
+      mapRef.current.setView([station.latitude, station.longitude], 18, {
+        animate: true,
+        duration: 1
+      })
+    }
+    // 可选：同时打开该充电桩的详情面板
+    setSelectedStation(station)
+  }
+
   return (
     <div className="w-full h-full relative">
-      <SearchBar />
+      <SearchBar onStationSelect={handleStationSelectFromSearch} />
       
       {/* Map Container */}
       <MapContainer
@@ -233,8 +246,7 @@ const MapView: React.FC = () => {
       {/* Control Buttons */}
       <button
         onClick={handleRefresh}
-        disabled={!canRefresh() || isLoading}
-        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 

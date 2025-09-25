@@ -48,8 +48,7 @@ const FavoritesView: React.FC = () => {
           
           <button
             onClick={handleRefresh}
-            disabled={!canRefresh()}
-            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-200/50 dark:border-gray-700/50"
+            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
