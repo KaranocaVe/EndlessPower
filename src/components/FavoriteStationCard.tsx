@@ -71,7 +71,11 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
-    const outletName = outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'
+    // 优先使用状态API中的插座名称，这是最准确的名称
+    const outletName = status?.outlet?.vOutletName?.replace('插座', '') 
+      || outlet.vOutletName?.replace('插座', '') 
+      || outlet.outletNo 
+      || 'N/A'
     const serial = `插座 ${outletName.length > 10 ? outletName.substring(0, 10) + '...' : outletName}`
     
     if (!status || !status.outlet) {

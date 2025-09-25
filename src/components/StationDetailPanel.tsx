@@ -66,7 +66,11 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
-    const outletName = outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'
+    // 优先使用状态API中的插座名称，这是最准确的名称
+    const outletName = status?.outlet?.vOutletName?.replace('插座', '') 
+      || outlet.vOutletName?.replace('插座', '') 
+      || outlet.outletNo 
+      || 'N/A'
     
     // 智能截断：保留尾部不同信息，省略前面相同部分
     const formatOutletName = (name: string) => {
