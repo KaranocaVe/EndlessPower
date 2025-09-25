@@ -55,7 +55,7 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
           setSummary({ total: 0, available: 0, occupied: 0 })
         }
       } catch (error) {
-        console.error('Failed to load station data:', error)
+        if (import.meta.env.DEV) console.error('Failed to load station data:', error)
         showError('加载充电站数据失败')
       }
       

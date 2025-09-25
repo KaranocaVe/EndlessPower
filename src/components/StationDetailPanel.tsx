@@ -39,7 +39,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           setOutletStatuses(statuses)
         }
       } catch (error) {
-        console.error('Failed to load station details:', error)
+        if (import.meta.env.DEV) console.error('Failed to load station details:', error)
         showError('加载充电站详情失败')
       }
       

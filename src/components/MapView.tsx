@@ -48,7 +48,7 @@ const MapView: React.FC = () => {
           }
         },
         (error) => {
-          console.warn('Failed to get user location:', error)
+          if (import.meta.env.DEV) console.warn('Failed to get user location:', error)
         },
         {
           enableHighAccuracy: true,

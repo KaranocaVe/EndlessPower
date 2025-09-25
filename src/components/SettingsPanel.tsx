@@ -268,10 +268,19 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
             <button 
               onClick={() => {
                 resetSettings()
-                // 显示重置完成的反馈
-                console.log('设置已重置为默认值')
+                // 给用户视觉反馈
+                const btn = document.activeElement as HTMLButtonElement
+                if (btn) {
+                  const originalText = btn.textContent
+                  btn.textContent = '已重置'
+                  btn.disabled = true
+                  setTimeout(() => {
+                    btn.textContent = originalText
+                    btn.disabled = false
+                  }, 1500)
+                }
               }}
-              className="w-full mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
+              className="w-full mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium disabled:opacity-50"
             >
               重置所有设置
             </button>
