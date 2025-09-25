@@ -76,23 +76,23 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
     
     if (!status || !status.outlet) {
       return (
-        <div key={outlet.outletId} className="bg-gray-100 rounded-xl p-3 border border-gray-200 h-20">
-          <h4 className="text-sm font-semibold text-gray-500 truncate" title={`插座 ${outletName}`}>{serial}</h4>
-          <p className="text-xs text-red-500 mt-1">数据加载失败</p>
+        <div key={outlet.outletId} className="bg-gray-100 dark:bg-gray-700 rounded-xl p-3 border border-gray-200 dark:border-gray-600 h-20">
+          <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate" title={`插座 ${outletName}`}>{serial}</h4>
+          <p className="text-xs text-red-500 dark:text-red-400 mt-1">数据加载失败</p>
         </div>
       )
     }
 
     const cardClasses = isAvailable 
-      ? 'bg-green-50 border-green-200' 
-      : 'bg-blue-50 border-blue-200'
+      ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' 
+      : 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700'
     
     const statusBadge = isAvailable ? (
-      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-green-100 text-green-800">
+      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200">
         可用
       </span>
     ) : (
-      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-blue-100 text-blue-800">
+      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200">
         占用中
       </span>
     )
@@ -100,16 +100,16 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
     return (
       <div key={outlet.outletId} className={`rounded-xl p-3 border transition-all h-20 ${cardClasses}`}>
         <div className="flex justify-between items-center">
-          <h4 className="text-sm font-semibold text-gray-800 truncate mr-2" title={`插座 ${outletName}`}>{serial}</h4>
+          <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate mr-2" title={`插座 ${outletName}`}>{serial}</h4>
           {statusBadge}
         </div>
         
         {isAvailable ? (
           <div className="mt-2 text-center">
-            <p className="text-xs text-green-700 font-semibold">空闲中</p>
+            <p className="text-xs text-green-700 dark:text-green-400 font-semibold">空闲中</p>
           </div>
         ) : (
-          <div className="mt-1 text-xs flex justify-between text-gray-600">
+          <div className="mt-1 text-xs flex justify-between text-gray-600 dark:text-gray-300">
             <span><span className="font-medium">已充:</span> {status.usedmin || 0}分钟</span>
             <span><span className="font-medium">消费:</span> {status.usedfee?.toFixed(2) || '0.00'}元</span>
           </div>
@@ -119,7 +119,7 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
   }
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
+    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
       <div className="p-6">
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
@@ -127,14 +127,14 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
             <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
               {station.stationName}
             </h2>
-            <p className="text-sm text-gray-600 mt-1 truncate">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 truncate">
               {station.address}
             </p>
           </div>
           
           <button
             onClick={handleRemoveFavorite}
-            className="text-gray-400 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-colors ml-2"
+            className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors ml-2"
             title="移除收藏"
           >
             <svg 
@@ -153,17 +153,17 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
         </div>
 
         {/* Summary */}
-        <div className="grid grid-cols-3 gap-2 text-center text-sm text-gray-600 mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="grid grid-cols-3 gap-2 text-center text-sm text-gray-600 dark:text-gray-300 mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <div>
-            <p className="font-semibold text-lg text-gray-800">{summary.total}</p>
+            <p className="font-semibold text-lg text-gray-800 dark:text-gray-200">{summary.total}</p>
             <p className="text-xs">总插座</p>
           </div>
           <div>
-            <p className="font-semibold text-lg text-green-600">{summary.available}</p>
+            <p className="font-semibold text-lg text-green-600 dark:text-green-400">{summary.available}</p>
             <p className="text-xs">可用</p>
           </div>
           <div>
-            <p className="font-semibold text-lg text-blue-600">{summary.occupied}</p>
+            <p className="font-semibold text-lg text-blue-600 dark:text-blue-400">{summary.occupied}</p>
             <p className="text-xs">占用</p>
           </div>
         </div>
@@ -175,7 +175,7 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
               <LoadingSpinner text="加载中..." />
             </div>
           ) : outlets.length === 0 ? (
-            <p className="text-center text-sm text-gray-500 py-4">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
               该充电站暂无插座信息。
             </p>
           ) : (
