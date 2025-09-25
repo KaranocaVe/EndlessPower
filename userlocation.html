@@ -34,14 +34,6 @@
             transform: scale(1.25);
         }
         
-        #station-detail-panel {
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(229, 231, 235, 0.6);
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid var(--color-primary);
@@ -76,22 +68,11 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
             border-color: var(--color-primary);
         }
-        /* ✨ 新增：重置 GoatCounter 小部件的样式，移除边框和背景 ✨ */
-#visitor-stats div {
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background-color: transparent !important;
-}
-/* ✨ 新增：隐藏 "stats by GoatCounter" 的链接 ✨ */
-#visitor-stats a {
-    display: none !important;
-}
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex flex-col h-screen">
 
-    <header class="bg-white/80 backdrop-blur-sm shadow-sm z-[1100] border-b border-gray-200"><nav class="container mx-auto px-4 py-3 flex justify-between items-center"><h1 class="text-xl font-bold text-gray-900">EndlessPower</p>成电清水河充电桩查询</h1><div class="flex space-x-1 bg-gray-200/80 p-1 rounded-lg"><button id="nav-map" class="nav-button px-4 py-1.5 rounded-md text-sm font-semibold transition-all">地图</button><button id="nav-favorites" class="nav-button px-4 py-1.5 rounded-md text-sm font-semibold transition-all">收藏</button></div></nav></header>
+    <header class="bg-white/80 backdrop-blur-sm shadow-sm z-[1100] border-b border-gray-200"><nav class="container mx-auto px-4 py-3 flex justify-between items-center"><h1 class="text-xl font-bold text-gray-900">EndlessPower</p>闪开来电充电桩查询</h1><div class="flex space-x-1 bg-gray-200/80 p-1 rounded-lg"><button id="nav-map" class="nav-button px-4 py-1.5 rounded-md text-sm font-semibold transition-all">地图</button><button id="nav-favorites" class="nav-button px-4 py-1.5 rounded-md text-sm font-semibold transition-all">收藏</button></div></nav></header>
     
     <main class="flex-grow relative">
         <div id="map-page" class="page-content w-full h-full">
@@ -118,10 +99,17 @@
             <div class="container mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">我的收藏</h2>
-                    <button id="refresh-favorites-btn" class="bg-white text-gray-700 p-3 rounded-full shadow-md hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                           <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m7 0h-5V4m0 0l7 7m-7-7H4" /><path stroke-linecap="round" stroke-linejoin="round" d="M20 20v-5h-5m-7 0h5v5m0 0l-7-7m7 7h5" /></svg>
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button id="toggle-all-favorites-btn" title="全部展开/折叠" class="bg-white text-gray-700 p-3 rounded-full shadow-md hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <button id="refresh-favorites-btn" class="bg-white text-gray-700 p-3 rounded-full shadow-md hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                               <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5m7 0h-5V4m0 0l7 7m-7-7H4" /><path stroke-linecap="round" stroke-linejoin="round" d="M20 20v-5h-5m-7 0h5v5m0 0l-7-7m7 7h5" /></svg>
+                        </button>
+                    </div>
                 </div>
                 <div id="favorites-container" class="space-y-6"></div>
             </div>
@@ -140,37 +128,76 @@
         </div>
     </footer>
 
-    <div id="station-detail-panel" class="fixed bottom-4 right-4 w-full max-w-md rounded-xl transform translate-y-full opacity-0 pointer-events-none z-[1200]">
-        <div class="p-5 border-b border-gray-200/80">
-            <div class="flex justify-between items-center">
-                <div class="flex-1 min-w-0">
-                    <h2 id="detail-station-name" class="text-lg font-bold text-gray-800 truncate"></h2>
-                    <p id="detail-station-address" class="text-sm text-gray-500 truncate"></p>
+    <div id="station-detail-panel" class="fixed bottom-0 left-0 right-0 p-4 transform translate-y-full opacity-0 pointer-events-none z-[1200] transition-all duration-300 ease-in-out">
+        <div class="container mx-auto">
+             <div class="w-full rounded-xl shadow-lg overflow-hidden" style="background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(229, 231, 235, 0.6);">
+                <div class="p-5 border-b border-gray-200/80">
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1 min-w-0">
+                            <h2 id="detail-station-name" class="text-lg font-bold text-gray-800 truncate"></h2>
+                            <p id="detail-station-address" class="text-sm text-gray-500 truncate"></p>
+                        </div>
+                        <div class="flex items-center space-x-2 ml-3 flex-shrink-0">
+                            <button id="detail-favorite-btn" class="text-gray-400 hover:text-yellow-500 p-2 rounded-full hover:bg-yellow-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.783-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg></button>
+                            <button id="detail-close-btn" class="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-200/80 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-1 ml-4">
-                    <button id="detail-favorite-btn" class="text-gray-400 hover:text-yellow-500 p-2 rounded-full hover:bg-yellow-100 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg></button>
-                    <button id="detail-close-btn" class="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-200/80 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
-                </div>
+                <div id="detail-outlets-grid" class="p-5 h-72 overflow-y-auto grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
             </div>
         </div>
-        <div id="detail-outlets-grid" class="p-5 h-72 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </div>
     
     <div id="error-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[2000] flex justify-center items-center p-4"><div class="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm"><h3 class="text-lg font-bold text-red-600 mb-2">出错了！</h3><p id="error-message" class="text-gray-700"></p><button id="error-close-btn" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">关闭</button></div></div>
     
-    <template id="station-card-template"><div class="station-card bg-white rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-lg"><div class="p-5"><div class="flex justify-between items-start mb-4"><div class="min-w-0 flex-1"><h2 class="station-name text-xl font-bold text-gray-800 truncate"></h2><p class="station-address text-sm text-gray-500 mt-1 truncate"></p></div><button class="remove-favorite-btn text-gray-400 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-colors ml-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg></button></div><div class="station-summary grid grid-cols-3 gap-2 text-center text-sm text-gray-600 mb-4 p-3 bg-gray-50 rounded-lg"><div><p class="font-semibold text-lg text-gray-800 total-outlets">?</p><p class="text-xs">总插座</p></div><div><p class="font-semibold text-lg text-green-600 available-outlets">?</p><p class="text-xs">可用</p></div><div><p class="font-semibold text-lg text-blue-600 occupied-outlets">?</p><p class="text-xs">占用</p></div></div><div class="outlets-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div></div></div></template>
+    <template id="station-card-template">
+        <div class="station-card bg-white rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-lg flex flex-col">
+            <div class="p-5">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="min-w-0 flex-1">
+                        <h2 class="station-name text-xl font-bold text-gray-800 truncate"></h2>
+                        <p class="station-address text-sm text-gray-500 mt-1 truncate"></p>
+                    </div>
+                    <div class="flex items-center ml-2 flex-shrink-0">
+                        <button class="pin-favorite-btn text-gray-400 hover:text-blue-500 p-1.5 rounded-full hover:bg-blue-50 transition-colors" title="置顶">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.493,1.52a1,1,0,0,0-1.012,0L2.5,5.113V11a1,1,0,0,0,1,1H9v4.5a.5.5,0,0,0,1,0V12h5.5a1,1,0,0,0,1-1V5.113ZM4.5,6.237,10,3.312l5.5,2.925V10H4.5Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <button class="remove-favorite-btn text-gray-400 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-colors" title="移除收藏">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <button class="expand-details-btn text-gray-400 hover:text-gray-700 p-1.5 rounded-full hover:bg-gray-100 transition-colors" title="查看详情">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 chevron transition-transform" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="station-summary grid grid-cols-3 gap-2 text-center text-sm text-gray-600 mb-4 p-3 bg-gray-50 rounded-lg">
+                    <div><p class="font-semibold text-lg text-gray-800 total-outlets">?</p><p class="text-xs">总插座</p></div>
+                    <div><p class="font-semibold text-lg text-green-600 available-outlets">?</p><p class="text-xs">可用</p></div>
+                    <div><p class="font-semibold text-lg text-blue-600 occupied-outlets">?</p><p class="text-xs">占用</p></div>
+                </div>
+            </div>
+            <div class="collapsible-content hidden border-t border-gray-200">
+                <div class="outlets-grid p-5 grid grid-cols-2 md:grid-cols-3 gap-3">
+                </div>
+            </div>
+        </div>
+    </template>
     
-    <script>
+   <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- 配置 ---
         const MAP_CENTER = [30.754365, 103.936107];
-        const REFRESH_COOLDOWN = 15000; // 15 seconds
-        const FAVORITE_LIMIT=4;
+        const REFRESH_COOLDOWN = 15000;
+        const FAVORITE_LIMIT=5;
         const JITTER_AMOUNT = 0.0004;
 
         let map, markers = {}, currentDetailRequestId = 0;
         let lastMapRefresh = 0, lastFavoritesRefresh = 0;
-        let userLocationMarker; // 用户位置标记
+        let userLocationMarker;
 
         // --- DOM 元素 ---
         const navButtons = { map: document.getElementById('nav-map'), favorites: document.getElementById('nav-favorites') };
@@ -185,22 +212,42 @@
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
         const clearSearchBtn = document.getElementById('clear-search-btn');
+        const toggleAllFavoritesBtn = document.getElementById('toggle-all-favorites-btn');
+        // ✨ ADDED: Get the detail panel's favorite button
+        const detailFavoriteBtn = document.getElementById('detail-favorite-btn');
+
         const StationDB = { get: () => JSON.parse(localStorage.getItem('managedStations') || 'null'), set: (stations) => localStorage.setItem('managedStations', JSON.stringify(stations)) };
+        
+        // ✨ REVISED: FavoritesManager with robust number conversion
         const FavoritesManager = { 
             get: () => JSON.parse(localStorage.getItem('favoriteStations') || '[]'), 
             set: (favorites) => localStorage.setItem('favoriteStations', JSON.stringify(favorites)), 
             add: (stationId) => {
+                const numericStationId = Number(stationId);
                 const favs = FavoritesManager.get();
-                if (favs.includes(stationId)) return;
+                if (favs.some(id => Number(id) === numericStationId)) return;
                 if (favs.length >= FAVORITE_LIMIT) {
                     showError('收藏夹已满，请先移除一些站点。');
                     return;
                 }
-                favs.push(stationId);
+                favs.push(numericStationId);
                 FavoritesManager.set(favs);
             },
-            remove: (stationId) => FavoritesManager.set(FavoritesManager.get().filter(id => id !== stationId)), 
-            isFavorite: (stationId) => FavoritesManager.get().includes(stationId) 
+            remove: (stationId) => {
+                const numericStationId = Number(stationId);
+                const newFavs = FavoritesManager.get().filter(id => Number(id) !== numericStationId);
+                FavoritesManager.set(newFavs);
+            }, 
+            isFavorite: (stationId) => {
+                const numericStationId = Number(stationId);
+                return FavoritesManager.get().some(id => Number(id) === numericStationId);
+            },
+            pin: (stationId) => {
+                const numericStationId = Number(stationId);
+                const favs = FavoritesManager.get();
+                const otherFavs = favs.filter(id => Number(id) !== numericStationId);
+                FavoritesManager.set([numericStationId, ...otherFavs]);
+            }
         };
         
         async function initApp() {
@@ -210,116 +257,122 @@
             refreshBtn.addEventListener('click', handleMapRefresh);
             locateBtn.addEventListener('click', getCurrentLocation);
             refreshFavoritesBtn.addEventListener('click', handleFavoritesRefresh);
+            toggleAllFavoritesBtn.addEventListener('click', toggleAllFavoriteCards);
+            
+            // ✨ ADDED: A single, persistent event listener for the detail panel favorite button
+            detailFavoriteBtn.addEventListener('click', handleDetailFavoriteClick);
+
             document.getElementById('error-close-btn').addEventListener('click', () => errorOverlay.classList.add('hidden'));
             searchBtn.addEventListener('click', performSearch);
             searchInput.addEventListener('keyup', (event) => { if (event.key === 'Enter') performSearch(); });
             searchInput.addEventListener('input', () => clearSearchBtn.classList.toggle('hidden', !searchInput.value));
             clearSearchBtn.addEventListener('click', clearSearch);
 
-            // 尝试获取用户当前位置，如果失败则使用默认位置
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         const { latitude, longitude } = position.coords;
-                        // 更新地图中心到用户位置
                         map.setView([latitude, longitude], 16);
-                        // 显示用户位置标记
-                        userLocationMarker.setLatLng([latitude, longitude]);
-                        userLocationMarker.setOpacity(1);
-                        // 获取并显示该位置附近的充电站
+                        userLocationMarker.setLatLng([latitude, longitude]).setOpacity(1);
                         await initialFetchAndStoreStations(latitude, longitude);
                         switchView('map');
                     },
                     async (error) => {
-                        // 如果获取位置失败，使用默认位置
+                        console.warn("Could not get user location, using default.", error.message);
                         const localStations = StationDB.get();
                         if (!localStations || localStations.length === 0) await initialFetchAndStoreStations();
                         switchView('map');
                     },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 60000
-                    }
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
                 );
             } else {
-                // 浏览器不支持地理位置功能，使用默认位置
                 const localStations = StationDB.get();
                 if (!localStations || localStations.length === 0) await initialFetchAndStoreStations();
                 switchView('map');
             }
         }
+        
+        // ✨ ADDED: Handler function for the detail panel favorite button click
+        function handleDetailFavoriteClick() {
+            const stationId = detailFavoriteBtn.dataset.stationId;
+            if (!stationId) return;
 
-        // 添加获取用户当前位置的函数
+            if (FavoritesManager.isFavorite(stationId)) {
+                FavoritesManager.remove(stationId);
+            } else {
+                FavoritesManager.add(stationId);
+            }
+            updateDetailFavoriteButtonState(stationId);
+        }
+
+        // ✨ ADDED: Dedicated function to update the detail button's UI
+        function updateDetailFavoriteButtonState(stationId) {
+            const isFav = FavoritesManager.isFavorite(stationId);
+            detailFavoriteBtn.classList.toggle('text-yellow-400', isFav);
+        }
+
+        function toggleAllFavoriteCards() {
+            const cards = document.querySelectorAll('#favorites-container .station-card');
+            if (cards.length === 0) return;
+            const mainIcon = toggleAllFavoritesBtn.querySelector('svg');
+            const firstContent = cards[0].querySelector('.collapsible-content');
+            const shouldExpand = firstContent.classList.contains('hidden');
+            mainIcon.classList.toggle('rotate-180', shouldExpand);
+            cards.forEach(card => {
+                const stationId = card.dataset.stationId;
+                const collapsibleContent = card.querySelector('.collapsible-content');
+                const chevron = card.querySelector('.chevron');
+                if (shouldExpand) {
+                    collapsibleContent.classList.remove('hidden');
+                    chevron.classList.add('rotate-180');
+                    if (!card.dataset.outletsLoaded) {
+                        updateFavoriteStationCard(stationId, card);
+                        card.dataset.outletsLoaded = 'true';
+                    }
+                } else {
+                    collapsibleContent.classList.add('hidden');
+                    chevron.classList.remove('rotate-180');
+                }
+            });
+        }
+
         function getCurrentLocation() {
             if (!navigator.geolocation) {
                 showError('您的浏览器不支持地理位置功能');
                 return;
             }
-
-            // 显示加载状态
             mapLoader.classList.remove('hidden');
             locateBtn.disabled = true;
-
             navigator.geolocation.getCurrentPosition(
-                // 成功回调
                 async (position) => {
                     const { latitude, longitude } = position.coords;
-
-                    // 更新地图中心到用户位置
                     map.setView([latitude, longitude], 16);
-
-                    // 显示用户位置标记
-                    userLocationMarker.setLatLng([latitude, longitude]);
-                    userLocationMarker.setOpacity(1);
-
-                    // 重新获取并显示该位置附近的充电站
+                    userLocationMarker.setLatLng([latitude, longitude]).setOpacity(1);
                     await fetchAndRenderStations(latitude, longitude);
-
-                    // 恢复按钮状态
                     mapLoader.classList.add('hidden');
                     locateBtn.disabled = false;
                 },
-                // 错误回调
                 (error) => {
                     mapLoader.classList.add('hidden');
                     locateBtn.disabled = false;
-
-                    switch(error.code) {
-                        case error.PERMISSION_DENIED:
-                            showError('用户拒绝了地理位置请求');
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            showError('位置信息不可用');
-                            break;
-                        case error.TIMEOUT:
-                            showError('获取位置信息超时');
-                            break;
-                        default:
-                            showError('获取地理位置时发生未知错误');
-                            break;
-                    }
+                    const messages = {
+                        [error.PERMISSION_DENIED]: '用户拒绝了地理位置请求',
+                        [error.POSITION_UNAVAILABLE]: '位置信息不可用',
+                        [error.TIMEOUT]: '获取位置信息超时',
+                    };
+                    showError(messages[error.code] || '获取地理位置时发生未知错误');
                 },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 60000
-                }
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
             );
         }
 
-        // 修改获取充电站数据的函数，支持传入位置参数
-        async function fetchAndRenderStations(lat = 30.754736739439924, lng = 103.92946279311207) {
+        async function fetchAndRenderStations(lat = MAP_CENTER[0], lng = MAP_CENTER[1]) {
             mapLoader.classList.remove('hidden');
-
-            // 更新API调用参数
             const nearStations = await fetchNearStationsAPI(lat, lng);
-
             if (nearStations && nearStations.length > 0) {
                 StationDB.set(applyJitter(nearStations));
                 renderMarkers();
             }
-
             mapLoader.classList.add('hidden');
         }
 
@@ -374,8 +427,6 @@
                 subdomains: ['1', '2', '3', '4'],
                 attribution: '&copy; 高德地图'
             }).addTo(map);
-
-            // 添加用户位置标记
             userLocationMarker = L.marker([0, 0], {
                 icon: L.divIcon({
                     className: 'user-location-marker',
@@ -383,11 +434,9 @@
                     iconSize: [22, 22],
                     iconAnchor: [11, 11]
                 })
-            }).addTo(map);
-            userLocationMarker.setOpacity(0); // 初始隐藏
+            }).addTo(map).setOpacity(0);
         }
         
-        // ✨ 2. 修复了CORS跨域问题，不再需要浏览器插件 ✨
         async function fetchAPI(url, options = {}) {
             try {
                 const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
@@ -405,54 +454,41 @@
         
         const getOutlets = (stationId) => fetchAPI(`https://wemp.issks.com/charge/v1/outlet/station/outlets/${stationId}`);
         const getOutletStatus = (outletNo) => fetchAPI(`https://wemp.issks.com/charge/v1/charging/outlet/${outletNo}`);
-        const fetchNearStationsAPI = (lat = 30.754736739439924, lng = 103.92946279311207) => {
+        const fetchNearStationsAPI = (lat = MAP_CENTER[0], lng = MAP_CENTER[1]) => {
             const url = 'https://wemp.issks.com/device/v1/near/station';
-            const body = {
-                page: 1,
-                pageSize: 200,
-                scale: 3,
-                latitude: lat,
-                longitude: lng,
-                userLatitude: lat,
-                userLongitude: lng
-            };
-            return fetchAPI(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-                body: JSON.stringify(body)
-            })
+            const body = { page: 1, pageSize: 200, scale: 3, latitude: lat, longitude: lng, userLatitude: lat, userLongitude: lng };
+            return fetchAPI(url, { method: 'POST', headers: { 'Content-Type': 'application/json;charset=UTF-8' }, body: JSON.stringify(body) })
                 .then(data => data?.elecStationData || []);
         };
         
-        function hideStationDetailPanel(){ detailPanel.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none'); }
+        function hideStationDetailPanel(){ 
+            detailPanel.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
+        }
         
+        // ✨ REVISED: showStationDetailPanel now only sets data and initial state
         function showStationDetailPanel(station) {
             currentDetailRequestId++;
             const thisRequestId = currentDetailRequestId;
             document.getElementById('detail-station-name').textContent = station.stationName;
             document.getElementById('detail-station-address').textContent = station.address;
-            const favBtn = document.getElementById('detail-favorite-btn');
-            const updateFavBtnStyle = () => favBtn.classList.toggle('text-yellow-400', FavoritesManager.isFavorite(station.stationId));
-            updateFavBtnStyle();
 
-            // ✨ 3. 修正了收藏按钮的添加/移除逻辑 ✨
-            favBtn.onclick = () => {
-                if (FavoritesManager.isFavorite(station.stationId)) {
-                    FavoritesManager.remove(station.stationId);
-                } else {
-                    FavoritesManager.add(station.stationId);
-                }
-                updateFavBtnStyle();
-            };
+            // Store the stationId in the button's dataset for the global handler to use
+            detailFavoriteBtn.dataset.stationId = station.stationId;
+            
+            // Set the initial visual state of the button
+            updateDetailFavoriteButtonState(station.stationId);
 
             document.getElementById('detail-close-btn').onclick = hideStationDetailPanel;
             const outletsGrid = document.getElementById('detail-outlets-grid');
             outletsGrid.innerHTML = '<div class="col-span-full flex justify-center p-8"><div class="loader"></div></div>';
+            
             detailPanel.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+
             updateOutletsInContainer(station.stationId, outletsGrid, thisRequestId);
         }
 
         function buildOutletCardHTML(statusData) {
+            const beginTime = statusData.chargingBeginTime ? statusData.chargingBeginTime.substring(11, 16) : '未知';
             if (!statusData || !statusData.outlet) {
                 return `<div class="bg-gray-100 rounded-xl p-4 border border-gray-200"><h3 class="text-base font-semibold text-gray-500">插座 N/A</h3><p class="text-sm text-red-500 mt-2">数据加载失败</p></div>`;
             }
@@ -470,7 +506,7 @@
                     <p><strong>已充:</strong> ${statusData.usedmin || 0}分钟</p>
                     <p><strong>消费:</strong> ${statusData.usedfee?.toFixed(2) || '0.00'}元</p>
                     <p><strong>功率:</strong> ${statusData.powerFee?.billingPower || '未知'}</p>
-                    <p class="text-xs truncate pt-1"><strong>开始:</strong> ${statusData.chargingBeginTime || '未知'}</p>
+                    <p><strong>开始:</strong> ${beginTime}</p>
                 </div>`;
             }
             return `<div class="outlet-card rounded-xl p-4 border transition-all ${cardClasses}"><div class="flex justify-between items-center"><h3 class="text-base font-semibold text-gray-800">${serial}</h3>${statusHTML}</div>${detailsHTML}</div>`;
@@ -478,67 +514,85 @@
 
         async function updateOutletsInContainer(stationId, container, requestId) {
             const outlets = await getOutlets(stationId);
-            if (requestId !== currentDetailRequestId) return;
+            if (requestId && requestId !== currentDetailRequestId) return;
             if (!outlets || outlets.length === 0) {
                 container.innerHTML = `<p class="col-span-full text-center text-gray-500 py-4">该充电站暂无插座信息。</p>`;
                 return;
             }
             const statuses = await Promise.all(outlets.map(o => getOutletStatus(o.outletNo)));
-            if (requestId !== currentDetailRequestId) return;
+            if (requestId && requestId !== currentDetailRequestId) return;
             const outletsHTML = outlets
                 .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
                 .map((outlet, i) => buildOutletCardHTML(statuses[i]))
                 .join('');
             container.innerHTML = outletsHTML;
         }
-
+        
         async function updateFavoriteStationCard(stationId, cardElement) {
             const container = cardElement.querySelector('.outlets-grid');
             if (!container) return;
-            container.innerHTML = '<div class="col-span-full flex justify-center p-8"><div class="loader"></div></div>';
-            const outlets = await getOutlets(stationId);
-            if (!outlets || outlets.length === 0) {
-                container.innerHTML = `<p class="col-span-full text-center text-sm text-gray-500 py-4">该充电站暂无插座信息。</p>`;
-                cardElement.querySelector('.total-outlets').textContent = 0;
-                cardElement.querySelector('.available-outlets').textContent = 0;
-                cardElement.querySelector('.occupied-outlets').textContent = 0;
-                return;
-            }
-            const statuses = await Promise.all(outlets.map(o => getOutletStatus(o.outletNo)));
-            const outletsHTML = outlets
-                .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
-                .map((outlet, i) => buildOutletCardHTML(statuses[i]))
-                .join('');
-            container.innerHTML = outletsHTML;
-            let availableCount = statuses.filter(s => s?.outlet?.iCurrentChargingRecordId === 0).length;
-            cardElement.querySelector('.total-outlets').textContent = outlets.length;
-            cardElement.querySelector('.available-outlets').textContent = availableCount;
-            cardElement.querySelector('.occupied-outlets').textContent = outlets.length - availableCount;
+            container.innerHTML = '<div class="col-span-full flex justify-center p-4"><div class="loader"></div></div>';
+            await updateOutletsInContainer(stationId, container);
         }
         
         async function renderFavoritesPage() {
             const container = document.getElementById('favorites-container');
-            container.innerHTML = '<div class="flex justify-center p-8"><div class="loader"></div></div>'; 
+            container.innerHTML = '<div class="col-span-full flex justify-center p-8"><div class="loader"></div></div>'; 
+            
             const favoriteIds = FavoritesManager.get();
             const allStations = StationDB.get() || [];
+            
             if (favoriteIds.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 mt-8">您还没有收藏任何充电桩。</p>';
+                container.innerHTML = '<p class="text-center text-gray-500 mt-8 col-span-full">您还没有收藏任何充电桩。</p>';
                 return;
             }
+
+            const dynamicData = await fetchNearStationsAPI();
+            const statusMap = dynamicData ? new Map(dynamicData.map(s => [s.stationId, {freeNum: s.freeNum, switchType: s.switchType}])) : new Map();
+
             const favorites = favoriteIds.map(id => allStations.find(s => s.stationId === id)).filter(Boolean);
             container.innerHTML = '';
+
             favorites.forEach(station => {
                 const stationCardEl = document.getElementById('station-card-template').content.cloneNode(true);
                 const stationCard = stationCardEl.querySelector('.station-card');
+                
                 stationCard.dataset.stationId = station.stationId;
                 stationCard.querySelector('.station-name').textContent = station.stationName;
                 stationCard.querySelector('.station-address').textContent = station.address;
+
+                const status = statusMap.get(station.stationId);
+                const total = status ? status.switchType : station.switchType;
+                const available = status ? status.freeNum : station.freeNum;
+                stationCard.querySelector('.total-outlets').textContent = total || 0;
+                stationCard.querySelector('.available-outlets').textContent = available || 0;
+                stationCard.querySelector('.occupied-outlets').textContent = Math.max(0, (total || 0) - (available || 0));
+
                 stationCard.querySelector('.remove-favorite-btn').onclick = () => {
                     FavoritesManager.remove(station.stationId);
                     renderFavoritesPage();
                 };
+
+                stationCard.querySelector('.pin-favorite-btn').onclick = () => {
+                    FavoritesManager.pin(station.stationId);
+                    renderFavoritesPage();
+                };
+
+                const expandBtn = stationCard.querySelector('.expand-details-btn');
+                const collapsibleContent = stationCard.querySelector('.collapsible-content');
+                const chevron = expandBtn.querySelector('.chevron');
+
+                expandBtn.onclick = () => {
+                    const isHidden = collapsibleContent.classList.toggle('hidden');
+                    chevron.classList.toggle('rotate-180', !isHidden);
+                    
+                    if (!isHidden && !stationCard.dataset.outletsLoaded) {
+                        updateFavoriteStationCard(station.stationId, stationCard);
+                        stationCard.dataset.outletsLoaded = 'true';
+                    }
+                };
+
                 container.appendChild(stationCardEl);
-                updateFavoriteStationCard(station.stationId, stationCard);
             });
         }
         
@@ -548,38 +602,6 @@
         initApp();
     });
     </script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const statsContainer = document.getElementById('visitor-stats');
-    if (!statsContainer) return;
-
-    // 创建一个“侦探”（Observer），监视 #visitor-stats 容器的变化
-    const observer = new MutationObserver((mutationsList, observer) => {
-        // 尝试寻找 GoatCounter 添加的那个 div 框
-        const widget = statsContainer.querySelector('div');
-        if (!widget) return;
-
-        // 尝试从框里提取出数字（通常在 <strong> 标签里）
-        const numberNode = widget.querySelector('strong')?.textContent.trim();
-        
-        if (numberNode) {
-            // 如果成功提取到数字，我们就创建一个干净的文本
-            const cleanText = '总访问量: ' + numberNode;
-            
-            // 用我们干净的文本彻底替换掉原来的丑框框
-            statsContainer.innerHTML = cleanText;
-            
-            // 任务完成，让“侦探”下班
-            observer.disconnect();
-        }
-    });
-
-    // 让“侦探”开始工作
-    observer.observe(statsContainer, { childList: true });
-});
-</script>
-
-<script data-goatcounter="https://mumiao.goatcounter.com/count" 
-        async src="//gc.zgo.at/count.js"></script>
+    <script data-goatcounter="https://mumiao.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
