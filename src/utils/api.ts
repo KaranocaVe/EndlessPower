@@ -6,6 +6,11 @@ import {
   NearStationsRequest,
   NearStationsResponse 
 } from '../types/station'
+import { 
+  mergeStationsLocations, 
+  extractMergedStations, 
+  debugLocationMerge 
+} from './locationMerger'
 
 const JITTER_AMOUNT = 0.0004
 
@@ -37,6 +42,8 @@ export async function fetchNearStations(
   lat = 30.754736739439924, 
   lng = 103.92946279311207
 ): Promise<Station[]> {
+  console.log('🔍 开始获取附近充电站...', { lat, lng })
+  
   const url = 'https://wemp.issks.com/device/v1/near/station'
   
   const body: NearStationsRequest = {
@@ -55,7 +62,18 @@ export async function fetchNearStations(
     body: JSON.stringify(body)
   })
   
-  return data?.elecStationData || []
+  const apiStations = data?.elecStationData || []
+  console.log(`📡 API返回 ${apiStations.length} 个充电站`)
+  
+  // 合并硬编码位置信息
+  const mergeResults = mergeStationsLocations(apiStations)
+  const mergedStations = extractMergedStations(mergeResults)
+  
+  // 打印位置合并统计信息
+  const stats = debugLocationMerge(mergeResults, false)
+  console.log(`🗺️ 位置合并完成: ${stats.hardcoded}/${stats.total} 使用硬编码位置`)
+  
+  return mergedStations
 }
 
 // 获取充电站插座信息

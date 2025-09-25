@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
+import LocationDebugPanel from './LocationDebugPanel'
+import { useStationStore } from '../store/stationStore'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[]
@@ -19,6 +21,9 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isInstalled, setIsInstalled] = useState(false)
   const [showInstallButton, setShowInstallButton] = useState(false)
+  const [showLocationDebug, setShowLocationDebug] = useState(false)
+  
+  const { stations } = useStationStore()
 
   useEffect(() => {
     console.log('🔍 PWA Header: 初始化安装检测')
@@ -74,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleAppInstalled)
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return
@@ -152,25 +157,35 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           
           {/* 开发调试按钮 - 仅在开发环境显示 */}
           {process.env.NODE_ENV === 'development' && (
-            <button
-              onClick={() => {
-                console.log('🔧 PWA 调试信息:', {
-                  isInstalled,
-                  showInstallButton,
-                  hasDeferredPrompt: !!deferredPrompt,
-                  userAgent: navigator.userAgent,
-                  isStandalone: window.matchMedia('(display-mode: standalone)').matches,
-                  hasServiceWorker: 'serviceWorker' in navigator,
-                  manifestPresent: !!document.querySelector('link[rel="manifest"]'),
-                  httpsOrLocalhost: location.protocol === 'https:' || location.hostname === 'localhost'
-                })
-                alert('PWA调试信息已输出到控制台，请按F12查看Console')
-              }}
-              className="px-2 py-1.5 bg-gray-200 text-gray-700 text-xs rounded-lg hover:bg-gray-300 transition-colors"
-              title="PWA调试信息"
-            >
-              🔧
-            </button>
+            <div className="flex space-x-1">
+              <button
+                onClick={() => {
+                  console.log('🔧 PWA 调试信息:', {
+                    isInstalled,
+                    showInstallButton,
+                    hasDeferredPrompt: !!deferredPrompt,
+                    userAgent: navigator.userAgent,
+                    isStandalone: window.matchMedia('(display-mode: standalone)').matches,
+                    hasServiceWorker: 'serviceWorker' in navigator,
+                    manifestPresent: !!document.querySelector('link[rel="manifest"]'),
+                    httpsOrLocalhost: location.protocol === 'https:' || location.hostname === 'localhost'
+                  })
+                  alert('PWA调试信息已输出到控制台，请按F12查看Console')
+                }}
+                className="px-2 py-1.5 bg-gray-200 text-gray-700 text-xs rounded-lg hover:bg-gray-300 transition-colors"
+                title="PWA调试信息"
+              >
+                🔧
+              </button>
+              
+              <button
+                onClick={() => setShowLocationDebug(true)}
+                className="px-2 py-1.5 bg-blue-200 text-blue-700 text-xs rounded-lg hover:bg-blue-300 transition-colors"
+                title="位置调试面板"
+              >
+                🗺️
+              </button>
+            </div>
           )}
           
           {/* 导航按钮 */}
@@ -201,6 +216,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           </div>
         </div>
       </nav>
+      
+      {/* 位置调试面板 */}
+      {showLocationDebug && (
+        <LocationDebugPanel
+          stations={stations}
+          onClose={() => setShowLocationDebug(false)}
+        />
+      )}
     </header>
   )
 }
