@@ -27,42 +27,43 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
   const { showError } = useErrorStore()
 
   useEffect(() => {
-    loadStationData()
-  }, [station.stationId, refreshTrigger])
+    const loadStationData = async () => {
+      setIsLoading(true)
+      
+      try {
+        const stationOutlets = await fetchStationOutlets(station.stationId)
+        setOutlets(stationOutlets)
 
-  const loadStationData = async () => {
-    setIsLoading(true)
-    
-    try {
-      const stationOutlets = await fetchStationOutlets(station.stationId)
-      setOutlets(stationOutlets)
+        if (stationOutlets.length > 0) {
+          const statuses = await Promise.all(
+            stationOutlets.map(outlet => fetchOutletStatus(outlet.outletNo))
+          )
+          setOutletStatuses(statuses)
 
-      if (stationOutlets.length > 0) {
-        const statuses = await Promise.all(
-          stationOutlets.map(outlet => fetchOutletStatus(outlet.outletNo))
-        )
-        setOutletStatuses(statuses)
-
-        // 计算摘要信息
-        const availableCount = statuses.filter(
-          s => s?.outlet?.iCurrentChargingRecordId === 0
-        ).length
-        
-        setSummary({
-          total: stationOutlets.length,
-          available: availableCount,
-          occupied: stationOutlets.length - availableCount
-        })
-      } else {
-        setSummary({ total: 0, available: 0, occupied: 0 })
+          // 计算摘要信息
+          const availableCount = statuses.filter(
+            s => s?.outlet?.iCurrentChargingRecordId === 0
+          ).length
+          
+          setSummary({
+            total: stationOutlets.length,
+            available: availableCount,
+            occupied: stationOutlets.length - availableCount
+          })
+        } else {
+          setSummary({ total: 0, available: 0, occupied: 0 })
+        }
+      } catch (error) {
+        console.error('Failed to load station data:', error)
+        showError('加载充电站数据失败')
       }
-    } catch (error) {
-      console.error('Failed to load station data:', error)
-      showError('加载充电站数据失败')
+      
+      setIsLoading(false)
     }
-    
-    setIsLoading(false)
-  }
+
+    loadStationData()
+  }, [station.stationId, refreshTrigger, showError])
+
 
   const handleRemoveFavorite = () => {
     removeFavorite(station.stationId)

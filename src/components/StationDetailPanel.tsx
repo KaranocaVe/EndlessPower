@@ -25,31 +25,30 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       return
     }
 
-    loadStationDetails()
-  }, [station])
-
-  const loadStationDetails = async () => {
-    if (!station) return
-    
-    setIsLoading(true)
-    
-    try {
-      const stationOutlets = await fetchStationOutlets(station.stationId)
-      setOutlets(stationOutlets)
+    const loadStationDetails = async () => {
+      setIsLoading(true)
       
-      if (stationOutlets.length > 0) {
-        const statuses = await Promise.all(
-          stationOutlets.map(outlet => fetchOutletStatus(outlet.outletNo))
-        )
-        setOutletStatuses(statuses)
+      try {
+        const stationOutlets = await fetchStationOutlets(station.stationId)
+        setOutlets(stationOutlets)
+        
+        if (stationOutlets.length > 0) {
+          const statuses = await Promise.all(
+            stationOutlets.map(outlet => fetchOutletStatus(outlet.outletNo))
+          )
+          setOutletStatuses(statuses)
+        }
+      } catch (error) {
+        console.error('Failed to load station details:', error)
+        showError('加载充电站详情失败')
       }
-    } catch (error) {
-      console.error('Failed to load station details:', error)
-      showError('加载充电站详情失败')
+      
+      setIsLoading(false)
     }
-    
-    setIsLoading(false)
-  }
+
+    loadStationDetails()
+  }, [station, showError])
+
 
   const handleFavoriteToggle = () => {
     if (!station) return
@@ -65,7 +64,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     }
   }
 
-  const renderOutletCard = (outlet: Outlet, status: OutletStatus | null, index: number) => {
+  const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
     const serial = `插座 ${outlet.vOutletName.replace('插座', '') || 'N/A'}`
     
@@ -198,7 +197,11 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {outlets
               .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
-              .map((outlet, index) => renderOutletCard(outlet, outletStatuses[index], index))
+              .map((outlet, index) => (
+                <div key={outlet.outletId}>
+                  {renderOutletCard(outlet, outletStatuses[index])}
+                </div>
+              ))
             }
           </div>
         )}
