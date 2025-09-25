@@ -2,7 +2,7 @@ import React from 'react'
 import { useStationStore } from '../store/stationStore'
 
 const SearchBar: React.FC = () => {
-  const { searchKeyword, setSearchKeyword } = useStationStore()
+  const { searchKeyword, setSearchKeyword, isUsingSimulatedData } = useStationStore()
 
   const handleSearch = () => {
     // 搜索逻辑已在store中通过getFilteredStations实现
@@ -41,7 +41,7 @@ const SearchBar: React.FC = () => {
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="搜索充电站..."
+          placeholder={isUsingSimulatedData ? "搜索充电站（模拟数据）..." : "搜索充电站..."}
           className="w-full h-12 pl-12 pr-24 rounded-full bg-white/95 backdrop-blur-sm border border-gray-200/50 shadow-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 outline-none transition-all duration-200 placeholder-gray-400"
         />
         

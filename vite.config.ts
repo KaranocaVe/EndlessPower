@@ -41,7 +41,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/(corsproxy\.io|api\.allorigins\.win|proxy\.cors\.sh)\/.*/i,
+            urlPattern: /^https:\/\/(corsproxy\.io|api\.allorigins\.win|proxy\.cors\.sh|api\.codetabs\.com|cors-anywhere\.herokuapp\.com|cors\.bridged\.cc)\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',

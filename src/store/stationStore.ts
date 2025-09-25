@@ -13,12 +13,14 @@ interface StationState {
   lastRefresh: number
   userLocation: [number, number] | null
   searchKeyword: string
+  isUsingSimulatedData: boolean
   
   // Actions
   setStations: (stations: Station[]) => void
   setLoading: (loading: boolean) => void
   setUserLocation: (location: [number, number] | null) => void
   setSearchKeyword: (keyword: string) => void
+  setSimulatedData: (isSimulated: boolean) => void
   initializeStations: () => Promise<void>
   refreshStations: (lat?: number, lng?: number) => Promise<void>
   canRefresh: () => boolean
@@ -33,11 +35,13 @@ export const useStationStore = create<StationState>()(
       lastRefresh: 0,
       userLocation: null,
       searchKeyword: '',
+      isUsingSimulatedData: false,
       
       setStations: (stations: Station[]) => set({ stations }),
       setLoading: (loading: boolean) => set({ isLoading: loading }),
       setUserLocation: (location: [number, number] | null) => set({ userLocation: location }),
       setSearchKeyword: (keyword: string) => set({ searchKeyword: keyword }),
+      setSimulatedData: (isSimulated: boolean) => set({ isUsingSimulatedData: isSimulated }),
       
       initializeStations: async () => {
         const { stations } = get()
