@@ -12,7 +12,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <div className={`flex items-center space-x-3 ${className}`}>
       <div className="loader"></div>
-      <span className="font-semibold text-gray-700">{text}</span>
+      <span className="font-semibold text-gray-700 dark:text-gray-200">{text}</span>
     </div>
   )
 }
