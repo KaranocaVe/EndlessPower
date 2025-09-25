@@ -3,7 +3,8 @@ import React from 'react'
 const Footer: React.FC = () => {
   return (
     <footer className="text-center py-4 text-xs text-gray-500 bg-white/80 backdrop-blur-sm border-t border-gray-200/50 z-10 shrink-0">
-      <div className="space-y-2">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="space-y-2">
         <div id="visitor-stats" className="inline-block"></div>
         <p>
           <a 
@@ -27,6 +28,7 @@ const Footer: React.FC = () => {
             View Project on GitHub
           </a>
         </p>
+        </div>
       </div>
     </footer>
   )

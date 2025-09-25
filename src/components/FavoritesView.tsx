@@ -31,7 +31,7 @@ const FavoritesView: React.FC = () => {
 
   return (
     <div className="w-full h-full overflow-y-auto p-4 md:p-6 bg-gradient-to-b from-transparent to-gray-50/30">
-      <div className="container mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">我的收藏</h2>
           

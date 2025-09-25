@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
 
   return (
     <header className="bg-white/90 backdrop-blur-md shadow-lg z-[1100] border-b border-gray-200/50">
-      <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <nav className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex-1 min-w-0">
           <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
             <span className="hidden sm:inline">EndlessPower 闪开来电充电桩查询</span>
