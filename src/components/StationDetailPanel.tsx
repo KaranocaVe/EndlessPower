@@ -85,10 +85,10 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     
     if (!status || !status.outlet) {
       return (
-        <div key={outlet.outletId} className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl p-4 border border-gray-200/50 dark:border-gray-600/50 h-32 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-            <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 truncate" title={`插座 ${outletName}`}>{serial}</h3>
+        <div key={outlet.outletId} className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-xl p-2.5 border border-gray-200/50 dark:border-gray-600/50 h-24 shadow-sm">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 truncate" title={`插座 ${outletName}`}>{serial}</h3>
           </div>
           <p className="text-xs text-red-500 dark:text-red-400">数据加载失败</p>
         </div>
@@ -100,13 +100,13 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 dark:from-blue-900/20 dark:via-indigo-900/10 dark:to-blue-800/20 border-blue-200/60 dark:border-blue-700/50 shadow-blue-100/50 dark:shadow-blue-900/20'
     
     const statusBadge = isAvailable ? (
-      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold shadow-lg">
-        <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+      <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-bold shadow-md">
+        <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
         <span>可用</span>
       </div>
     ) : (
-      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold shadow-lg">
-        <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+      <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold shadow-md">
+        <div className="w-1 h-1 bg-white rounded-full"></div>
         <span>占用中</span>
       </div>
     )
@@ -119,53 +119,28 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     }
 
     const details = isAvailable ? (
-      <div className="mt-2 text-center">
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-100/80 dark:bg-green-800/30">
-          <svg className="w-3 h-3 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
-          <p className="text-xs font-semibold text-green-700 dark:text-green-400">空闲中</p>
-        </div>
+      <div className="text-center">
+        <p className="text-xs font-semibold text-green-700 dark:text-green-400">空闲中</p>
       </div>
     ) : (
-      <div className="mt-1.5 space-y-1">
-        <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/30 rounded-lg px-2.5 py-1">
-          <div className="flex items-center gap-1">
-            <svg className="w-2.5 h-2.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span className="text-xs text-gray-700 dark:text-gray-300">已充: <span className="font-semibold text-blue-600 dark:text-blue-400">{status.usedmin || 0}分钟</span></span>
-          </div>
-          <div className="flex items-center gap-1">
-            <svg className="w-2.5 h-2.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-            </svg>
-            <span className="text-xs text-gray-700 dark:text-gray-300">消费: <span className="font-semibold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}元</span></span>
-          </div>
+      <div className="space-y-0.5">
+        <div className="flex justify-between text-xs">
+          <span className="text-gray-600 dark:text-gray-400">已充: <span className="font-semibold text-blue-600 dark:text-blue-400">{status.usedmin || 0}分钟</span></span>
+          <span className="text-gray-600 dark:text-gray-400">消费: <span className="font-semibold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}元</span></span>
         </div>
-        <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/30 rounded-lg px-2.5 py-1">
-          <div className="flex items-center gap-1">
-            <svg className="w-2.5 h-2.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-            <span className="text-xs text-gray-700 dark:text-gray-300">功率: <span className="font-semibold text-orange-600 dark:text-orange-400">{status.powerFee?.billingPower || '未知'}</span></span>
-          </div>
-          <div className="flex items-center gap-1">
-            <svg className="w-2.5 h-2.5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span className="text-xs text-gray-700 dark:text-gray-300">开始: <span className="font-semibold text-purple-600 dark:text-purple-400">{formatTime(status.chargingBeginTime || '未知')}</span></span>
-          </div>
+        <div className="flex justify-between text-xs">
+          <span className="text-gray-600 dark:text-gray-400">功率: <span className="font-semibold text-orange-600 dark:text-orange-400">{status.powerFee?.billingPower || '未知'}</span></span>
+          <span className="text-gray-600 dark:text-gray-400">开始: <span className="font-semibold text-purple-600 dark:text-purple-400">{formatTime(status.chargingBeginTime || '未知')}</span></span>
         </div>
       </div>
     )
 
     return (
-      <div key={outlet.outletId} className={`rounded-2xl p-3 border transition-all duration-300 h-32 shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${cardClasses}`}>
-        <div className="flex justify-between items-start gap-2 mb-2">
-          <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${isAvailable ? 'bg-green-500' : 'bg-blue-500'} shadow-lg`}></div>
-            <h3 className="text-sm font-bold text-gray-800 dark:text-gray-100 truncate flex-1" title={`插座 ${outletName}`}>{serial}</h3>
+      <div key={outlet.outletId} className={`rounded-xl p-2.5 border transition-all duration-300 h-24 shadow-md hover:shadow-lg ${cardClasses}`}>
+        <div className="flex justify-between items-center gap-1.5 mb-1.5">
+          <div className="flex items-center gap-1.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+            <h3 className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate flex-1" title={`插座 ${outletName}`}>{serial}</h3>
           </div>
           {statusBadge}
         </div>
