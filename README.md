@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**🔗 [在线体验 - endlesspower.icu](http://endlesspower.icu/)**
+**🔗 [立即体验 - endlesspower.icu](http://endlesspower.icu/)**
 
 *一个现代化的 PWA 应用，旨在解决闪开来电寻找可用充电桩的痛点*
 
