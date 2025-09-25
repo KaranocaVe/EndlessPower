@@ -4,7 +4,6 @@ import MapView from './components/MapView'
 import FavoritesView from './components/FavoritesView'
 import ErrorOverlay from './components/ErrorOverlay'
 import Footer from './components/Footer'
-import PWAInstallPrompt from './components/PWAInstallPrompt'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import { useStationStore } from './store/stationStore'
 import { useErrorStore } from './store/errorStore'
@@ -33,7 +32,7 @@ function App() {
       {error && <ErrorOverlay />}
       
       {/* PWA Components */}
-      <PWAInstallPrompt />
+      {/* PWAInstallPrompt 已集成到 Header 中，这里只保留更新提示 */}
       <PWAUpdatePrompt />
     </div>
   )
