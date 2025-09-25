@@ -170,9 +170,22 @@ const MapView: React.FC = () => {
     }
   }, [stations, showUnavailableStations])
 
+  // 处理搜索框选择充电桩
+  const handleStationSelectFromSearch = (station: Station) => {
+    // 定位地图到选择的充电桩
+    if (mapRef.current) {
+      mapRef.current.setView([station.latitude, station.longitude], 18, {
+        animate: true,
+        duration: 1
+      })
+    }
+    // 可选：同时打开该充电桩的详情面板
+    setSelectedStation(station)
+  }
+
   return (
     <div className="w-full h-full relative">
-      <SearchBar />
+      <SearchBar onStationSelect={handleStationSelectFromSearch} />
       
       {/* Map Container */}
       <MapContainer
