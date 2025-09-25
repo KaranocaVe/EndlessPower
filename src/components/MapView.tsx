@@ -216,23 +216,6 @@ const MapView: React.FC = () => {
         />
       )}
 
-      {/* 开发模式调试信息 */}
-      {import.meta.env.DEV && (
-        <div className="absolute top-20 left-4 z-[999] bg-black/80 text-white p-2 rounded text-xs">
-          <div>暗色模式: {isDark ? '开启' : '关闭'}</div>
-          <div>覆盖层: {isDark ? '显示' : '隐藏'}</div>
-          <button 
-            onClick={() => {
-              const overlay = document.querySelector('[style*="mixBlendMode"]')
-              console.log('覆盖层元素:', overlay)
-              console.log('覆盖层样式:', overlay ? window.getComputedStyle(overlay) : '未找到')
-            }}
-            className="mt-1 px-2 py-1 bg-blue-500 text-white rounded text-xs"
-          >
-            调试覆盖层
-          </button>
-        </div>
-      )}
 
       {/* Control Buttons */}
       <button
