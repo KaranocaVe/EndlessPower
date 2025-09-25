@@ -3,3 +3,13 @@ compatibility_date = "2025-09-25"
 
 [assets]
 directory = "./dist"
+
+# 开发环境配置
+[env.dev]
+name = "endlesspower-dev"
+vars = { NODE_ENV = "development" }
+
+# 生产环境配置  
+[env.production]
+name = "endlesspower"
+vars = { NODE_ENV = "production" }

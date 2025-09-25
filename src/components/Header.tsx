@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import LocationDebugPanel from './LocationDebugPanel'
 import { useStationStore } from '../store/stationStore'
 import { useThemeStore } from '../store/themeStore'
+import { IS_DEV } from '../config/environment'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[]
@@ -224,7 +225,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           </button>
           
           {/* 开发调试按钮 - 仅在开发环境显示 */}
-          {process.env.NODE_ENV === 'development' && (
+          {IS_DEV && (
             <div className="flex space-x-1">
               <button
                 onClick={() => {
