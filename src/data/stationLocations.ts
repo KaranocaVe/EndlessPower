@@ -31,72 +31,7 @@ export const HARDCODED_STATION_LOCATIONS: HardcodedStationLocation[] = [
     longitude: 104.065752,
     address: "四川省成都市锦江区天府广场",
     note: "位于地下停车场B2层"
-  },
-  {
-    stationId: 1003,
-    stationName: "春熙路充电站",
-    latitude: 30.661825,
-    longitude: 104.081502,
-    address: "四川省成都市锦江区春熙路",
-    note: "商场东侧停车场"
-  },
-  {
-    stationId: 1004,
-    stationName: "双流机场T1充电站",
-    latitude: 30.578469,
-    longitude: 103.947125,
-    address: "四川省成都市双流区双流国际机场T1航站楼",
-    note: "T1航站楼停车场3层"
-  },
-  {
-    stationId: 1005,
-    stationName: "双流机场T2充电站",
-    latitude: 30.572838,
-    longitude: 103.948563,
-    address: "四川省成都市双流区双流国际机场T2航站楼",
-    note: "T2航站楼停车场4层"
-  },
-  {
-    stationId: 1006,
-    stationName: "成都东站充电站",
-    latitude: 30.613994,
-    longitude: 104.176422,
-    address: "四川省成都市成华区成都东客站",
-    note: "东广场地下停车场"
-  },
-  {
-    stationId: 1007,
-    stationName: "IFS国际金融中心充电站",
-    latitude: 30.66188,
-    longitude: 104.081886,
-    address: "四川省成都市锦江区红星路三段IFS",
-    note: "地下停车场B3层"
-  },
-  {
-    stationId: 1008,
-    stationName: "宽窄巷子充电站",
-    latitude: 30.668947,
-    longitude: 104.061123,
-    address: "四川省成都市青羊区宽窄巷子",
-    note: "景区专用停车场"
-  },
-  {
-    stationId: 1009,
-    stationName: "锦里古街充电站",
-    latitude: 30.642699,
-    longitude: 104.044713,
-    address: "四川省成都市武侯区锦里古街",
-    note: "武侯祠停车场内"
-  },
-  {
-    stationId: 1010,
-    stationName: "环球中心充电站",
-    latitude: 30.573611,
-    longitude: 104.061111,
-    address: "四川省成都市武侯区环球中心",
-    note: "购物中心地下停车场"
   }
-  
   // 添加更多精确位置...
   // 可以根据实际使用情况不断补充
 ]

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import clsx from 'clsx'
 import LocationDebugPanel from './LocationDebugPanel'
 import { useStationStore } from '../store/stationStore'
+import { useThemeStore } from '../store/themeStore'
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[]
@@ -23,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   const [showInstallButton, setShowInstallButton] = useState(false)
   const [showLocationDebug, setShowLocationDebug] = useState(false)
   const { isUsingSimulatedData, setSimulatedData } = useStationStore()
+  const { theme, isDark, toggleTheme, applyTheme } = useThemeStore()
   
   const { stations } = useStationStore()
 
@@ -68,10 +70,21 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
       setSimulatedData(true)
     }
 
+    // 监听系统主题变化
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      if (theme === 'auto') {
+        applyTheme()
+      }
+    }
+
     console.log('👂 PWA Header: 开始监听安装事件')
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
     window.addEventListener('appinstalled', handleAppInstalled)
     window.addEventListener('api-fallback-to-simulation', handleApiFallback)
+    
+    // 监听系统主题变化
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', handleSystemThemeChange)
 
     // 调试：检查当前状态
     setTimeout(() => {
@@ -87,8 +100,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleAppInstalled)
       window.removeEventListener('api-fallback-to-simulation', handleApiFallback)
+      mediaQuery.removeEventListener('change', handleSystemThemeChange)
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [theme, applyTheme, setSimulatedData]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 初始化主题
+  useEffect(() => {
+    applyTheme()
+  }, [applyTheme])
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return
@@ -109,7 +128,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   }
 
   return (
-    <header className="bg-white/90 backdrop-blur-md shadow-lg z-[1100] border-b border-gray-200/50">
+    <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg z-[1100] border-b border-gray-200/50 dark:border-gray-700/50">
       <nav className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex-1 min-w-0">
           <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
@@ -185,6 +204,25 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             </div>
           )}
           
+          {/* 主题切换按钮 */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 shadow-sm hover:shadow-md"
+            title={isDark ? '切换到亮色模式' : '切换到暗色模式'}
+          >
+            {isDark ? (
+              // 太阳图标 (亮色模式)
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            ) : (
+              // 月亮图标 (暗色模式)
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+          </button>
+          
           {/* 开发调试按钮 - 仅在开发环境显示 */}
           {process.env.NODE_ENV === 'development' && (
             <div className="flex space-x-1">
@@ -219,14 +257,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           )}
           
           {/* 导航按钮 */}
-          <div className="flex space-x-1 bg-gray-100/80 p-1 rounded-xl shadow-sm">
+          <div className="flex space-x-1 bg-gray-100/80 dark:bg-gray-800/80 p-1 rounded-xl shadow-sm">
             <button
               onClick={() => onViewChange('map')}
               className={clsx(
                 'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200',
                 currentView === 'map'
                   ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white/70 dark:hover:bg-gray-700/70'
               )}
             >
               地图
@@ -238,7 +276,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
                 'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200',
                 currentView === 'favorites'
                   ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white/70 dark:hover:bg-gray-700/70'
               )}
             >
               收藏

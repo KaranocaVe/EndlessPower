@@ -82,13 +82,13 @@ define(['./workbox-418c2b01'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "index.html",
-    "revision": "0.q3rjaaa92bg"
+    "revision": "0.h8jssd59sdg"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
     allowlist: [/^\/$/]
   }));
-  workbox.registerRoute(/^https:\/\/corsproxy\.io\/.*/i, new workbox.NetworkFirst({
+  workbox.registerRoute(/^https:\/\/(corsproxy\.io|api\.allorigins\.win|proxy\.cors\.sh|api\.codetabs\.com|cors-anywhere\.herokuapp\.com|cors\.bridged\.cc)\/.*/i, new workbox.NetworkFirst({
     "cacheName": "api-cache",
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 50,
