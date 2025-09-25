@@ -20,10 +20,10 @@ function App() {
   }, [initializeStations])
 
   return (
-    <div className="bg-gray-100 text-gray-800 flex flex-col h-screen">
+    <div className="bg-gradient-to-br from-slate-50 to-gray-100 text-gray-800 flex flex-col h-screen">
       <Header currentView={currentView} onViewChange={setCurrentView} />
       
-      <main className="flex-grow relative">
+      <main className="flex-grow relative overflow-hidden">
         {currentView === 'map' ? <MapView /> : <FavoritesView />}
       </main>
 

@@ -120,17 +120,17 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   if (!station) return null
 
   return (
-    <div className={`fixed bottom-4 right-4 w-full max-w-md rounded-xl bg-white/85 backdrop-blur-lg border border-gray-200/60 shadow-xl z-[1200] transition-all duration-300 ${
+    <div className={`fixed bottom-4 right-4 w-full max-w-md rounded-2xl bg-white/95 backdrop-blur-xl border border-gray-200/50 shadow-2xl z-[1200] transition-all duration-300 ${
       station ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-full opacity-0 pointer-events-none'
     }`}>
       {/* Header */}
-      <div className="p-5 border-b border-gray-200/80">
+      <div className="p-5 border-b border-gray-200/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50">
         <div className="flex justify-between items-center">
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold text-gray-800 truncate">
+            <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
               {station.stationName}
             </h2>
-            <p className="text-sm text-gray-500 truncate">
+            <p className="text-sm text-gray-600 truncate mt-1">
               {station.address}
             </p>
           </div>
@@ -162,7 +162,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-800 p-2 rounded-full hover:bg-gray-200/80 transition-colors"
+              className="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-white/60 transition-all duration-200"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 

@@ -42,7 +42,7 @@ const SearchBar: React.FC = () => {
           onChange={(e) => setSearchKeyword(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="搜索充电站..."
-          className="w-full h-12 pl-12 pr-24 rounded-full border-gray-200 shadow-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition"
+          className="w-full h-12 pl-12 pr-24 rounded-full bg-white/95 backdrop-blur-sm border border-gray-200/50 shadow-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 outline-none transition-all duration-200 placeholder-gray-400"
         />
         
         <div className="absolute inset-y-0 right-0 flex items-center">

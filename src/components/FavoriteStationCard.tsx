@@ -116,15 +116,15 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-lg">
-      <div className="p-5">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
+      <div className="p-6">
         {/* Header */}
         <div className="flex justify-between items-start mb-4">
           <div className="min-w-0 flex-1">
-            <h2 className="text-xl font-bold text-gray-800 truncate">
+            <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
               {station.stationName}
             </h2>
-            <p className="text-sm text-gray-500 mt-1 truncate">
+            <p className="text-sm text-gray-600 mt-1 truncate">
               {station.address}
             </p>
           </div>

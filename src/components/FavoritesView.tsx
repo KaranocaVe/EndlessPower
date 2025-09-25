@@ -30,15 +30,15 @@ const FavoritesView: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full overflow-y-auto p-4 md:p-6">
+    <div className="w-full h-full overflow-y-auto p-4 md:p-6 bg-gradient-to-b from-transparent to-gray-50/30">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">我的收藏</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">我的收藏</h2>
           
           <button
             onClick={handleRefresh}
             disabled={!canRefresh()}
-            className="bg-white text-gray-700 p-3 rounded-full shadow-md hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-white/90 backdrop-blur-sm text-gray-700 p-3 rounded-full shadow-lg hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-200/50"
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg" 

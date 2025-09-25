@@ -100,10 +100,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   }
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm shadow-sm z-[1100] border-b border-gray-200">
-      <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header className="bg-white/90 backdrop-blur-md shadow-lg z-[1100] border-b border-gray-200/50">
+      <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex-1 min-w-0">
-          <h1 className="text-lg md:text-xl font-bold text-gray-900 truncate">
+          <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
             <span className="hidden sm:inline">EndlessPower 闪开来电充电桩查询</span>
             <span className="sm:hidden">EndlessPower</span>
           </h1>
@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           {!isInstalled && showInstallButton && deferredPrompt && (
             <button
               onClick={handleInstallClick}
-              className="flex items-center space-x-1 px-2 py-1.5 md:px-3 bg-primary text-white text-xs md:text-sm font-medium rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+              className="flex items-center space-x-1 px-3 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs md:text-sm font-medium rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
               title="安装应用到桌面"
             >
               <svg 
@@ -189,14 +189,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           )}
           
           {/* 导航按钮 */}
-          <div className="flex space-x-1 bg-gray-200/80 p-1 rounded-lg">
+          <div className="flex space-x-1 bg-gray-100/80 p-1 rounded-xl shadow-sm">
             <button
               onClick={() => onViewChange('map')}
               className={clsx(
-                'px-4 py-1.5 rounded-md text-sm font-semibold transition-all',
+                'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200',
                 currentView === 'map'
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-white/50'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
               )}
             >
               地图
@@ -205,10 +205,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             <button
               onClick={() => onViewChange('favorites')}
               className={clsx(
-                'px-4 py-1.5 rounded-md text-sm font-semibold transition-all',
+                'px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200',
                 currentView === 'favorites'
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-white/50'
+                  ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-white/70'
               )}
             >
               收藏
