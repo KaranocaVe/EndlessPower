@@ -205,13 +205,19 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
             {/* 刷新间隔 */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                刷新间隔（秒）
+                刷新间隔
               </label>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                更短的间隔可减少数据不一致，但会增加流量消耗
+              </p>
               <select 
                 value={refreshInterval}
                 onChange={(e) => setRefreshInterval(Number(e.target.value))}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               >
+                <option value="3">3 秒（最快）</option>
+                <option value="5">5 秒（推荐）</option>
+                <option value="10">10 秒</option>
                 <option value="15">15 秒</option>
                 <option value="30">30 秒</option>
                 <option value="60">1 分钟</option>

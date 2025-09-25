@@ -1,7 +1,7 @@
 {
   "name": "endless-power-react",
   "version": "1.2.0",
-  "description": "充电桩地图查询React应用",
+  "description": "闪开来电充电桩地图查询应用",
   "type": "module",
   "private": true,
   "scripts": {
