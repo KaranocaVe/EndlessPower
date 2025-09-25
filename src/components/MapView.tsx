@@ -4,6 +4,7 @@ import L from 'leaflet'
 import { Station } from '../types/station'
 import { useStationStore } from '../store/stationStore'
 import { useErrorStore } from '../store/errorStore'
+import { useThemeStore } from '../store/themeStore'
 import { getColorForAvailability } from '../utils/api'
 import SearchBar from './SearchBar'
 import StationDetailPanel from './StationDetailPanel'
@@ -25,6 +26,7 @@ const MapView: React.FC = () => {
   } = useStationStore()
   
   const { showError } = useErrorStore()
+  const { isDark } = useThemeStore()
   
   const stations = getFilteredStations()
 
@@ -185,11 +187,40 @@ const MapView: React.FC = () => {
         )}
       </MapContainer>
 
+      {/* 暗色模式覆盖层 */}
+      {isDark && (
+        <div 
+          className="absolute inset-0 pointer-events-none z-[401] transition-opacity duration-300"
+          style={{
+            background: 'rgba(0, 0, 0, 0.4)',
+            mixBlendMode: 'multiply'
+          }}
+        />
+      )}
+
+      {/* 开发模式调试信息 */}
+      {import.meta.env.DEV && (
+        <div className="absolute top-20 left-4 z-[999] bg-black/80 text-white p-2 rounded text-xs">
+          <div>暗色模式: {isDark ? '开启' : '关闭'}</div>
+          <div>覆盖层: {isDark ? '显示' : '隐藏'}</div>
+          <button 
+            onClick={() => {
+              const overlay = document.querySelector('[style*="mixBlendMode"]')
+              console.log('覆盖层元素:', overlay)
+              console.log('覆盖层样式:', overlay ? window.getComputedStyle(overlay) : '未找到')
+            }}
+            className="mt-1 px-2 py-1 bg-blue-500 text-white rounded text-xs"
+          >
+            调试覆盖层
+          </button>
+        </div>
+      )}
+
       {/* Control Buttons */}
       <button
         onClick={handleRefresh}
         disabled={!canRefresh() || isLoading}
-        className="absolute bottom-6 right-6 z-[999] bg-white text-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -209,7 +240,7 @@ const MapView: React.FC = () => {
 
       <button
         onClick={handleLocateUser}
-        className="absolute bottom-6 right-24 z-[999] bg-white text-gray-700 p-3 rounded-full shadow-lg hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all"
+        className="absolute bottom-6 right-24 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -234,7 +265,7 @@ const MapView: React.FC = () => {
 
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999] bg-white/80 p-4 rounded-lg shadow-xl">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[999] bg-white/80 dark:bg-gray-800/80 p-4 rounded-lg shadow-xl backdrop-blur-sm">
           <LoadingSpinner text="刷新状态..." />
         </div>
       )}

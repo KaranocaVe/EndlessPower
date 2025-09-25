@@ -3,7 +3,6 @@ import Header from './components/Header'
 import MapView from './components/MapView'
 import FavoritesView from './components/FavoritesView'
 import ErrorOverlay from './components/ErrorOverlay'
-import Footer from './components/Footer'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import { useStationStore } from './store/stationStore'
 import { useErrorStore } from './store/errorStore'
@@ -32,8 +31,6 @@ function App() {
       <main className="flex-grow relative overflow-hidden">
         {currentView === 'map' ? <MapView /> : <FavoritesView />}
       </main>
-
-      <Footer />
       
       {error && <ErrorOverlay />}
       
