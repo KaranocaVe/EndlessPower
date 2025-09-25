@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSettingsStore } from '../store/settingsStore'
 
 interface SettingsPanelProps {
   isOpen: boolean
@@ -6,11 +7,16 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
-  // 设置状态
-  const [autoRefresh, setAutoRefresh] = useState(false)
-  const [showDistance, setShowDistance] = useState(true)
-  const [zoomLevel, setZoomLevel] = useState(16)
-  const [refreshInterval, setRefreshInterval] = useState(30)
+  // 从store获取设置状态
+  const {
+    autoRefresh,
+    showUnavailableStations,
+    refreshInterval,
+    setAutoRefresh,
+    setShowUnavailableStations,
+    setRefreshInterval,
+    resetSettings
+  } = useSettingsStore()
   
   // 动画状态
   const [isAnimating, setIsAnimating] = useState(false)
@@ -20,14 +26,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
       setIsAnimating(true)
     }
   }, [isOpen])
-
-  // 重置所有设置
-  const resetSettings = () => {
-    setAutoRefresh(false)
-    setShowDistance(true)
-    setZoomLevel(16)
-    setRefreshInterval(30)
-  }
 
   if (!isOpen) return null
 
@@ -119,35 +117,35 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* 示例设置项 - 显示距离 */}
+            {/* 显示无可用插座的充电桩 */}
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  显示距离
+                  显示无可用插座的充电桩
                 </label>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  在充电桩卡片上显示距离信息
+                  在地图上显示没有可用插座的充电桩
                 </p>
               </div>
               <div className="relative">
                 <input
                   type="checkbox"
                   className="sr-only"
-                  id="show-distance"
-                  checked={showDistance}
-                  onChange={(e) => setShowDistance(e.target.checked)}
+                  id="show-unavailable-stations"
+                  checked={showUnavailableStations}
+                  onChange={(e) => setShowUnavailableStations(e.target.checked)}
                 />
                 <label
-                  htmlFor="show-distance"
+                  htmlFor="show-unavailable-stations"
                   className={`block w-10 h-6 rounded-full cursor-pointer transition-colors ${
-                    showDistance 
+                    showUnavailableStations 
                       ? 'bg-blue-500' 
                       : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <span 
                     className={`block w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                      showDistance 
+                      showUnavailableStations 
                         ? 'transform translate-x-5 translate-y-1' 
                         : 'transform translate-x-1 translate-y-1'
                     }`}
@@ -157,29 +155,6 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* 显示设置 */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">显示设置</h3>
-            
-            {/* 地图缩放级别 */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                默认地图缩放级别: {zoomLevel}
-              </label>
-              <input
-                type="range"
-                min="10"
-                max="18"
-                value={zoomLevel}
-                onChange={(e) => setZoomLevel(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"
-              />
-              <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                <span>远 (10)</span>
-                <span>近 (18)</span>
-              </div>
-            </div>
-          </div>
 
           {/* 数据设置 */}
           <div className="space-y-4">
@@ -220,7 +195,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
             
             {/* 重置按钮 */}
             <button 
-              onClick={resetSettings}
+              onClick={() => {
+                resetSettings()
+                // 显示重置完成的反馈
+                console.log('设置已重置为默认值')
+              }}
               className="w-full mt-4 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
             >
               重置所有设置

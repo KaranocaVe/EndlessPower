@@ -5,6 +5,7 @@ import { Station } from '../types/station'
 import { useStationStore } from '../store/stationStore'
 import { useErrorStore } from '../store/errorStore'
 import { useThemeStore } from '../store/themeStore'
+import { useSettingsStore } from '../store/settingsStore'
 import { getColorForAvailability } from '../utils/api'
 import SearchBar from './SearchBar'
 import StationDetailPanel from './StationDetailPanel'
@@ -27,6 +28,7 @@ const MapView: React.FC = () => {
   
   const { showError } = useErrorStore()
   const { isDark } = useThemeStore()
+  const { showUnavailableStations } = useSettingsStore()
   
   const stations = getFilteredStations()
 
@@ -139,6 +141,22 @@ const MapView: React.FC = () => {
     return getColorForAvailability(ratio)
   }
 
+  // 判断充电桩是否有可用插座
+  const hasAvailableOutlets = (station: Station) => {
+    return station.freeNum && station.freeNum > 0
+  }
+
+  // 根据设置过滤充电桩
+  const getDisplayStations = () => {
+    if (showUnavailableStations) {
+      return stations // 显示所有充电桩
+    } else {
+      return stations.filter(hasAvailableOutlets) // 只显示有可用插座的充电桩
+    }
+  }
+
+  const displayStations = getDisplayStations()
+
   return (
     <div className="w-full h-full relative">
       <SearchBar />
@@ -158,7 +176,7 @@ const MapView: React.FC = () => {
         />
         
         {/* Station Markers */}
-        {stations.map((station) => (
+        {displayStations.map((station) => (
           <Marker
             key={station.stationId}
             position={[station.latitude, station.longitude]}
