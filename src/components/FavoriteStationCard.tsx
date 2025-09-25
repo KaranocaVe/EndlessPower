@@ -71,12 +71,13 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
-    const serial = `插座 ${outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'}`
+    const outletName = outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'
+    const serial = `插座 ${outletName.length > 10 ? outletName.substring(0, 10) + '...' : outletName}`
     
     if (!status || !status.outlet) {
       return (
-        <div key={outlet.outletId} className="bg-gray-100 rounded-lg p-3 border border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-500">{serial}</h4>
+        <div key={outlet.outletId} className="bg-gray-100 rounded-xl p-3 border border-gray-200 h-20">
+          <h4 className="text-sm font-semibold text-gray-500 truncate" title={`插座 ${outletName}`}>{serial}</h4>
           <p className="text-xs text-red-500 mt-1">数据加载失败</p>
         </div>
       )
@@ -87,28 +88,30 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
       : 'bg-blue-50 border-blue-200'
     
     const statusBadge = isAvailable ? (
-      <span className="text-xs font-bold py-0.5 px-2 rounded-full bg-green-100 text-green-800">
+      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-green-100 text-green-800">
         可用
       </span>
     ) : (
-      <span className="text-xs font-bold py-0.5 px-2 rounded-full bg-blue-100 text-blue-800">
-        占用
+      <span className="text-xs font-bold py-1 px-2.5 rounded-full bg-blue-100 text-blue-800">
+        占用中
       </span>
     )
 
     return (
-      <div key={outlet.outletId} className={`rounded-lg p-3 border transition-all ${cardClasses}`}>
-        <div className="flex justify-between items-center mb-2">
-          <h4 className="text-sm font-semibold text-gray-800">{serial}</h4>
+      <div key={outlet.outletId} className={`rounded-xl p-3 border transition-all h-20 ${cardClasses}`}>
+        <div className="flex justify-between items-center">
+          <h4 className="text-sm font-semibold text-gray-800 truncate mr-2" title={`插座 ${outletName}`}>{serial}</h4>
           {statusBadge}
         </div>
         
         {isAvailable ? (
-          <p className="text-xs text-green-700 font-medium">空闲中</p>
+          <div className="mt-2 text-center">
+            <p className="text-xs text-green-700 font-semibold">空闲中</p>
+          </div>
         ) : (
-          <div className="text-xs space-y-1 text-gray-600">
-            <p><span className="font-medium">已充:</span> {status.usedmin || 0}分钟</p>
-            <p><span className="font-medium">消费:</span> {status.usedfee?.toFixed(2) || '0.00'}元</p>
+          <div className="mt-1 text-xs flex justify-between text-gray-600">
+            <span><span className="font-medium">已充:</span> {status.usedmin || 0}分钟</span>
+            <span><span className="font-medium">消费:</span> {status.usedfee?.toFixed(2) || '0.00'}元</span>
           </div>
         )}
       </div>

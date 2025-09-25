@@ -66,13 +66,14 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
-    const serial = `插座 ${outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'}`
+    const outletName = outlet.vOutletName?.replace('插座', '') || outlet.outletNo || 'N/A'
+    const serial = `插座 ${outletName.length > 12 ? outletName.substring(0, 12) + '...' : outletName}`
     
     if (!status || !status.outlet) {
       return (
-        <div key={outlet.outletId} className="bg-gray-100 rounded-xl p-4 border border-gray-200">
-          <h3 className="text-base font-semibold text-gray-500">{serial}</h3>
-          <p className="text-sm text-red-500 mt-2">数据加载失败</p>
+        <div key={outlet.outletId} className="bg-gray-100 rounded-xl p-3 border border-gray-200 h-28">
+          <h3 className="text-sm font-semibold text-gray-500 truncate" title={`插座 ${outletName}`}>{serial}</h3>
+          <p className="text-xs text-red-500 mt-1">数据加载失败</p>
         </div>
       )
     }
@@ -91,25 +92,34 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       </span>
     )
 
+    const formatTime = (timeStr: string) => {
+      if (!timeStr || timeStr === '未知') return '未知'
+      // 只显示时间部分，去掉日期
+      const timePart = timeStr.split(' ')[1]
+      return timePart ? timePart.substring(0, 5) : timeStr // 只显示HH:MM
+    }
+
     const details = isAvailable ? (
-      <div className="mt-3 text-center">
-        <p className="font-semibold text-green-700">空闲中</p>
+      <div className="mt-2 text-center">
+        <p className="text-xs font-semibold text-green-700">空闲中</p>
       </div>
     ) : (
-      <div className="mt-2 text-sm space-y-1.5 text-gray-600">
-        <p><strong>已充:</strong> {status.usedmin || 0}分钟</p>
-        <p><strong>消费:</strong> {status.usedfee?.toFixed(2) || '0.00'}元</p>
-        <p><strong>功率:</strong> {status.powerFee?.billingPower || '未知'}</p>
-        <p className="text-xs truncate pt-1">
-          <strong>开始:</strong> {status.chargingBeginTime || '未知'}
-        </p>
+      <div className="mt-1 text-xs space-y-0.5 text-gray-600">
+        <div className="flex justify-between">
+          <span><strong>已充:</strong> {status.usedmin || 0}分钟</span>
+          <span><strong>消费:</strong> {status.usedfee?.toFixed(2) || '0.00'}元</span>
+        </div>
+        <div className="flex justify-between">
+          <span><strong>功率:</strong> {status.powerFee?.billingPower || '未知'}</span>
+          <span><strong>开始:</strong> {formatTime(status.chargingBeginTime || '未知')}</span>
+        </div>
       </div>
     )
 
     return (
-      <div key={outlet.outletId} className={`rounded-xl p-4 border transition-all ${cardClasses}`}>
+      <div key={outlet.outletId} className={`rounded-xl p-3 border transition-all h-28 ${cardClasses}`}>
         <div className="flex justify-between items-center">
-          <h3 className="text-base font-semibold text-gray-800">{serial}</h3>
+          <h3 className="text-sm font-semibold text-gray-800 truncate mr-2" title={`插座 ${outletName}`}>{serial}</h3>
           {statusBadge}
         </div>
         {details}
