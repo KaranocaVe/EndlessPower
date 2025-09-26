@@ -157,13 +157,13 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       <div className="space-y-1">
         {/* 主要信息：时间和费用 */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1 flex-1 min-w-0">
-            <span className="text-lg font-bold text-blue-600 dark:text-blue-400 truncate">{status.usedmin || 0}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">分钟</span>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{status.usedmin || 0}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">分钟</span>
           </div>
-          <div className="flex items-center gap-1 flex-1 min-w-0 justify-end">
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">¥</span>
-            <span className="text-lg font-bold text-green-600 dark:text-green-400 truncate">{status.usedfee?.toFixed(2) || '0.00'}</span>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className="text-xs text-gray-500 dark:text-gray-400">¥</span>
+            <span className="text-lg font-bold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}</span>
           </div>
         </div>
         {/* 次要信息：功率和开始时间 */}
