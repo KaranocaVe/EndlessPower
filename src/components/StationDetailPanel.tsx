@@ -7,7 +7,6 @@ import { useErrorStore } from '../store/errorStore'
 import LoadingSpinner from './LoadingSpinner'
 import StarOutlined from '@mui/icons-material/StarOutlined'
 import StarBorderOutlined from '@mui/icons-material/StarBorderOutlined'
-import CloseOutlined from '@mui/icons-material/CloseOutlined'
 
 interface StationDetailPanelProps {
   station: Station | null
