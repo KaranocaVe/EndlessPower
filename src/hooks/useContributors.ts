@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { fetchContributors, fetchRepoStats, GitHubContributor } from '../utils/github'
 
 export interface RepoStats {
@@ -17,7 +17,7 @@ export const useContributors = () => {
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
-  const loadContributors = async (force = false) => {
+  const loadContributors = useCallback(async (force = false) => {
     // 防重复请求，除非强制刷新
     if (!force && (isLoading || (contributors.length > 0 && lastUpdated && Date.now() - lastUpdated.getTime() < 5 * 60 * 1000))) {
       return
@@ -43,12 +43,12 @@ export const useContributors = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [isLoading, contributors.length, lastUpdated])
 
   // 组件挂载时自动加载
   useEffect(() => {
     loadContributors()
-  }, [])
+  }, [loadContributors])
 
   // 计算统计信息
   const stats = {

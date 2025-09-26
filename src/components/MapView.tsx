@@ -137,7 +137,7 @@ const MapView: React.FC = () => {
           
           // 刷新该位置的充电站
           await refreshStations(latitude, longitude)
-        } catch (error) {
+        } catch {
           showError('刷新充电站数据时出错')
         } finally {
           setIsLocating(false)

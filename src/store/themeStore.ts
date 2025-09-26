@@ -67,7 +67,7 @@ export const useThemeStore = create<ThemeState>()(
         
         // 创建新的媒体查询监听器
         mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        mediaQueryListener = (e: MediaQueryListEvent) => {
+        mediaQueryListener = (_e: MediaQueryListEvent) => {
           const { theme } = get()
           // 只有在自动模式下才响应系统主题变化
           if (theme === 'auto') {

@@ -24,7 +24,7 @@ const defaultSettings = {
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       ...defaultSettings,
 
       setAutoRefresh: (enabled: boolean) => set({ autoRefresh: enabled }),
@@ -40,7 +40,7 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'app-settings',
       // 迁移逻辑：为现有用户优化刷新间隔
-      migrate: (persistedState: any, version: number) => {
+      migrate: (persistedState: any, _version: number) => {
         if (persistedState && persistedState.refreshInterval >= 30) {
           // 如果现有用户的刷新间隔 >= 30秒，建议改为5秒以提高数据准确性
           persistedState.refreshInterval = 5
