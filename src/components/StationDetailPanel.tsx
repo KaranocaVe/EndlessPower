@@ -126,14 +126,22 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
         <p className="text-xs font-semibold text-green-700 dark:text-green-400">空闲中</p>
       </div>
     ) : (
-      <div className="space-y-0.5">
-        <div className="flex justify-between text-xs">
-          <span className="text-gray-600 dark:text-gray-400">已充: <span className="font-semibold text-blue-600 dark:text-blue-400">{status.usedmin || 0}分钟</span></span>
-          <span className="text-gray-600 dark:text-gray-400">消费: <span className="font-semibold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}元</span></span>
+      <div className="space-y-1">
+        {/* 主要信息：时间和费用 */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{status.usedmin || 0}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">分钟</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-gray-500 dark:text-gray-400">¥</span>
+            <span className="text-lg font-bold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}</span>
+          </div>
         </div>
-        <div className="flex justify-between text-xs">
-          <span className="text-gray-600 dark:text-gray-400">功率: <span className="font-semibold text-orange-600 dark:text-orange-400">{status.powerFee?.billingPower || '未知'}</span></span>
-          <span className="text-gray-600 dark:text-gray-400">开始: <span className="font-semibold text-purple-600 dark:text-purple-400">{formatTime(status.chargingBeginTime || '未知')}</span></span>
+        {/* 次要信息：功率和开始时间 */}
+        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+          <span className="font-medium">{status.powerFee?.billingPower || '未知'}</span>
+          <span>{formatTime(status.chargingBeginTime || '未知')}</span>
         </div>
       </div>
     )
