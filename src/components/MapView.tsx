@@ -193,6 +193,7 @@ const MapView: React.FC = () => {
         zoom={16}
         className="w-full h-full"
         zoomControl={false}
+        attributionControl={false}
         ref={mapRef}
       >
         <TileLayer
@@ -302,39 +303,6 @@ const MapView: React.FC = () => {
         onClose={() => setSelectedStation(null)}
       />
 
-      {/* Zoom Control */}
-      <div className="leaflet-control-zoom leaflet-bar leaflet-control absolute bottom-6 left-6 z-[999]">
-        <a
-          className="leaflet-control-zoom-in"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            if (mapRef.current) {
-              mapRef.current.zoomIn()
-            }
-          }}
-          title="放大"
-          role="button"
-          aria-label="放大"
-        >
-          +
-        </a>
-        <a
-          className="leaflet-control-zoom-out"
-          href="#"
-          onClick={(e) => {
-            e.preventDefault()
-            if (mapRef.current) {
-              mapRef.current.zoomOut()
-            }
-          }}
-          title="缩小"
-          role="button"
-          aria-label="缩小"
-        >
-          −
-        </a>
-      </div>
     </div>
   )
 }
