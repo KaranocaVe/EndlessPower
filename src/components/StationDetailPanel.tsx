@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './StationDetailPanel.css'
 import { Station, Outlet, OutletStatus } from '../types/station'
 import { fetchStationOutlets, fetchOutletStatus } from '../utils/api'
@@ -18,6 +18,11 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   const [outlets, setOutlets] = useState<Outlet[]>([])
   const [outletStatuses, setOutletStatuses] = useState<(OutletStatus | null)[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [shouldScrollTitle, setShouldScrollTitle] = useState(false)
+  const [shouldScrollAddress, setShouldScrollAddress] = useState(false)
+  
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const addressRef = useRef<HTMLParagraphElement>(null)
   
   const { isFavorite, addFavorite, removeFavorite, canAddMore } = useFavoritesStore()
   const { showError } = useErrorStore()
@@ -52,6 +57,30 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
     loadStationDetails()
   }, [station, showError])
+
+  // 检测文本是否需要滚动
+  useEffect(() => {
+    if (!station) return
+
+    const checkOverflow = () => {
+      // 检测标题是否溢出
+      if (titleRef.current) {
+        const isOverflowing = titleRef.current.scrollWidth > titleRef.current.clientWidth
+        setShouldScrollTitle(isOverflowing)
+      }
+
+      // 检测地址是否溢出  
+      if (addressRef.current) {
+        const isOverflowing = addressRef.current.scrollWidth > addressRef.current.clientWidth
+        setShouldScrollAddress(isOverflowing)
+      }
+    }
+
+    // 延迟检测，确保DOM已渲染
+    const timer = setTimeout(checkOverflow, 100)
+    
+    return () => clearTimeout(timer)
+  }, [station])
 
 
   const handleFavoriteToggle = () => {
@@ -250,18 +279,19 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           <div className="flex-1 min-w-0">
             <div className="overflow-hidden">
               <h2 
+                ref={titleRef}
                 id="station-title"
                 className={`text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap ${
-                  station.stationName.length > 12 ? 'animate-marquee-scroll' : ''
+                  shouldScrollTitle ? 'animate-marquee-scroll' : ''
                 }`}
                 title={station.stationName}
                 onMouseEnter={(e) => {
-                  if (station.stationName.length > 12) {
+                  if (shouldScrollTitle) {
                     e.currentTarget.style.animationPlayState = 'paused'
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (station.stationName.length > 12) {
+                  if (shouldScrollTitle) {
                     e.currentTarget.style.animationPlayState = 'running'
                   }
                 }}
@@ -271,17 +301,18 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             </div>
             <div className="overflow-hidden mt-1">
               <p 
+                ref={addressRef}
                 className={`text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap ${
-                  station.address.length > 20 ? 'animate-marquee-scroll' : ''
+                  shouldScrollAddress ? 'animate-marquee-scroll' : ''
                 }`}
                 title={station.address}
                 onMouseEnter={(e) => {
-                  if (station.address.length > 20) {
+                  if (shouldScrollAddress) {
                     e.currentTarget.style.animationPlayState = 'paused'
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (station.address.length > 20) {
+                  if (shouldScrollAddress) {
                     e.currentTarget.style.animationPlayState = 'running'
                   }
                 }}
