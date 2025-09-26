@@ -1,5 +1,6 @@
 import React from 'react'
 import { useVisitorsCount } from '../hooks/useVisitorsCount'
+import GroupIcon from '@mui/icons-material/Group'
 
 const VisitorsCounter: React.FC = () => {
   const { visitorsCount, isConnected } = useVisitorsCount()
@@ -25,10 +26,8 @@ const VisitorsCounter: React.FC = () => {
           </span>
         </div>
 
-        {/* 用户图标 - 使用简单的emoji */}
-        <span className="text-sm" role="img" aria-label="用户">
-          👥
-        </span>
+        {/* 用户图标 */}
+        <GroupIcon className="w-4 h-4 text-gray-600 dark:text-gray-300" />
 
         {/* 在线文本 */}
         <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">

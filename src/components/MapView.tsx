@@ -10,6 +10,8 @@ import { getColorForAvailability } from '../utils/api'
 import SearchBar from './SearchBar'
 import StationDetailPanel from './StationDetailPanel'
 import LoadingSpinner from './LoadingSpinner'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import MyLocationIcon from '@mui/icons-material/MyLocation'
 
 const MAP_CENTER: [number, number] = [30.754365, 103.936107]
 
@@ -249,45 +251,14 @@ const MapView: React.FC = () => {
         onClick={handleRefresh}
         className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-6 w-6" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor" 
-          strokeWidth="2"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-          />
-        </svg>
+        <RefreshIcon className="h-6 w-6" />
       </button>
 
       <button
         onClick={handleLocateUser}
         className="absolute bottom-6 right-24 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-6 w-6" 
-          fill="none" 
-          viewBox="0 0 24 24" 
-          stroke="currentColor" 
-          strokeWidth="2"
-        >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" 
-          />
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" 
-          />
-        </svg>
+        <MyLocationIcon className="h-6 w-6" />
       </button>
 
       {/* Loading Overlay */}

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useThemeStore } from '../store/themeStore'
+import WbSunnyIcon from '@mui/icons-material/WbSunny'
+import NightlightIcon from '@mui/icons-material/Nightlight'
+import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
 
 interface SettingsPanelProps {
   isOpen: boolean
@@ -179,20 +182,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                 title={theme === 'auto' ? '当前跟随系统' : (isDark ? '切换到亮色模式' : '切换到暗色模式')}
               >
                 {theme === 'auto' ? (
-                  // 自动图标
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364-.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
+                  <SettingsBrightnessIcon className="w-6 h-6" />
                 ) : isDark ? (
-                  // 太阳图标 (亮色模式)
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
+                  <WbSunnyIcon className="w-6 h-6" />
                 ) : (
-                  // 月亮图标 (暗色模式)
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
+                  <NightlightIcon className="w-6 h-6" />
                 )}
               </button>
             </div>
