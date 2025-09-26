@@ -273,7 +273,7 @@ const MapView: React.FC = () => {
 
       <button
         onClick={handleWeChatScan}
-        className="absolute bottom-6 right-42 z-[999] bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
+        className="absolute bottom-6 right-40 z-[999] bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
         title="微信扫一扫"
       >
         <QrCodeScannerOutlined className="h-6 w-6" />
