@@ -151,7 +151,6 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       <div key={outlet.outletId} className={`rounded-xl p-2.5 border transition-all duration-300 h-24 shadow-md hover:shadow-lg ${cardClasses}`}>
         <div className="flex justify-between items-center gap-1.5 mb-1.5">
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
-            <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
             <div className="flex-1 min-w-0 overflow-hidden relative">
               <div 
                 className={`w-7 h-7 rounded-full flex items-center justify-center border-2 ${
