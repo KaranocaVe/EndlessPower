@@ -23,6 +23,7 @@ const MapView: React.FC = () => {
   
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
+  const [isLocating, setIsLocating] = useState(false)
   const mapRef = useRef<L.Map | null>(null)
   
   const { 
@@ -114,23 +115,36 @@ const MapView: React.FC = () => {
       return
     }
 
+    if (isLocating) {
+      return // 防止重复请求
+    }
+
+    setIsLocating(true)
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        const { latitude, longitude } = position.coords
-        const location: [number, number] = [latitude, longitude]
-        
-        setUserLocation(location)
-        setStoreUserLocation(location)
-        
-        // 移动地图到用户位置
-        if (mapRef.current) {
-          mapRef.current.setView(location, 16)
+        try {
+          const { latitude, longitude } = position.coords
+          const location: [number, number] = [latitude, longitude]
+          
+          setUserLocation(location)
+          setStoreUserLocation(location)
+          
+          // 移动地图到用户位置
+          if (mapRef.current) {
+            mapRef.current.setView(location, 16)
+          }
+          
+          // 刷新该位置的充电站
+          await refreshStations(latitude, longitude)
+        } catch (error) {
+          showError('刷新充电站数据时出错')
+        } finally {
+          setIsLocating(false)
         }
-        
-        // 刷新该位置的充电站
-        await refreshStations(latitude, longitude)
       },
       (error) => {
+        setIsLocating(false)
         switch(error.code) {
           case error.PERMISSION_DENIED:
             showError('用户拒绝了地理位置请求')
