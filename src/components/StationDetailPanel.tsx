@@ -7,6 +7,7 @@ import { useErrorStore } from '../store/errorStore'
 import LoadingSpinner from './LoadingSpinner'
 import StarOutlined from '@mui/icons-material/StarOutlined'
 import StarBorderOutlined from '@mui/icons-material/StarBorderOutlined'
+import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
 
 interface StationDetailPanelProps {
   station: Station | null
@@ -64,6 +65,15 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
         return
       }
       addFavorite(station.stationId)
+    }
+  }
+
+  const handleWeChatScan = () => {
+    try {
+      // 尝试打开微信扫一扫
+      window.location.href = 'weixin://scanqrcode'
+    } catch (error) {
+      console.warn('无法打开微信扫一扫，可能是设备不支持或未安装微信', error)
     }
   }
 
@@ -242,6 +252,14 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           </div>
           
           <div className="flex items-center space-x-1 ml-4">
+            <button
+              onClick={handleWeChatScan}
+              className="text-green-500 hover:text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 p-2 rounded-full transition-all duration-200"
+              title="微信扫一扫"
+            >
+              <QrCodeScannerOutlined className="h-6 w-6" />
+            </button>
+            
             <button
               onClick={handleFavoriteToggle}
               className={`p-2 rounded-full transition-colors ${
