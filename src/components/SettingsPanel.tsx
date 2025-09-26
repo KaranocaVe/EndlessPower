@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useThemeStore } from '../store/themeStore'
-import { getAppVersion, formatVersionDisplay, getShortGitCommit, getBuildEnv } from '../utils/version'
+import { formatVersionDisplay, getShortGitCommit, getBuildEnv } from '../utils/version'
 import WbSunnyOutlined from '@mui/icons-material/WbSunnyOutlined'
 import NightlightOutlined from '@mui/icons-material/NightlightOutlined'
 import SettingsBrightnessOutlined from '@mui/icons-material/SettingsBrightnessOutlined'

@@ -33,7 +33,7 @@ export default defineConfig({
       manifest: {
         name: 'EndlessPower 充电桩查询',
         short_name: 'EndlessPower',
-        description: '闪开来电充电桩地图查询应用',
+        description: '智能充电桩查询应用，实时显示附近充电站状态，支持充电桩导航、收藏管理，为新能源汽车用户提供便捷充电服务。',
         version: version,
         theme_color: '#3B82F6',
         background_color: '#F9FAFB',
@@ -41,6 +41,13 @@ export default defineConfig({
         orientation: 'portrait',
         scope: '/',
         start_url: '/',
+        lang: 'zh-CN',
+        categories: ['lifestyle', 'utilities', 'travel', 'navigation'],
+        keywords: [
+          '充电桩', '充电站', '电动汽车充电', '新能源汽车', 
+          '充电桩查询', '充电桩地图', '闪开来电', 'EndlessPower',
+          '实时充电状态', '附近充电桩', '充电桩导航', 'EV充电'
+        ],
         icons: [
           {
             src: 'pwa-192x192.svg',

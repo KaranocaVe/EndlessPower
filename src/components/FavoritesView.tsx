@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import { useFavoritesStore } from '../store/favoritesStore'
+import { useSEO } from '../hooks/useSEO'
 import { useStationStore } from '../store/stationStore'
 import FavoriteStationCard from './FavoriteStationCard'
 
 const REFRESH_COOLDOWN = 15000
 
 const FavoritesView: React.FC = () => {
+  // SEO优化
+  useSEO('favorites')
+  
   const [lastRefresh, setLastRefresh] = useState(0)
   const { favoriteIds, isPinned } = useFavoritesStore()
   const { stations } = useStationStore()

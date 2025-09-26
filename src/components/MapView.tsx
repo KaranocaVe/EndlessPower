@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Tooltip } from 'react-leaflet'
+import { useSEO } from '../hooks/useSEO'
 import L from 'leaflet'
 import { Station } from '../types/station'
 import { useStationStore } from '../store/stationStore'
@@ -17,6 +18,9 @@ import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
 const MAP_CENTER: [number, number] = [30.754365, 103.936107]
 
 const MapView: React.FC = () => {
+  // SEO优化
+  useSEO('home')
+  
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null)
   const mapRef = useRef<L.Map | null>(null)
