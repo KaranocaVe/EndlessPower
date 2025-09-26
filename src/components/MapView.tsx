@@ -12,6 +12,7 @@ import StationDetailPanel from './StationDetailPanel'
 import LoadingSpinner from './LoadingSpinner'
 import RefreshOutlined from '@mui/icons-material/RefreshOutlined'
 import MyLocationOutlined from '@mui/icons-material/MyLocationOutlined'
+import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
 
 const MAP_CENTER: [number, number] = [30.754365, 103.936107]
 
@@ -149,6 +150,15 @@ const MapView: React.FC = () => {
     )
   }
 
+  const handleWeChatScan = () => {
+    try {
+      // 尝试打开微信扫一扫
+      window.location.href = 'weixin://scanqrcode'
+    } catch (error) {
+      console.warn('无法打开微信扫一扫，可能是设备不支持或未安装微信', error)
+    }
+  }
+
   const getStationMarkerColor = (station: Station) => {
     if (!station.freeNum || !station.switchType || station.switchType === 0) {
       return '#9ca3af' // gray for unknown status
@@ -259,6 +269,14 @@ const MapView: React.FC = () => {
         className="absolute bottom-6 right-24 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
         <MyLocationOutlined className="h-6 w-6" />
+      </button>
+
+      <button
+        onClick={handleWeChatScan}
+        className="absolute bottom-6 right-42 z-[999] bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
+        title="微信扫一扫"
+      >
+        <QrCodeScannerOutlined className="h-6 w-6" />
       </button>
 
       {/* Loading Overlay */}
