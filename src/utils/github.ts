@@ -153,37 +153,4 @@ export const formatContributions = (count: number): string => {
   return count.toString()
 }
 
-/**
- * 获取贡献者等级标识
- */
-export const getContributorBadge = (contributions: number): { 
-  label: string
-  color: string 
-  icon: string 
-} => {
-  if (contributions >= 100) {
-    return {
-      label: '核心贡献者',
-      color: 'bg-gradient-to-r from-purple-500 to-pink-500',
-      icon: '👑'
-    }
-  } else if (contributions >= 50) {
-    return {
-      label: '高级贡献者',
-      color: 'bg-gradient-to-r from-blue-500 to-indigo-500',
-      icon: '🌟'
-    }
-  } else if (contributions >= 10) {
-    return {
-      label: '活跃贡献者',
-      color: 'bg-gradient-to-r from-green-500 to-emerald-500',
-      icon: '🚀'
-    }
-  } else {
-    return {
-      label: '贡献者',
-      color: 'bg-gradient-to-r from-gray-500 to-gray-600',
-      icon: '💡'
-    }
-  }
-}
+// 已移除复杂的等级系统，所有贡献者平等展示

@@ -317,28 +317,27 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
 
               {contributorsLoading ? (
                 <div className="flex justify-center items-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 dark:border-blue-400"></div>
                 </div>
               ) : (
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {contributors.slice(0, 5).map((contributor, index) => (
+                <div className="space-y-2 max-h-56 overflow-y-auto">
+                  {contributors.slice(0, 8).map((contributor) => (
                     <ContributorCard 
                       key={contributor.id} 
-                      contributor={contributor} 
-                      rank={index + 1} 
+                      contributor={contributor}
                     />
                   ))}
                   
-                  {contributors.length > 5 && (
+                  {contributors.length > 8 && (
                     <div className="text-center py-2">
                       <div className="text-xs text-gray-500 dark:text-gray-400">
-                        还有 {contributors.length - 5} 位贡献者...
+                        还有 {contributors.length - 8} 位贡献者
                       </div>
                     </div>
                   )}
                   
                   {lastUpdated && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 text-center pt-2 border-t border-gray-200 dark:border-gray-700">
                       最后更新: {lastUpdated.toLocaleString()}
                     </div>
                   )}
