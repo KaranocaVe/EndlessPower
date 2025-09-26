@@ -155,10 +155,18 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
             <div className="flex-1 min-w-0 overflow-hidden relative">
               <div 
-                className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
+                className={`w-7 h-7 rounded-full flex items-center justify-center border-2 ${
+                  isAvailable 
+                    ? 'bg-green-100 dark:bg-green-900/30 border-green-200 dark:border-green-700/50' 
+                    : 'bg-blue-100 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700/50'
+                }`}
                 title={`插座 ${outletName}`}
               >
-                <span className="text-xs font-bold text-gray-700 dark:text-gray-200">
+                <span className={`text-sm font-bold ${
+                  isAvailable 
+                    ? 'text-green-700 dark:text-green-300' 
+                    : 'text-blue-700 dark:text-blue-300'
+                }`}>
                   {serial}
                 </span>
               </div>
