@@ -204,6 +204,25 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     )
   }
 
+  // ESC键关闭和焦点管理
+  useEffect(() => {
+    if (station) {
+      document.body.style.overflow = 'hidden'
+      
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose()
+        }
+      }
+      document.addEventListener('keydown', handleEscape)
+      
+      return () => {
+        document.body.style.overflow = 'unset'
+        document.removeEventListener('keydown', handleEscape)
+      }
+    }
+  }, [station, onClose])
+
   if (!station) return null
 
   return (
@@ -212,6 +231,9 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
         station ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
       }`}
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="station-title"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -228,6 +250,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           <div className="flex-1 min-w-0">
             <div className="overflow-hidden">
               <h2 
+                id="station-title"
                 className={`text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap ${
                   station.stationName.length > 12 ? 'animate-marquee-scroll' : ''
                 }`}
@@ -271,19 +294,22 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           <div className="flex items-center space-x-1 ml-4">
             <button
               onClick={handleWeChatScan}
-              className="text-green-500 hover:text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 p-2 rounded-full transition-all duration-200"
-              title="微信扫一扫"
+              className="text-green-500 hover:text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 p-3 rounded-full transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="微信扫一扫"
+              type="button"
             >
               <QrCodeScannerOutlined className="h-6 w-6" />
             </button>
             
             <button
               onClick={handleFavoriteToggle}
-              className={`p-2 rounded-full transition-colors ${
+              className={`p-3 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
                 isFavorite(station.stationId)
                   ? 'text-yellow-400 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
                   : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
               }`}
+              aria-label={isFavorite(station.stationId) ? '取消收藏' : '添加收藏'}
+              type="button"
             >
               {isFavorite(station.stationId) ? (
                 <StarOutlined className="h-6 w-6" />
@@ -294,7 +320,9 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             
             <button
               onClick={onClose}
-              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-2 rounded-full hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-200"
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-3 rounded-full hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="关闭充电站详情"
+              type="button"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 

@@ -213,12 +213,13 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
           <div className="flex items-center gap-1 ml-2">
             <button
               onClick={handleTogglePin}
-              className={`p-1.5 rounded-full transition-colors ${
+              className={`p-2 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
                 isPinned(station.stationId)
                   ? 'text-yellow-500 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'
                   : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'
               }`}
-              title={isPinned(station.stationId) ? '取消置顶' : '置顶'}
+              aria-label={isPinned(station.stationId) ? '取消置顶' : '置顶'}
+              type="button"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -238,8 +239,9 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
             
             <button
               onClick={handleRemoveFavorite}
-              className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
-              title="移除收藏"
+              className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="移除收藏"
+              type="button"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -278,7 +280,10 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
           <div className="flex justify-center mb-4">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors min-h-[44px]"
+              aria-label={isExpanded ? '收起详情' : '展开详情'}
+              aria-expanded={isExpanded}
+              type="button"
             >
               {isExpanded ? (
                 <>

@@ -39,8 +39,23 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true)
+      // 焦点陷阱：防止背景滚动
+      document.body.style.overflow = 'hidden'
+      
+      // ESC键关闭
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose()
+        }
+      }
+      document.addEventListener('keydown', handleEscape)
+      
+      return () => {
+        document.body.style.overflow = 'unset'
+        document.removeEventListener('keydown', handleEscape)
+      }
     }
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   if (!isOpen) return null
 
@@ -48,6 +63,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
     <div
       className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 z-[2000]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-title"
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -67,11 +85,12 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">设置</h2>
+          <h2 id="settings-title" className="text-xl font-semibold text-gray-800 dark:text-gray-200">设置</h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-3 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="关闭设置"
+            type="button"
           >
             <svg
               className="w-6 h-6"
@@ -285,10 +304,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                 <button
                   onClick={refresh}
                   disabled={contributorsLoading}
-                  className="p-1 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50"
-                  title="刷新贡献者信息"
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50 rounded-lg min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-label="刷新贡献者信息"
+                  type="button"
                 >
-                  <RefreshOutlined className={`w-4 h-4 ${contributorsLoading ? 'animate-spin' : ''}`} />
+                  <RefreshOutlined className={`w-5 h-5 ${contributorsLoading ? 'animate-spin' : ''}`} />
                 </button>
               </div>
 

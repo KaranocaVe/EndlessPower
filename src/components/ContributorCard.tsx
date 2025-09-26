@@ -11,10 +11,11 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
   }
 
   return (
-    <div
-      className="cursor-pointer group"
+    <button 
+      className="cursor-pointer group p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
       onClick={handleClick}
-      title={`${contributor.login} - 查看GitHub主页`}
+      aria-label={`查看${contributor.login}的GitHub主页`}
+      type="button"
     >
       <img
         src={contributor.avatar_url}
@@ -25,7 +26,7 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
           target.src = `https://ui-avatars.com/api/?name=${contributor.login}&background=6B7280&color=fff&size=40`
         }}
       />
-    </div>
+    </button>
   )
 }
 

@@ -263,22 +263,28 @@ const MapView: React.FC = () => {
       {/* Control Buttons */}
       <button
         onClick={handleRefresh}
-        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
+        className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
+        aria-label="刷新充电站数据"
+        type="button"
       >
         <RefreshOutlined className="h-6 w-6" />
       </button>
 
       <button
         onClick={handleLocateUser}
-        className="absolute bottom-6 right-20 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
+        disabled={isLocating}
+        className="absolute bottom-6 right-20 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-w-[56px] min-h-[56px] flex items-center justify-center"
+        aria-label={isLocating ? "定位中..." : "定位当前位置"}
+        type="button"
       >
         <MyLocationOutlined className="h-6 w-6" />
       </button>
 
       <button
         onClick={handleWeChatScan}
-        className="absolute bottom-6 right-36 z-[999] bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
-        title="微信扫一扫"
+        className="absolute bottom-6 right-36 z-[999] bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
+        aria-label="微信扫一扫"
+        type="button"
       >
         <QrCodeScannerOutlined className="h-6 w-6" />
       </button>

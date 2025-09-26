@@ -29,12 +29,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           <button
             onClick={() => onViewChange('map')}
             className={clsx(
-              'flex items-center justify-center p-2 rounded-lg transition-all duration-200',
+              'flex items-center justify-center p-3 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px]',
               currentView === 'map'
                 ? 'bg-blue-500 text-white shadow-md'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-white/70 dark:hover:bg-gray-700/50'
             )}
-            title="地图"
+            aria-label="查看地图"
+            aria-pressed={currentView === 'map'}
+            type="button"
           >
             <MapOutlined className="w-5 h-5" />
           </button>
@@ -43,12 +45,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           <button
             onClick={() => onViewChange('favorites')}
             className={clsx(
-              'flex items-center justify-center p-2 rounded-lg transition-all duration-200',
+              'flex items-center justify-center p-3 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px]',
               currentView === 'favorites'
                 ? 'bg-blue-500 text-white shadow-md'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-white/70 dark:hover:bg-gray-700/50'
             )}
-            title="收藏"
+            aria-label="查看收藏"
+            aria-pressed={currentView === 'favorites'}
+            type="button"
           >
             <FavoriteBorderOutlined className="w-5 h-5" />
           </button>
@@ -56,8 +60,9 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           {/* 设置按钮 */}
           <button
             onClick={() => setShowSettings(true)}
-            className="flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-white/70 dark:hover:bg-gray-700/50 transition-all duration-200"
-            title="设置"
+            className="flex items-center justify-center p-3 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-white/70 dark:hover:bg-gray-700/50 transition-all duration-200 min-w-[44px] min-h-[44px]"
+            aria-label="打开设置"
+            type="button"
           >
             <SettingsOutlined className="w-5 h-5" />
           </button>
