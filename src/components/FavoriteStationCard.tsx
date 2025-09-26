@@ -80,12 +80,44 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
+    
     // 优先使用状态API中的插座名称，这是最准确的名称
-    const outletName = status?.outlet?.vOutletName?.replace('插座', '') 
-      || outlet.vOutletName?.replace('插座', '') 
+    let outletName = status?.outlet?.vOutletName?.replace('插座', '').trim()
+      || outlet.vOutletName?.replace('插座', '').trim()
       || outlet.outletNo 
       || 'N/A'
-    const serial = `插座 ${outletName.length > 10 ? outletName.substring(0, 10) + '...' : outletName}`
+    
+    // 如果名称为空，使用序号
+    if (!outletName || outletName === '') {
+      outletName = outlet.outletSerialNo?.toString() || outlet.outletNo || 'N/A'
+    }
+    
+    // 智能处理显示文本 - 完整显示短名称，适度截断长名称
+    const getDisplayName = (name: string) => {
+      if (name.length <= 8) {
+        // 短名称直接显示
+        return name
+      } else if (name.length <= 15) {
+        // 中等长度名称，尝试智能截断
+        const match = name.match(/^(\d+)/)
+        if (match) {
+          // 如果是数字开头，保留数字+简短描述
+          return match[1] + (name.length > match[1].length ? '号' : '')
+        }
+        return name
+      } else {
+        // 长名称截断，但保证不会出现"2.."这种情况
+        const match = name.match(/^(\d+)/)
+        if (match && match[1].length < 10) {
+          // 数字开头且数字部分不太长，保留数字+号
+          return match[1] + '号'
+        }
+        return name.substring(0, 6) + '...'
+      }
+    }
+    
+    const displayName = getDisplayName(outletName)
+    const serial = `插座 ${displayName}`
     
     if (!status || !status.outlet) {
       return (
@@ -155,42 +187,43 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
   }
 
   return (
-    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105">
-      <div className="p-6">
+    <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] flex flex-col h-full">
+      <div className="p-4 md:p-5 flex-1">
         {/* Header */}
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-3">
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
+            <div className="flex items-start gap-2 mb-1">
+              <h2 className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate leading-tight">
                 {station.stationName}
               </h2>
               {isPinned(station.stationId) && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200">
-                  <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 flex-shrink-0">
+                  <svg className="w-2.5 h-2.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                   置顶
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 truncate">
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300 truncate leading-relaxed">
               {station.address}
             </p>
           </div>
           
-          <div className="flex items-center gap-1 ml-2">
+          <div className="flex items-start gap-1 ml-2 flex-shrink-0">
             <button
               onClick={handleTogglePin}
-              className={`p-1.5 rounded-full transition-colors ${
+              className={`p-1.5 md:p-2 rounded-full transition-colors min-w-[36px] min-h-[36px] md:min-w-[44px] md:min-h-[44px] flex items-center justify-center ${
                 isPinned(station.stationId)
                   ? 'text-yellow-500 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'
                   : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'
               }`}
-              title={isPinned(station.stationId) ? '取消置顶' : '置顶'}
+              aria-label={isPinned(station.stationId) ? '取消置顶' : '置顶'}
+              type="button"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5" 
+                className="h-4 w-4 md:h-5 md:w-5" 
                 fill={isPinned(station.stationId) ? 'currentColor' : 'none'}
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
@@ -206,12 +239,13 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
             
             <button
               onClick={handleRemoveFavorite}
-              className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1.5 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
-              title="移除收藏"
+              className="text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 p-1.5 md:p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors min-w-[36px] min-h-[36px] md:min-w-[44px] md:min-h-[44px] flex items-center justify-center"
+              aria-label="移除收藏"
+              type="button"
             >
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5" 
+                className="h-4 w-4 md:h-5 md:w-5" 
                 viewBox="0 0 20 20" 
                 fill="currentColor"
               >
@@ -225,40 +259,43 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
           </div>
         </div>
 
-        {/* Summary */}
-        <div className="grid grid-cols-3 gap-2 text-center text-sm text-gray-600 dark:text-gray-300 mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+        {/* Summary - 紧凑版 */}
+        <div className="grid grid-cols-3 gap-2 text-center text-xs md:text-sm text-gray-600 dark:text-gray-300 mb-3 p-2.5 md:p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <div>
-            <p className="font-semibold text-lg text-gray-800 dark:text-gray-200">{summary.total}</p>
+            <p className="font-semibold text-base md:text-lg text-gray-800 dark:text-gray-200">{summary.total}</p>
             <p className="text-xs">总插座</p>
           </div>
           <div>
-            <p className="font-semibold text-lg text-green-600 dark:text-green-400">{summary.available}</p>
+            <p className="font-semibold text-base md:text-lg text-green-600 dark:text-green-400">{summary.available}</p>
             <p className="text-xs">可用</p>
           </div>
           <div>
-            <p className="font-semibold text-lg text-blue-600 dark:text-blue-400">{summary.occupied}</p>
+            <p className="font-semibold text-base md:text-lg text-blue-600 dark:text-blue-400">{summary.occupied}</p>
             <p className="text-xs">占用</p>
           </div>
         </div>
 
-        {/* 展开/收起按钮 */}
+        {/* 展开/收起按钮 - 紧凑版 */}
         {outlets.length > 0 && (
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs md:text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors min-h-[36px] md:min-h-[44px]"
+              aria-label={isExpanded ? '收起详情' : '展开详情'}
+              aria-expanded={isExpanded}
+              type="button"
             >
               {isExpanded ? (
                 <>
                   <span>收起详情</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" />
                   </svg>
                 </>
               ) : (
                 <>
                   <span>展开详情</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                   </svg>
                 </>
@@ -269,17 +306,17 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
 
         {/* Outlets Grid */}
         {isExpanded && (
-          <div className="space-y-3">
+          <div className="mt-3 space-y-3">
             {isLoading ? (
-              <div className="flex justify-center py-8">
+              <div className="flex justify-center py-6 md:py-8">
                 <LoadingSpinner text="加载中..." />
               </div>
             ) : outlets.length === 0 ? (
-              <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
+              <p className="text-center text-xs md:text-sm text-gray-500 dark:text-gray-400 py-3 md:py-4">
                 该充电站暂无插座信息。
               </p>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-3">
                 {outlets
                   .sort((a, b) => a.outletSerialNo - b.outletSerialNo)
                   .map((outlet, index) => renderOutletCard(outlet, outletStatuses[index]))

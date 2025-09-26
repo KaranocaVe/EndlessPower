@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useStationStore } from '../store/stationStore'
 import { Station } from '../types/station'
+import CancelOutlined from '@mui/icons-material/CancelOutlined'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
 
 interface SearchBarProps {
   onStationSelect?: (station: Station) => void
@@ -92,62 +94,53 @@ const SearchBar: React.FC<SearchBarProps> = ({ onStationSelect }) => {
           onClick={handleInputClick}
           placeholder={isUsingSimulatedData ? "搜索充电站（模拟数据）..." : "搜索充电站..."}
           className="w-full h-12 pl-12 pr-24 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 shadow-xl focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400 dark:focus:ring-blue-500/50 dark:focus:border-blue-500 outline-none transition-all duration-200 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-gray-100"
+          aria-label="搜索充电站"
+          role="searchbox"
+          aria-expanded={showDropdown}
+          aria-haspopup="listbox"
         />
         
         <div className="absolute inset-y-0 right-0 flex items-center">
           {searchKeyword && (
             <button
               onClick={clearSearch}
-              className="h-full px-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="h-full px-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors min-w-[44px] flex items-center justify-center"
+              aria-label="清除搜索"
+              type="button"
             >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path 
-                  fillRule="evenodd" 
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
-                  clipRule="evenodd" 
-                />
-              </svg>
+              <CancelOutlined className="h-5 w-5" />
             </button>
           )}
           
           <button
             onClick={handleSearch}
-            className="h-full px-4 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="h-full px-4 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors min-w-[44px] flex items-center justify-center"
+            aria-label="搜索"
+            type="button"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-5 w-5" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
-              strokeWidth="2"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-              />
-            </svg>
+            <SearchOutlined className="h-5 w-5" />
           </button>
         </div>
 
         {/* 下拉列表 */}
         {showDropdown && availableStations.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-2xl shadow-xl max-h-80 overflow-y-auto">
+          <div 
+            className="absolute top-full left-0 right-0 mt-2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50 rounded-2xl shadow-xl max-h-80 overflow-y-auto"
+            role="listbox"
+            aria-label="可用充电桩列表"
+          >
             <div className="p-2">
               <div className="text-xs text-gray-500 dark:text-gray-400 px-3 py-2 font-medium">
                 可用充电桩 ({availableStations.length})
               </div>
-              {availableStations.map((station) => (
+              {availableStations.map((station, index) => (
                 <button
                   key={station.stationId}
                   onClick={() => handleStationSelect(station)}
-                  className="w-full text-left px-3 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group"
+                  className="w-full text-left px-3 py-3 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group min-h-[44px] flex items-center"
+                  role="option"
+                  aria-selected={false}
+                  tabIndex={index === 0 ? 0 : -1}
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1 min-w-0">
