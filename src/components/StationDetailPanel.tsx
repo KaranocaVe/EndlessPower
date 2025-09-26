@@ -76,16 +76,17 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       || outlet.outletNo 
       || 'N/A'
     
-    // 智能截断：保留尾部不同信息，省略前面相同部分
-    const formatOutletName = (name: string) => {
-      if (name.length <= 8) return `插座 ${name}`
-      // 如果名称很长，显示前3个字符...后4个字符
-      if (name.length > 12) {
-        return `插座 ${name.substring(0, 3)}...${name.slice(-4)}`
+    // 提取数字作为图标显示
+    const extractNumber = (name: string) => {
+      // 尝试从名称中提取数字
+      const numbers = name.match(/\d+/)
+      if (numbers) {
+        return numbers[0]
       }
-      return `插座 ${name}`
+      // 如果没有数字，使用插座序号
+      return outlet.outletSerialNo?.toString() || '?'
     }
-    const serial = formatOutletName(outletName)
+    const serial = extractNumber(outletName)
     
     if (!status || !status.outlet) {
       return (
