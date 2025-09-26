@@ -14,15 +14,15 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewType>('map')
   const { initializeStations } = useStationStore()
   const { error } = useErrorStore()
-  const { applyTheme } = useThemeStore()
+  const { initializeTheme } = useThemeStore()
 
   useEffect(() => {
     initializeStations()
   }, [initializeStations])
 
   useEffect(() => {
-    applyTheme()
-  }, [applyTheme])
+    initializeTheme()
+  }, [initializeTheme])
 
   // 修复移动端视口高度问题
   useEffect(() => {
