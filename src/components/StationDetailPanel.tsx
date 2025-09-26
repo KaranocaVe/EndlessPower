@@ -79,21 +79,38 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
+    
     // 优先使用状态API中的插座名称，这是最准确的名称
-    const outletName = status?.outlet?.vOutletName?.replace('插座', '') 
-      || outlet.vOutletName?.replace('插座', '') 
+    let outletName = status?.outlet?.vOutletName?.replace('插座', '').trim()
+      || outlet.vOutletName?.replace('插座', '').trim()
       || outlet.outletNo 
       || 'N/A'
     
-    // 提取数字作为图标显示
+    // 如果名称为空，使用序号
+    if (!outletName || outletName === '') {
+      outletName = outlet.outletSerialNo?.toString() || outlet.outletNo || 'N/A'
+    }
+    
+    // 智能提取显示文本 - 避免出现"2.."这样的显示问题
     const extractNumber = (name: string) => {
-      // 尝试从名称中提取数字
-      const numbers = name.match(/\d+/)
-      if (numbers) {
-        return numbers[0]
+      // 如果是纯数字，直接返回
+      if (/^\d+$/.test(name)) {
+        return name
       }
+      
+      // 如果名称很短（3个字符以内），直接使用
+      if (name.length <= 3) {
+        return name
+      }
+      
+      // 尝试提取开头的数字
+      const numbers = name.match(/^(\d+)/)
+      if (numbers && numbers[1]) {
+        return numbers[1]
+      }
+      
       // 如果没有数字，使用插座序号
-      return outlet.outletSerialNo?.toString() || '?'
+      return outlet.outletSerialNo?.toString() || name.substring(0, 2) || '?'
     }
     const serial = extractNumber(outletName)
     

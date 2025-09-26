@@ -80,12 +80,44 @@ const FavoriteStationCard: React.FC<FavoriteStationCardProps> = ({
 
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
+    
     // 优先使用状态API中的插座名称，这是最准确的名称
-    const outletName = status?.outlet?.vOutletName?.replace('插座', '') 
-      || outlet.vOutletName?.replace('插座', '') 
+    let outletName = status?.outlet?.vOutletName?.replace('插座', '').trim()
+      || outlet.vOutletName?.replace('插座', '').trim()
       || outlet.outletNo 
       || 'N/A'
-    const serial = `插座 ${outletName.length > 10 ? outletName.substring(0, 10) + '...' : outletName}`
+    
+    // 如果名称为空，使用序号
+    if (!outletName || outletName === '') {
+      outletName = outlet.outletSerialNo?.toString() || outlet.outletNo || 'N/A'
+    }
+    
+    // 智能处理显示文本 - 完整显示短名称，适度截断长名称
+    const getDisplayName = (name: string) => {
+      if (name.length <= 8) {
+        // 短名称直接显示
+        return name
+      } else if (name.length <= 15) {
+        // 中等长度名称，尝试智能截断
+        const match = name.match(/^(\d+)/)
+        if (match) {
+          // 如果是数字开头，保留数字+简短描述
+          return match[1] + (name.length > match[1].length ? '号' : '')
+        }
+        return name
+      } else {
+        // 长名称截断，但保证不会出现"2.."这种情况
+        const match = name.match(/^(\d+)/)
+        if (match && match[1].length < 10) {
+          // 数字开头且数字部分不太长，保留数字+号
+          return match[1] + '号'
+        }
+        return name.substring(0, 6) + '...'
+      }
+    }
+    
+    const displayName = getDisplayName(outletName)
+    const serial = `插座 ${displayName}`
     
     if (!status || !status.outlet) {
       return (
