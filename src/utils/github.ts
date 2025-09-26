@@ -48,15 +48,6 @@ export const fetchContributors = async (): Promise<GitHubContributor[]> => {
     console.warn('Failed to fetch contributors:', error)
     // 返回默认贡献者信息作为fallback
     return [
-      {
-        id: 1,
-        login: 'KaranocaVe',
-        avatar_url: 'https://github.com/KaranocaVe.png',
-        html_url: 'https://github.com/KaranocaVe',
-        contributions: 100,
-        type: 'User',
-        site_admin: false
-      }
     ]
   }
 }
