@@ -5,6 +5,7 @@ import FavoritesView from './components/FavoritesView'
 import ErrorOverlay from './components/ErrorOverlay'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import VisitorsCounter from './components/VisitorsCounter'
+import VersionInfo from './components/VersionInfo'
 import { useStationStore } from './store/stationStore'
 import { useErrorStore } from './store/errorStore'
 import { useThemeStore } from './store/themeStore'
@@ -58,6 +59,9 @@ function App() {
       
       {/* 访问者计数器 */}
       <VisitorsCounter />
+      
+      {/* 版本信息 (仅开发模式) */}
+      <VersionInfo />
     </div>
   )
 }

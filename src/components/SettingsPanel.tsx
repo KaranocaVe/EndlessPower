@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useThemeStore } from '../store/themeStore'
+import { getAppVersion, formatVersionDisplay, getShortGitCommit, getBuildEnv } from '../utils/version'
 import WbSunnyOutlined from '@mui/icons-material/WbSunnyOutlined'
 import NightlightOutlined from '@mui/icons-material/NightlightOutlined'
 import SettingsBrightnessOutlined from '@mui/icons-material/SettingsBrightnessOutlined'
@@ -225,7 +226,10 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
             <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">关于</h3>
             <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
               <p>
-                <span className="font-medium">版本:</span> 1.0.0
+                <span className="font-medium">版本:</span> {formatVersionDisplay()}
+                {getBuildEnv() === 'development' && (
+                  <span className="ml-1 text-xs text-orange-500">({getShortGitCommit()})</span>
+                )}
               </p>
               <p>
                 <span className="font-medium">数据来源:</span> 闪开来电充电桩API
