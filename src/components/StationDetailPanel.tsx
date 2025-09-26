@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import './StationDetailPanel.css'
 import { Station, Outlet, OutletStatus } from '../types/station'
 import { fetchStationOutlets, fetchOutletStatus } from '../utils/api'
 import { useFavoritesStore } from '../store/favoritesStore'
@@ -151,7 +152,26 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
         <div className="flex justify-between items-center gap-1.5 mb-1.5">
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-            <h3 className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate" title={`插座 ${outletName}`}>{serial}</h3>
+            <div className="flex-1 min-w-0 overflow-hidden relative">
+              <h3 
+                className={`text-xs font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap ${
+                  serial.length > 8 ? 'animate-marquee-scroll' : ''
+                }`}
+                title={`插座 ${outletName}`}
+                onMouseEnter={(e) => {
+                  if (serial.length > 8) {
+                    e.currentTarget.style.animationPlayState = 'paused'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (serial.length > 8) {
+                    e.currentTarget.style.animationPlayState = 'running'
+                  }
+                }}
+              >
+                {serial}
+              </h3>
+            </div>
           </div>
           {statusBadge}
         </div>
