@@ -128,20 +128,20 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     ) : (
       <div className="space-y-1">
         {/* 主要信息：时间和费用 */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{status.usedmin || 0}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">分钟</span>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1 flex-1 min-w-0">
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400 truncate">{status.usedmin || 0}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">分钟</span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500 dark:text-gray-400">¥</span>
-            <span className="text-lg font-bold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}</span>
+          <div className="flex items-center gap-1 flex-1 min-w-0 justify-end">
+            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">¥</span>
+            <span className="text-lg font-bold text-green-600 dark:text-green-400 truncate">{status.usedfee?.toFixed(2) || '0.00'}</span>
           </div>
         </div>
         {/* 次要信息：功率和开始时间 */}
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span className="font-medium">{status.powerFee?.billingPower || '未知'}</span>
-          <span>{formatTime(status.chargingBeginTime || '未知')}</span>
+        <div className="flex items-center justify-between gap-2 text-xs text-gray-500 dark:text-gray-400">
+          <span className="font-medium truncate flex-1">{status.powerFee?.billingPower || '未知'}</span>
+          <span className="flex-shrink-0">{formatTime(status.chargingBeginTime || '未知')}</span>
         </div>
       </div>
     )
@@ -149,9 +149,9 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     return (
       <div key={outlet.outletId} className={`rounded-xl p-2.5 border transition-all duration-300 h-24 shadow-md hover:shadow-lg ${cardClasses}`}>
         <div className="flex justify-between items-center gap-1.5 mb-1.5">
-          <div className="flex items-center gap-1.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-            <h3 className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate flex-1" title={`插座 ${outletName}`}>{serial}</h3>
+          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+            <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
+            <h3 className="text-xs font-bold text-gray-800 dark:text-gray-100 truncate" title={`插座 ${outletName}`}>{serial}</h3>
           </div>
           {statusBadge}
         </div>
