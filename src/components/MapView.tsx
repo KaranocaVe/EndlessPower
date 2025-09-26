@@ -10,8 +10,8 @@ import { getColorForAvailability } from '../utils/api'
 import SearchBar from './SearchBar'
 import StationDetailPanel from './StationDetailPanel'
 import LoadingSpinner from './LoadingSpinner'
-import RefreshIcon from '@mui/icons-material/Refresh'
-import MyLocationIcon from '@mui/icons-material/MyLocation'
+import RefreshOutlined from '@mui/icons-material/RefreshOutlined'
+import MyLocationOutlined from '@mui/icons-material/MyLocationOutlined'
 
 const MAP_CENTER: [number, number] = [30.754365, 103.936107]
 
@@ -251,14 +251,14 @@ const MapView: React.FC = () => {
         onClick={handleRefresh}
         className="absolute bottom-6 right-6 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
-        <RefreshIcon className="h-6 w-6" />
+        <RefreshOutlined className="h-6 w-6" />
       </button>
 
       <button
         onClick={handleLocateUser}
         className="absolute bottom-6 right-24 z-[999] bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all"
       >
-        <MyLocationIcon className="h-6 w-6" />
+        <MyLocationOutlined className="h-6 w-6" />
       </button>
 
       {/* Loading Overlay */}

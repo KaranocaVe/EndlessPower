@@ -4,9 +4,9 @@ import { fetchStationOutlets, fetchOutletStatus } from '../utils/api'
 import { useFavoritesStore } from '../store/favoritesStore'
 import { useErrorStore } from '../store/errorStore'
 import LoadingSpinner from './LoadingSpinner'
-import StarIcon from '@mui/icons-material/Star'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
-import CloseIcon from '@mui/icons-material/Close'
+import StarOutlined from '@mui/icons-material/StarOutlined'
+import StarBorderOutlined from '@mui/icons-material/StarBorderOutlined'
+import CloseOutlined from '@mui/icons-material/CloseOutlined'
 
 interface StationDetailPanelProps {
   station: Station | null
@@ -192,9 +192,9 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
               }`}
             >
               {isFavorite(station.stationId) ? (
-                <StarIcon className="h-6 w-6" />
+                <StarOutlined className="h-6 w-6" />
               ) : (
-                <StarBorderIcon className="h-6 w-6" />
+                <StarBorderOutlined className="h-6 w-6" />
               )}
             </button>
             

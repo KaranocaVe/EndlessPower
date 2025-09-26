@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useStationStore } from '../store/stationStore'
 import { Station } from '../types/station'
-import CancelIcon from '@mui/icons-material/Cancel'
-import SearchIcon from '@mui/icons-material/Search'
+import CancelOutlined from '@mui/icons-material/CancelOutlined'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
 
 interface SearchBarProps {
   onStationSelect?: (station: Station) => void
@@ -102,7 +102,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onStationSelect }) => {
               onClick={clearSearch}
               className="h-full px-3 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
-              <CancelIcon className="h-5 w-5" />
+              <CancelOutlined className="h-5 w-5" />
             </button>
           )}
           
@@ -110,7 +110,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onStationSelect }) => {
             onClick={handleSearch}
             className="h-full px-4 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            <SearchIcon className="h-5 w-5" />
+            <SearchOutlined className="h-5 w-5" />
           </button>
         </div>
 

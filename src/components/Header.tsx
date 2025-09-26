@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
 import SettingsPanel from './SettingsPanel'
-import MapIcon from '@mui/icons-material/Map'
-import FavoriteIcon from '@mui/icons-material/Favorite'
-import SettingsIcon from '@mui/icons-material/Settings'
+import MapOutlined from '@mui/icons-material/MapOutlined'
+import FavoriteBorderOutlined from '@mui/icons-material/FavoriteBorderOutlined'
+import SettingsOutlined from '@mui/icons-material/SettingsOutlined'
 
 interface HeaderProps {
   currentView: 'map' | 'favorites'
@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             )}
             title="地图"
           >
-            <MapIcon className="w-5 h-5" />
+            <MapOutlined className="w-5 h-5" />
           </button>
 
           {/* 收藏按钮 */}
@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             )}
             title="收藏"
           >
-            <FavoriteIcon className="w-5 h-5" />
+            <FavoriteBorderOutlined className="w-5 h-5" />
           </button>
 
           {/* 设置按钮 */}
@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             className="flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-white/70 dark:hover:bg-gray-700/50 transition-all duration-200"
             title="设置"
           >
-            <SettingsIcon className="w-5 h-5" />
+            <SettingsOutlined className="w-5 h-5" />
           </button>
         </div>
       </nav>

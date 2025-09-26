@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useThemeStore } from '../store/themeStore'
-import WbSunnyIcon from '@mui/icons-material/WbSunny'
-import NightlightIcon from '@mui/icons-material/Nightlight'
-import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
+import WbSunnyOutlined from '@mui/icons-material/WbSunnyOutlined'
+import NightlightOutlined from '@mui/icons-material/NightlightOutlined'
+import SettingsBrightnessOutlined from '@mui/icons-material/SettingsBrightnessOutlined'
 
 interface SettingsPanelProps {
   isOpen: boolean
@@ -182,11 +182,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                 title={theme === 'auto' ? '当前跟随系统' : (isDark ? '切换到亮色模式' : '切换到暗色模式')}
               >
                 {theme === 'auto' ? (
-                  <SettingsBrightnessIcon className="w-6 h-6" />
+                  <SettingsBrightnessOutlined className="w-6 h-6" />
                 ) : isDark ? (
-                  <WbSunnyIcon className="w-6 h-6" />
+                  <WbSunnyOutlined className="w-6 h-6" />
                 ) : (
-                  <NightlightIcon className="w-6 h-6" />
+                  <NightlightOutlined className="w-6 h-6" />
                 )}
               </button>
             </div>
