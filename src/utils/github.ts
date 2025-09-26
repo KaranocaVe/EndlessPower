@@ -2,7 +2,6 @@
  * GitHub API 相关工具函数
  * 用于获取项目贡献者信息
  */
-
 export interface GitHubContributor {
   id: number
   login: string
@@ -11,19 +10,6 @@ export interface GitHubContributor {
   contributions: number
   type: 'User' | 'Bot'
   site_admin: boolean
-}
-
-export interface ContributorInfo extends GitHubContributor {
-  // 扩展信息
-  name?: string
-  company?: string
-  location?: string
-  bio?: string
-  blog?: string
-  public_repos?: number
-  followers?: number
-  following?: number
-  created_at?: string
 }
 
 // GitHub仓库信息
@@ -53,7 +39,7 @@ export const fetchContributors = async (): Promise<GitHubContributor[]> => {
 
     const contributors: GitHubContributor[] = await response.json()
     
-    // 过滤掉机器人账户（可选）
+    // 过滤掉机器人账户
     return contributors.filter(contributor => 
       contributor.type === 'User' && 
       !contributor.login.includes('[bot]')
@@ -72,33 +58,6 @@ export const fetchContributors = async (): Promise<GitHubContributor[]> => {
         site_admin: false
       }
     ]
-  }
-}
-
-/**
- * 获取单个用户的详细信息
- */
-export const fetchUserDetails = async (username: string): Promise<ContributorInfo | null> => {
-  try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}`,
-      {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'EndlessPower-App'
-        }
-      }
-    )
-
-    if (!response.ok) {
-      return null
-    }
-
-    const userDetails = await response.json()
-    return userDetails
-  } catch (error) {
-    console.warn('Failed to fetch user details:', error)
-    return null
   }
 }
 
@@ -143,14 +102,3 @@ export const fetchRepoStats = async () => {
   }
 }
 
-/**
- * 格式化贡献数
- */
-export const formatContributions = (count: number): string => {
-  if (count >= 1000) {
-    return `${Math.floor(count / 1000)}k+`
-  }
-  return count.toString()
-}
-
-// 已移除复杂的等级系统，所有贡献者平等展示

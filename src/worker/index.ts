@@ -72,7 +72,7 @@ export class VisitorsCounter {
         ws.send(message);
       }
     } catch (error) {
-      console.error('Error sending user count:', error);
+      // 发送用户数量失败
     }
   }
 
@@ -91,7 +91,7 @@ export class VisitorsCounter {
         }
       } catch (error) {
         // 连接已断开，从集合中移除
-        console.log('Removing dead connection');
+        // 移除失效连接
       }
     });
 

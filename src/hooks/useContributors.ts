@@ -52,9 +52,7 @@ export const useContributors = () => {
 
   // 计算统计信息
   const stats = {
-    totalContributors: contributors.length,
-    totalContributions: contributors.reduce((sum, contributor) => sum + contributor.contributions, 0),
-    topContributor: contributors.length > 0 ? contributors[0] : null
+    totalContributors: contributors.length
   }
 
   return {

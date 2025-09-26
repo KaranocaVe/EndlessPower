@@ -11,7 +11,7 @@ const ContributorCard: React.FC<ContributorCardProps> = ({ contributor }) => {
   }
 
   return (
-    <div 
+    <div
       className="cursor-pointer group"
       onClick={handleClick}
       title={`${contributor.login} - 查看GitHub主页`}
