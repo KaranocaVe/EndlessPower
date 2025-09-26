@@ -155,16 +155,19 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             <div className="flex-1 min-w-0 overflow-hidden relative">
               <h3 
                 className={`text-xs font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap ${
-                  serial.length > 8 ? 'animate-marquee-scroll' : ''
+                  serial.length > 6 ? 'animate-marquee-scroll' : ''
                 }`}
                 title={`插座 ${outletName}`}
+                style={{
+                  animationPlayState: 'running'
+                }}
                 onMouseEnter={(e) => {
-                  if (serial.length > 8) {
+                  if (serial.length > 6) {
                     e.currentTarget.style.animationPlayState = 'paused'
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (serial.length > 8) {
+                  if (serial.length > 6) {
                     e.currentTarget.style.animationPlayState = 'running'
                   }
                 }}
@@ -202,12 +205,46 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       <div className="p-4 sm:p-5 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/30 dark:to-indigo-900/30">
         <div className="flex justify-between items-center">
           <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
-              {station.stationName}
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 truncate mt-1">
-              {station.address}
-            </p>
+            <div className="overflow-hidden">
+              <h2 
+                className={`text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap ${
+                  station.stationName.length > 12 ? 'animate-marquee-scroll' : ''
+                }`}
+                title={station.stationName}
+                onMouseEnter={(e) => {
+                  if (station.stationName.length > 12) {
+                    e.currentTarget.style.animationPlayState = 'paused'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (station.stationName.length > 12) {
+                    e.currentTarget.style.animationPlayState = 'running'
+                  }
+                }}
+              >
+                {station.stationName}
+              </h2>
+            </div>
+            <div className="overflow-hidden mt-1">
+              <p 
+                className={`text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap ${
+                  station.address.length > 20 ? 'animate-marquee-scroll' : ''
+                }`}
+                title={station.address}
+                onMouseEnter={(e) => {
+                  if (station.address.length > 20) {
+                    e.currentTarget.style.animationPlayState = 'paused'
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (station.address.length > 20) {
+                    e.currentTarget.style.animationPlayState = 'running'
+                  }
+                }}
+              >
+                {station.address}
+              </p>
+            </div>
           </div>
           
           <div className="flex items-center space-x-1 ml-4">
