@@ -1,5 +1,6 @@
 # Cloudflare Workers 配置 (wrangler v3.88.0^)
 name = "endlesspower"
+main = "src/worker/index.ts"
 compatibility_date = "2025-09-25"
 
 # 静态资源配置
@@ -17,6 +18,7 @@ command = "npm run build"
 # 开发环境配置
 [env.dev]
 name = "endlesspower"
+main = "src/worker/index.ts"
 compatibility_date = "2025-09-25"
 vars = { NODE_ENV = "development", DEBUG = "true" }
 
@@ -29,6 +31,7 @@ enabled = true
 # 生产环境配置  
 [env.production]
 name = "endlesspower"
+main = "src/worker/index.ts"
 compatibility_date = "2025-09-25"
 vars = { NODE_ENV = "production", DEBUG = "false" }
 
