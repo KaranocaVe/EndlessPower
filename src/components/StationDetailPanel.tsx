@@ -153,27 +153,14 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isAvailable ? 'bg-green-500' : 'bg-blue-500'}`}></div>
             <div className="flex-1 min-w-0 overflow-hidden relative">
-              <h3 
-                className={`text-xs font-bold text-gray-800 dark:text-gray-100 whitespace-nowrap ${
-                  serial.length > 6 ? 'animate-marquee-scroll' : ''
-                }`}
+              <div 
+                className="w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
                 title={`插座 ${outletName}`}
-                style={{
-                  animationPlayState: 'running'
-                }}
-                onMouseEnter={(e) => {
-                  if (serial.length > 6) {
-                    e.currentTarget.style.animationPlayState = 'paused'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (serial.length > 6) {
-                    e.currentTarget.style.animationPlayState = 'running'
-                  }
-                }}
               >
-                {serial}
-              </h3>
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-200">
+                  {serial}
+                </span>
+              </div>
             </div>
           </div>
           {statusBadge}
