@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useSettingsStore } from '../store/settingsStore'
 import { useThemeStore } from '../store/themeStore'
 import { formatVersionDisplay, getShortGitCommit, getBuildEnv } from '../utils/version'
+import { useContributors } from '../hooks/useContributors'
+import ContributorCard from './ContributorCard'
 import WbSunnyOutlined from '@mui/icons-material/WbSunnyOutlined'
 import NightlightOutlined from '@mui/icons-material/NightlightOutlined'
 import SettingsBrightnessOutlined from '@mui/icons-material/SettingsBrightnessOutlined'
+import RefreshOutlined from '@mui/icons-material/RefreshOutlined'
+import GroupOutlined from '@mui/icons-material/GroupOutlined'
 
 interface SettingsPanelProps {
   isOpen: boolean
@@ -25,6 +29,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
   
   // 主题相关状态
   const { theme, isDark, toggleTheme } = useThemeStore()
+  
+  // 贡献者信息
+  const { contributors, repoStats, stats, isLoading: contributorsLoading, error: contributorsError, lastUpdated, refresh } = useContributors()
   
   // 动画状态
   const [isAnimating, setIsAnimating] = useState(false)
@@ -266,6 +273,77 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                   <span>官方网站</span>
                 </a>
               </div>
+            </div>
+
+            {/* 贡献者区域 */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <GroupOutlined className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <h4 className="text-sm font-medium text-gray-800 dark:text-gray-200">项目贡献者</h4>
+                </div>
+                <button
+                  onClick={refresh}
+                  disabled={contributorsLoading}
+                  className="p-1 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50"
+                  title="刷新贡献者信息"
+                >
+                  <RefreshOutlined className={`w-4 h-4 ${contributorsLoading ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
+
+              {contributorsError && (
+                <div className="text-xs text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-2 rounded-lg">
+                  {contributorsError}
+                </div>
+              )}
+
+              {repoStats && (
+                <div className="grid grid-cols-3 gap-3 text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div>
+                    <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">{repoStats.stars}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">Stars</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-green-600 dark:text-green-400">{stats.totalContributors}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">贡献者</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-bold text-blue-600 dark:text-blue-400">{repoStats.forks}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">Forks</div>
+                  </div>
+                </div>
+              )}
+
+              {contributorsLoading ? (
+                <div className="flex justify-center items-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {contributors.slice(0, 5).map((contributor, index) => (
+                    <ContributorCard 
+                      key={contributor.id} 
+                      contributor={contributor} 
+                      rank={index + 1} 
+                    />
+                  ))}
+                  
+                  {contributors.length > 5 && (
+                    <div className="text-center py-2">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        还有 {contributors.length - 5} 位贡献者...
+                      </div>
+                    </div>
+                  )}
+                  
+                  {lastUpdated && (
+                    <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                      最后更新: {lastUpdated.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             
             {/* 重置按钮 */}
