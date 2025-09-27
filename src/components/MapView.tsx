@@ -4,7 +4,6 @@ import { useSEO } from '../hooks/useSEO'
 import L from 'leaflet'
 import { Station } from '../types/station'
 import { useStationStore } from '../store/stationStore'
-import { useErrorStore } from '../store/errorStore'
 import { useThemeStore } from '../store/themeStore'
 import { useSettingsStore } from '../store/settingsStore'
 import { getColorForAvailability } from '../utils/api'
@@ -16,7 +15,6 @@ import LoadingSpinner from './LoadingSpinner'
 import DevPanel from './DevPanel'
 import DraggableStationMarkerUniversal from './DraggableStationMarkerUniversal'
 import RefreshOutlined from '@mui/icons-material/RefreshOutlined'
-import MyLocationOutlined from '@mui/icons-material/MyLocationOutlined'
 import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
 import DeveloperModeOutlined from '@mui/icons-material/DeveloperModeOutlined'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
@@ -53,7 +51,6 @@ const MapView: React.FC = () => {
     setUserLocation: setStoreUserLocation 
   } = useStationStore()
   
-  const { showError } = useErrorStore()
   const { isDark } = useThemeStore()
   const { showUnavailableStations, autoRefresh, refreshInterval } = useSettingsStore()
   
@@ -122,70 +119,56 @@ const MapView: React.FC = () => {
   const handleRefresh = async () => {
     if (!canRefresh()) return
     
-    const lat = userLocation?.[0]
-    const lng = userLocation?.[1]
-    
-    await refreshStations(lat, lng)
-  }
-
-  const handleLocateUser = () => {
-    if (!navigator.geolocation) {
-      showError('您的浏览器不支持地理位置功能')
-      return
-    }
-
-    if (isLocating) {
-      return // 防止重复请求
-    }
-
-    setIsLocating(true)
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords
-          const location: [number, number] = [latitude, longitude]
-          
-          setUserLocation(location)
-          setStoreUserLocation(location)
-          
-          // 移动地图到用户位置
-          if (mapRef.current) {
-            mapRef.current.setView(location, 16)
+    // 如果支持地理位置且未在定位中，先获取用户位置
+    if (navigator.geolocation && !isLocating) {
+      setIsLocating(true)
+      
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          try {
+            const { latitude, longitude } = position.coords
+            const location: [number, number] = [latitude, longitude]
+            
+            setUserLocation(location)
+            setStoreUserLocation(location)
+            
+            // 移动地图到用户位置
+            if (mapRef.current) {
+              mapRef.current.setView(location, 16)
+            }
+            
+            // 刷新该位置的充电站
+            await refreshStations(latitude, longitude)
+          } catch {
+            // 如果刷新失败，使用原有位置或默认位置
+            const lat = userLocation?.[0]
+            const lng = userLocation?.[1]
+            await refreshStations(lat, lng)
+          } finally {
+            setIsLocating(false)
           }
-          
-          // 刷新该位置的充电站
-          await refreshStations(latitude, longitude)
-        } catch {
-          showError('刷新充电站数据时出错')
-        } finally {
+        },
+        async (_error) => {
           setIsLocating(false)
+          // 定位失败时，使用原有位置刷新，不显示错误（静默处理）
+          const lat = userLocation?.[0]
+          const lng = userLocation?.[1]
+          await refreshStations(lat, lng)
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000, // 减少超时时间
+          maximumAge: 60000
         }
-      },
-      (error) => {
-        setIsLocating(false)
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            showError('用户拒绝了地理位置请求')
-            break
-          case error.POSITION_UNAVAILABLE:
-            showError('位置信息不可用')
-            break
-          case error.TIMEOUT:
-            showError('获取位置信息超时')
-            break
-          default:
-            showError('获取地理位置时发生未知错误')
-            break
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000
-      }
-    )
+      )
+    } else {
+      // 不支持定位或正在定位中，直接刷新
+      const lat = userLocation?.[0]
+      const lng = userLocation?.[1]
+      await refreshStations(lat, lng)
+    }
   }
+
 
   const handleWeChatScan = () => {
     try {
@@ -498,19 +481,10 @@ const MapView: React.FC = () => {
         </button>
 
         <button
-          onClick={handleLocateUser}
-          disabled={isLocating}
-          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
-          aria-label={isLocating ? "定位中..." : "定位当前位置"}
-          type="button"
-        >
-          <MyLocationOutlined className="h-6 w-6" />
-        </button>
-
-        <button
           onClick={handleRefresh}
-          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
-          aria-label="刷新充电站数据"
+          disabled={isLoading || isLocating}
+          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
+          aria-label={isLoading || isLocating ? "刷新中..." : "刷新并定位"}
           type="button"
         >
           <RefreshOutlined className="h-6 w-6" />
