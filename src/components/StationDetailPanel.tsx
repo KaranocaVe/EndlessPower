@@ -321,61 +321,11 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
               </p>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-1 ml-4">
-            <button
-              onClick={handleWeChatScan}
-              className="text-green-500 hover:text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 p-3 rounded-full transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="微信扫一扫"
-              type="button"
-            >
-              <QrCodeScannerOutlined className="h-6 w-6" />
-            </button>
-            
-            <button
-              onClick={handleFavoriteToggle}
-              className={`p-3 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
-                isFavorite(station.stationId)
-                  ? 'text-yellow-400 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
-                  : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
-              }`}
-              aria-label={isFavorite(station.stationId) ? '取消收藏' : '添加收藏'}
-              type="button"
-            >
-              {isFavorite(station.stationId) ? (
-                <StarOutlined className="h-6 w-6" />
-              ) : (
-                <StarBorderOutlined className="h-6 w-6" />
-              )}
-            </button>
-            
-            <button
-              onClick={onClose}
-              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-3 rounded-full hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="关闭充电站详情"
-              type="button"
-            >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-6 w-6" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor" 
-                strokeWidth="2"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M6 18L18 6M6 6l12 12" 
-                />
-              </svg>
-            </button>
-          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5 flex-1 overflow-y-auto">
+      <div className="p-4 sm:p-5 flex-1 overflow-y-auto pb-20">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
             <LoadingSpinner />
@@ -396,6 +346,59 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             }
           </div>
         )}
+      </div>
+      
+      {/* Bottom Action Buttons */}
+      <div className="absolute bottom-0 left-0 right-0 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm">
+        <div className="flex justify-center gap-3 p-4 pb-safe" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+          <button
+            onClick={handleWeChatScan}
+            className="bg-green-500 text-white hover:bg-green-600 p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95"
+            aria-label="微信扫一扫"
+            type="button"
+          >
+            <QrCodeScannerOutlined className="h-6 w-6" />
+          </button>
+          
+          <button
+            onClick={handleFavoriteToggle}
+            className={`p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95 ${
+              isFavorite(station.stationId)
+                ? 'bg-yellow-400 text-white hover:bg-yellow-500'
+                : 'bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 hover:text-yellow-500'
+            }`}
+            aria-label={isFavorite(station.stationId) ? '取消收藏' : '添加收藏'}
+            type="button"
+          >
+            {isFavorite(station.stationId) ? (
+              <StarOutlined className="h-6 w-6" />
+            ) : (
+              <StarBorderOutlined className="h-6 w-6" />
+            )}
+          </button>
+          
+          <button
+            onClick={onClose}
+            className="bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95"
+            aria-label="关闭充电站详情"
+            type="button"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-6 w-6" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor" 
+              strokeWidth="2"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                d="M6 18L18 6M6 6l12 12" 
+              />
+            </svg>
+          </button>
+        </div>
       </div>
       </div>
     </div>
