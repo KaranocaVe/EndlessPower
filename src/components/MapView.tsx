@@ -456,7 +456,6 @@ const MapView: React.FC = () => {
         />
       )}
 
-
       {/* Control Buttons - 使用flex布局确保一致的间距 */}
       <div className="absolute bottom-6 right-6 z-[999] flex gap-3">
         {/* 开发模式按钮 (仅在开发环境显示) */}
