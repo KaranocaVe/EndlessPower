@@ -30,7 +30,23 @@ export const useThemeStore = create<ThemeState>()(
       
       toggleTheme: () => {
         const { theme } = get()
-        const newTheme = theme === 'dark' ? 'light' : 'dark'
+        let newTheme: Theme
+        
+        // 循环顺序：auto -> light -> dark -> auto
+        switch (theme) {
+          case 'auto':
+            newTheme = 'light'
+            break
+          case 'light':
+            newTheme = 'dark'
+            break
+          case 'dark':
+            newTheme = 'auto'
+            break
+          default:
+            newTheme = 'auto'
+        }
+        
         get().setTheme(newTheme)
       },
       

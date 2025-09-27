@@ -206,7 +206,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={toggleTheme}
                 className="flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                title={theme === 'auto' ? '当前跟随系统' : (isDark ? '切换到亮色模式' : '切换到暗色模式')}
+                title={
+                  theme === 'auto' ? '点击切换到亮色模式' : 
+                  theme === 'light' ? '点击切换到暗色模式' : 
+                  '点击切换到跟随系统'
+                }
               >
                 {theme === 'auto' ? (
                   <SettingsBrightnessOutlined className="w-6 h-6" />
