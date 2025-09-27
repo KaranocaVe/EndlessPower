@@ -34,11 +34,13 @@
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3B82F6" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1F2937" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="EndlessPower" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="EndlessPower" />
+    <meta name="msapplication-tap-highlight" content="no" />
     
     <!-- 安全和隐私 -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -139,9 +141,84 @@
     
     <!-- Prevent zoom on input focus (iOS) -->
     <style>
+      /* 防止移动端缩放输入框 */
       @media screen and (-webkit-min-device-pixel-ratio: 0) {
         select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"] {
           font-size: 16px !important;
+        }
+      }
+
+      /* PWA 沉浸式样式 */
+      html, body {
+        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      
+      /* 全屏PWA模式支持 */
+      @media (display-mode: fullscreen) {
+        body {
+          padding-top: env(safe-area-inset-top);
+          padding-left: env(safe-area-inset-left);  
+          padding-right: env(safe-area-inset-right);
+          padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* 全屏模式下的动画效果 */
+        #root {
+          animation: immersiveEntry 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes immersiveEntry {
+          from {
+            transform: scale(0.98);
+            opacity: 0.9;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+      }
+      
+      /* 状态栏透明模式下的安全区域 */
+      @supports (padding: max(0px)) {
+        .ios-safe-top {
+          padding-top: max(0.5rem, env(safe-area-inset-top));
+        }
+        .ios-safe-bottom {
+          padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+      }
+      
+      /* Root元素优化 */
+      #root {
+        background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+      }
+      
+      /* 深色模式优化 */
+      @media (prefers-color-scheme: dark) {
+        #root {
+          background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
+        }
+      }
+      
+      /* 增强视觉效果 - 仅在PWA模式下 */
+      @media (display-mode: standalone), (display-mode: fullscreen) {
+        /* 添加微妙的边缘光效 */
+        body::before {
+          content: '';
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+          z-index: 9999;
         }
       }
     </style>

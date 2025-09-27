@@ -441,8 +441,8 @@ const MapView: React.FC = () => {
         />
       )}
 
-      {/* Control Buttons - 响应式布局优化 */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 md:bottom-6 md:right-6 md:left-auto md:transform-none z-[999] flex gap-2 md:gap-3 bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm rounded-full p-2 md:p-0 md:bg-transparent md:backdrop-blur-none" style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+      {/* Control Buttons - 响应式布局优化 + PWA沉浸式支持 */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 md:bottom-6 md:right-6 md:left-auto md:transform-none z-[999] flex gap-2 md:gap-3 bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm rounded-full p-2 md:p-0 md:bg-transparent md:backdrop-blur-none ios-safe-bottom" style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
         {/* 开发模式按钮 (仅在开发环境显示) */}
         {versionInfo.isDevelopment && (
           <button

@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   const { visitorsCount, isConnected } = useVisitorsCount()
 
   return (
-    <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg z-[1100] border-b border-gray-200/50 dark:border-gray-700/50">
+    <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg z-[1100] border-b border-gray-200/50 dark:border-gray-700/50 ios-safe-top">
       <nav className="max-w-6xl mx-auto px-4 py-2 flex justify-between items-center">
         <div className="flex-1 min-w-0">
           <h1 className="text-base md:text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
