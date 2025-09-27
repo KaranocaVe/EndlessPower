@@ -561,7 +561,7 @@ const MapView: React.FC = () => {
           onClick={() => setShowMapModal(false)}
         >
           <div 
-            className="relative w-full h-full max-w-4xl max-h-full bg-black rounded-lg shadow-xl overflow-hidden"
+            className="relative w-full max-w-4xl max-h-[85vh] bg-black rounded-lg shadow-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -587,13 +587,13 @@ const MapView: React.FC = () => {
               smooth={true}
             >
               <TransformComponent
-                wrapperClass="w-full h-full flex items-center justify-center"
-                contentClass="w-full h-full flex items-center justify-center"
+                wrapperClass="w-full flex items-center justify-center"
+                contentClass="w-full flex items-center justify-center"
               >
                 <img 
                   src="/map.jpg" 
                   alt="校园地图" 
-                  className="max-w-full max-h-full object-contain select-none"
+                  className="max-w-full max-h-[85vh] object-contain select-none"
                   draggable={false}
                 />
               </TransformComponent>
