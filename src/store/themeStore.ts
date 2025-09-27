@@ -30,7 +30,23 @@ export const useThemeStore = create<ThemeState>()(
       
       toggleTheme: () => {
         const { theme } = get()
-        const newTheme = theme === 'dark' ? 'light' : 'dark'
+        let newTheme: Theme
+        
+        // 循环顺序：auto -> light -> dark -> auto
+        switch (theme) {
+          case 'auto':
+            newTheme = 'light'
+            break
+          case 'light':
+            newTheme = 'dark'
+            break
+          case 'dark':
+            newTheme = 'auto'
+            break
+          default:
+            newTheme = 'auto'
+        }
+        
         get().setTheme(newTheme)
       },
       
@@ -67,7 +83,7 @@ export const useThemeStore = create<ThemeState>()(
         
         // 创建新的媒体查询监听器
         mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        mediaQueryListener = (e: MediaQueryListEvent) => {
+        mediaQueryListener = (_e: MediaQueryListEvent) => {
           const { theme } = get()
           // 只有在自动模式下才响应系统主题变化
           if (theme === 'auto') {

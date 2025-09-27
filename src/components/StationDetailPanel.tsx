@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './StationDetailPanel.css'
 import { Station, Outlet, OutletStatus } from '../types/station'
 import { fetchStationOutlets, fetchOutletStatus } from '../utils/api'
@@ -18,6 +18,11 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   const [outlets, setOutlets] = useState<Outlet[]>([])
   const [outletStatuses, setOutletStatuses] = useState<(OutletStatus | null)[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [shouldScrollTitle, setShouldScrollTitle] = useState(false)
+  const [shouldScrollAddress, setShouldScrollAddress] = useState(false)
+  
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const addressRef = useRef<HTMLParagraphElement>(null)
   
   const { isFavorite, addFavorite, removeFavorite, canAddMore } = useFavoritesStore()
   const { showError } = useErrorStore()
@@ -52,6 +57,30 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
 
     loadStationDetails()
   }, [station, showError])
+
+  // 检测文本是否需要滚动
+  useEffect(() => {
+    if (!station) return
+
+    const checkOverflow = () => {
+      // 检测标题是否溢出
+      if (titleRef.current) {
+        const isOverflowing = titleRef.current.scrollWidth > titleRef.current.clientWidth
+        setShouldScrollTitle(isOverflowing)
+      }
+
+      // 检测地址是否溢出  
+      if (addressRef.current) {
+        const isOverflowing = addressRef.current.scrollWidth > addressRef.current.clientWidth
+        setShouldScrollAddress(isOverflowing)
+      }
+    }
+
+    // 延迟检测，确保DOM已渲染
+    const timer = setTimeout(checkOverflow, 100)
+    
+    return () => clearTimeout(timer)
+  }, [station])
 
 
   const handleFavoriteToggle = () => {
@@ -157,13 +186,13 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       <div className="space-y-1">
         {/* 主要信息：时间和费用 */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1 flex-1 min-w-0">
-            <span className="text-lg font-bold text-blue-600 dark:text-blue-400 truncate">{status.usedmin || 0}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">分钟</span>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{status.usedmin || 0}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">分钟</span>
           </div>
-          <div className="flex items-center gap-1 flex-1 min-w-0 justify-end">
-            <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">¥</span>
-            <span className="text-lg font-bold text-green-600 dark:text-green-400 truncate">{status.usedfee?.toFixed(2) || '0.00'}</span>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className="text-xs text-gray-500 dark:text-gray-400">¥</span>
+            <span className="text-lg font-bold text-green-600 dark:text-green-400">{status.usedfee?.toFixed(2) || '0.00'}</span>
           </div>
         </div>
         {/* 次要信息：功率和开始时间 */}
@@ -236,6 +265,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       aria-labelledby="station-title"
       style={{
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '16px'
@@ -243,25 +273,26 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     >
       <div className={`w-full max-w-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border border-gray-200/50 dark:border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 flex flex-col ${
         station ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-      }`} style={{ maxHeight: '85vh' }}>
+      }`} style={{ maxHeight: 'calc(85vh - 80px)' }}>
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-gray-200/60 dark:border-gray-700/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/30 dark:to-indigo-900/30">
         <div className="flex justify-between items-center">
           <div className="flex-1 min-w-0">
             <div className="overflow-hidden">
               <h2 
+                ref={titleRef}
                 id="station-title"
                 className={`text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent whitespace-nowrap ${
-                  station.stationName.length > 12 ? 'animate-marquee-scroll' : ''
+                  shouldScrollTitle ? 'animate-marquee-scroll' : ''
                 }`}
                 title={station.stationName}
                 onMouseEnter={(e) => {
-                  if (station.stationName.length > 12) {
+                  if (shouldScrollTitle) {
                     e.currentTarget.style.animationPlayState = 'paused'
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (station.stationName.length > 12) {
+                  if (shouldScrollTitle) {
                     e.currentTarget.style.animationPlayState = 'running'
                   }
                 }}
@@ -271,17 +302,18 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
             </div>
             <div className="overflow-hidden mt-1">
               <p 
+                ref={addressRef}
                 className={`text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap ${
-                  station.address.length > 20 ? 'animate-marquee-scroll' : ''
+                  shouldScrollAddress ? 'animate-marquee-scroll' : ''
                 }`}
                 title={station.address}
                 onMouseEnter={(e) => {
-                  if (station.address.length > 20) {
+                  if (shouldScrollAddress) {
                     e.currentTarget.style.animationPlayState = 'paused'
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (station.address.length > 20) {
+                  if (shouldScrollAddress) {
                     e.currentTarget.style.animationPlayState = 'running'
                   }
                 }}
@@ -289,56 +321,6 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
                 {station.address}
               </p>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-1 ml-4">
-            <button
-              onClick={handleWeChatScan}
-              className="text-green-500 hover:text-green-600 hover:bg-green-100 dark:hover:bg-green-900/30 p-3 rounded-full transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="微信扫一扫"
-              type="button"
-            >
-              <QrCodeScannerOutlined className="h-6 w-6" />
-            </button>
-            
-            <button
-              onClick={handleFavoriteToggle}
-              className={`p-3 rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center ${
-                isFavorite(station.stationId)
-                  ? 'text-yellow-400 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
-                  : 'text-gray-400 dark:text-gray-500 hover:text-yellow-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30'
-              }`}
-              aria-label={isFavorite(station.stationId) ? '取消收藏' : '添加收藏'}
-              type="button"
-            >
-              {isFavorite(station.stationId) ? (
-                <StarOutlined className="h-6 w-6" />
-              ) : (
-                <StarBorderOutlined className="h-6 w-6" />
-              )}
-            </button>
-            
-            <button
-              onClick={onClose}
-              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-3 rounded-full hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
-              aria-label="关闭充电站详情"
-              type="button"
-            >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-6 w-6" 
-                fill="none" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor" 
-                strokeWidth="2"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  d="M6 18L18 6M6 6l12 12" 
-                />
-              </svg>
-            </button>
           </div>
         </div>
       </div>
@@ -366,6 +348,57 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
           </div>
         )}
       </div>
+      </div>
+      
+      {/* Bottom Action Buttons - Outside the card */}
+      <div className="mt-4 flex justify-center gap-3" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+          <button
+            onClick={handleWeChatScan}
+            className="bg-white dark:bg-gray-800 text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95"
+            aria-label="微信扫一扫"
+            type="button"
+          >
+            <QrCodeScannerOutlined className="h-6 w-6" />
+          </button>
+        
+        <button
+          onClick={handleFavoriteToggle}
+          className={`p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95 ${
+            isFavorite(station.stationId)
+              ? 'bg-yellow-400 text-white hover:bg-yellow-500'
+              : 'bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 hover:bg-yellow-100 dark:hover:bg-yellow-900/30 hover:text-yellow-500'
+          }`}
+          aria-label={isFavorite(station.stationId) ? '取消收藏' : '添加收藏'}
+          type="button"
+        >
+          {isFavorite(station.stationId) ? (
+            <StarOutlined className="h-6 w-6" />
+          ) : (
+            <StarBorderOutlined className="h-6 w-6" />
+          )}
+        </button>
+        
+        <button
+          onClick={onClose}
+          className="bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95"
+          aria-label="关闭充电站详情"
+          type="button"
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            className="h-6 w-6" 
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor" 
+            strokeWidth="2"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              d="M6 18L18 6M6 6l12 12" 
+            />
+          </svg>
+        </button>
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ export class VisitorsCounter {
   private state: DurableObjectState;
   private sessions: Set<WebSocket>;
 
-  constructor(state: DurableObjectState, env: Env) {
+  constructor(state: DurableObjectState, _env: Env) {
     this.state = state;
     this.sessions = new Set();
   }
@@ -71,7 +71,7 @@ export class VisitorsCounter {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(message);
       }
-    } catch (error) {
+    } catch {
       // 发送用户数量失败
     }
   }
@@ -89,7 +89,7 @@ export class VisitorsCounter {
           ws.send(message);
           activeSessions.add(ws);
         }
-      } catch (error) {
+      } catch {
         // 连接已断开，从集合中移除
         // 移除失效连接
       }
@@ -101,7 +101,7 @@ export class VisitorsCounter {
 }
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     // WebSocket 访问者计数端点

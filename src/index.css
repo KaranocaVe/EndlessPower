@@ -166,3 +166,116 @@ input:focus {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+/* Development Mode Styles */
+/* Hardcoded Station Tooltip Styles */
+.leaflet-tooltip.hardcoded-station-tooltip {
+  background-color: rgba(245, 158, 11, 0.9) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3) !important;
+}
+
+.leaflet-tooltip-top.hardcoded-station-tooltip:before,
+.leaflet-tooltip-bottom.hardcoded-station-tooltip:before,
+.leaflet-tooltip-left.hardcoded-station-tooltip:before,
+.leaflet-tooltip-right.hardcoded-station-tooltip:before {
+  border: none !important;
+}
+
+/* Pulse animation for selected coordinates */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Custom marker styles for development mode */
+.draggable-station-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.draggable-station-marker-universal {
+  background: transparent !important;
+  border: none !important;
+}
+
+.selected-coords-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.user-location-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.image-anchor-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.image-corner-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Universal Station Tooltip Styles */
+.leaflet-tooltip.universal-station-tooltip {
+  background-color: rgba(59, 130, 246, 0.9) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+  max-width: 200px !important;
+}
+
+.leaflet-tooltip-top.universal-station-tooltip:before,
+.leaflet-tooltip-bottom.universal-station-tooltip:before,
+.leaflet-tooltip-left.universal-station-tooltip:before,
+.leaflet-tooltip-right.universal-station-tooltip:before {
+  border: none !important;
+}
+
+/* Development panel scrollbar styling */
+.dev-panel-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dev-panel-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dev-panel-scrollbar::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 2px;
+}
+
+.dev-panel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark .dev-panel-scrollbar::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.dark .dev-panel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
