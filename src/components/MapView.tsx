@@ -574,11 +574,6 @@ const MapView: React.FC = () => {
               </svg>
             </button>
             
-            {/* 操作提示 */}
-            <div className="absolute bottom-4 left-4 z-[2001] bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg text-sm">
-              双指缩放 • 拖拽移动 • 滚轮缩放
-            </div>
-            
             <TransformWrapper
               initialScale={1}
               minScale={1}
