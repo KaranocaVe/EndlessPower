@@ -19,6 +19,7 @@ import RefreshOutlined from '@mui/icons-material/RefreshOutlined'
 import MyLocationOutlined from '@mui/icons-material/MyLocationOutlined'
 import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
 import DeveloperModeOutlined from '@mui/icons-material/DeveloperModeOutlined'
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
 const MAP_CENTER: [number, number] = [30.754365, 103.936107]
 
@@ -38,12 +39,6 @@ const MapView: React.FC = () => {
   const [selectedCoords, setSelectedCoords] = useState<[number, number] | null>(null)
   const [hardcodedStations, setHardcodedStations] = useState<HardcodedStationLocation[]>(HARDCODED_STATION_LOCATIONS)
   const [showMapModal, setShowMapModal] = useState(false)
-  
-  // 图片缩放相关状态
-  const [imageScale, setImageScale] = useState(1)
-  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [lastTouchDistance, setLastTouchDistance] = useState(0)
   
   // 记录用户校准的位置 (stationId -> {lat, lng})
   const [calibratedPositions, setCalibratedPositions] = useState<Record<number, { lat: number; lng: number }>>({})
@@ -228,12 +223,7 @@ const MapView: React.FC = () => {
 
   const handleToggleMapModal = useCallback(() => {
     setShowMapModal(prev => !prev)
-    // 重置图片缩放状态
-    if (!showMapModal) {
-      setImageScale(1)
-      setImagePosition({ x: 0, y: 0 })
-    }
-  }, [showMapModal])
+  }, [])
 
   const handleClearCoords = useCallback(() => {
     setSelectedCoords(null)
@@ -312,91 +302,6 @@ const MapView: React.FC = () => {
     return station.freeNum && station.freeNum > 0
   }
 
-  // 图片缩放处理函数
-  const getTouchDistance = useCallback((touches: React.TouchList) => {
-    if (touches.length < 2) return 0
-    const touch1 = touches[0]
-    const touch2 = touches[1]
-    return Math.sqrt(
-      Math.pow(touch2.clientX - touch1.clientX, 2) + 
-      Math.pow(touch2.clientY - touch1.clientY, 2)
-    )
-  }, [])
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    if (e.touches.length === 2) {
-      // 双指操作：准备缩放
-      const distance = getTouchDistance(e.touches)
-      setLastTouchDistance(distance)
-    } else if (e.touches.length === 1) {
-      // 单指操作：准备拖动
-      setIsDragging(true)
-    }
-  }, [getTouchDistance])
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    e.preventDefault()
-    if (e.touches.length === 2) {
-      // 双指缩放
-      const distance = getTouchDistance(e.touches)
-      if (lastTouchDistance > 0) {
-        const scaleChange = distance / lastTouchDistance
-        setImageScale(prev => {
-          const newScale = Math.max(1, Math.min(5, prev * scaleChange))
-          return newScale
-        })
-      }
-      setLastTouchDistance(distance)
-    } else if (e.touches.length === 1 && isDragging && imageScale > 1) {
-      // 单指拖动（仅在放大状态下）
-      const touch = e.touches[0]
-      const deltaX = touch.clientX - (e.target as HTMLElement).offsetWidth / 2
-      const deltaY = touch.clientY - (e.target as HTMLElement).offsetHeight / 2
-      
-      setImagePosition(prev => ({
-        x: Math.max(-200, Math.min(200, prev.x + deltaX * 0.01)),
-        y: Math.max(-200, Math.min(200, prev.y + deltaY * 0.01))
-      }))
-    }
-  }, [getTouchDistance, lastTouchDistance, isDragging, imageScale])
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false)
-    setLastTouchDistance(0)
-  }, [])
-
-  // 鼠标事件处理（用于桌面端）
-  const handleMouseDown = useCallback((_e: React.MouseEvent) => {
-    if (imageScale > 1) {
-      setIsDragging(true)
-    }
-  }, [imageScale])
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (isDragging && imageScale > 1) {
-      const deltaX = e.movementX
-      const deltaY = e.movementY
-      
-      setImagePosition(prev => ({
-        x: Math.max(-200, Math.min(200, prev.x + deltaX)),
-        y: Math.max(-200, Math.min(200, prev.y + deltaY))
-      }))
-    }
-  }, [isDragging, imageScale])
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
-  }, [])
-
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault()
-    const scaleChange = e.deltaY > 0 ? 0.9 : 1.1
-    setImageScale(prev => {
-      const newScale = Math.max(1, Math.min(5, prev * scaleChange))
-      return newScale
-    })
-  }, [])
 
   // 根据设置过滤充电桩 - 使用 useMemo 确保响应式更新
   const displayStations = useMemo(() => {
@@ -669,44 +574,35 @@ const MapView: React.FC = () => {
               </svg>
             </button>
             
-            {/* 缩放提示 */}
-            {imageScale === 1 && (
-              <div className="absolute bottom-4 left-4 z-[2001] bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg text-sm">
-                双指缩放 • 滚轮缩放
-              </div>
-            )}
-            
-            {/* 当前缩放比例显示 */}
-            {imageScale > 1 && (
-              <div className="absolute top-4 left-4 z-[2001] bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg text-sm">
-                {Math.round(imageScale * 100)}%
-              </div>
-            )}
-            
-            <div 
-              className="w-full h-full flex items-center justify-center overflow-hidden cursor-grab"
-              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onWheel={handleWheel}
-            >
-              <img 
-                src="/map.jpg" 
-                alt="校园地图" 
-                className="max-w-full max-h-full object-contain select-none"
-                style={{
-                  transform: `scale(${imageScale}) translate(${imagePosition.x}px, ${imagePosition.y}px)`,
-                  transformOrigin: 'center center',
-                  transition: isDragging ? 'none' : 'transform 0.1s ease-out'
-                }}
-                draggable={false}
-              />
+            {/* 操作提示 */}
+            <div className="absolute bottom-4 left-4 z-[2001] bg-black bg-opacity-50 text-white px-3 py-2 rounded-lg text-sm">
+              双指缩放 • 拖拽移动 • 滚轮缩放
             </div>
+            
+            <TransformWrapper
+              initialScale={1}
+              minScale={1}
+              maxScale={5}
+              centerOnInit={true}
+              limitToBounds={false}
+              panning={{ disabled: false }}
+              pinch={{ disabled: false }}
+              doubleClick={{ disabled: false, mode: "zoomIn" }}
+              wheel={{ disabled: false }}
+              smooth={true}
+            >
+              <TransformComponent
+                wrapperClass="w-full h-full flex items-center justify-center"
+                contentClass="w-full h-full flex items-center justify-center"
+              >
+                <img 
+                  src="/map.jpg" 
+                  alt="校园地图" 
+                  className="max-w-full max-h-full object-contain select-none"
+                  draggable={false}
+                />
+              </TransformComponent>
+            </TransformWrapper>
           </div>
         </div>
       )}
