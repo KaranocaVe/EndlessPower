@@ -268,7 +268,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                 <span className="font-medium">地图服务:</span> 高德地图
               </p>
               <p>
-                <span className="font-medium">地图制作:</span> 感谢 yushimmering、sdescat0301 提供清水河地图
+                <span className="font-medium">地图制作:</span> 感谢 yushimmering、sdescat0301 提供清水河充电桩地图
               </p>
             </div>
             

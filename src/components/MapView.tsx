@@ -458,13 +458,13 @@ const MapView: React.FC = () => {
         />
       )}
 
-      {/* Control Buttons - 使用flex布局确保一致的间距 */}
-      <div className="absolute bottom-6 right-6 z-[999] flex gap-3">
+      {/* Control Buttons - 响应式布局优化 */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 md:bottom-6 md:right-6 md:left-auto md:transform-none z-[999] flex gap-2 md:gap-3 bg-white/10 dark:bg-gray-900/10 backdrop-blur-sm rounded-full p-2 md:p-0 md:bg-transparent md:backdrop-blur-none" style={{ bottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
         {/* 开发模式按钮 (仅在开发环境显示) */}
         {versionInfo.isDevelopment && (
           <button
             onClick={handleToggleDevMode}
-            className={`p-3 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center ${
+            className={`p-4 md:p-3 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center ${
               isDevMode
                 ? 'bg-orange-500 text-white hover:bg-orange-600'
                 : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -478,7 +478,7 @@ const MapView: React.FC = () => {
 
         <button
           onClick={handleWeChatScan}
-          className="bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
+          className="bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
           aria-label="微信扫一扫"
           type="button"
         >
@@ -488,7 +488,7 @@ const MapView: React.FC = () => {
         {/* 查看地图按钮 */}
         <button
           onClick={handleToggleMapModal}
-          className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
+          className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
           aria-label="查看校园地图"
           type="button"
         >
@@ -500,7 +500,7 @@ const MapView: React.FC = () => {
         <button
           onClick={handleLocateUser}
           disabled={isLocating}
-          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-w-[56px] min-h-[56px] flex items-center justify-center"
+          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
           aria-label={isLocating ? "定位中..." : "定位当前位置"}
           type="button"
         >
@@ -509,7 +509,7 @@ const MapView: React.FC = () => {
 
         <button
           onClick={handleRefresh}
-          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[56px] min-h-[56px] flex items-center justify-center"
+          className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 p-4 md:p-3 rounded-full shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 active:scale-95 transition-all min-w-[60px] min-h-[60px] md:min-w-[56px] md:min-h-[56px] flex items-center justify-center"
           aria-label="刷新充电站数据"
           type="button"
         >
