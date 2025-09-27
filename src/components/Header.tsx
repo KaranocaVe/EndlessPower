@@ -28,14 +28,14 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
 
         {/* 在线人数显示 */}
         {(isConnected || visitorsCount > 0) && (
-          <div className="hidden sm:flex items-center gap-1.5 bg-gray-100/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-full px-2.5 py-1 mr-3">
+          <div className="flex items-center gap-1 sm:gap-1.5 bg-gray-100/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-full px-2 sm:px-2.5 py-1 mr-2 sm:mr-3">
             <div
               className={`w-1.5 h-1.5 rounded-full ${isConnected
                   ? 'bg-green-500 animate-pulse'
                   : 'bg-gray-400'
                 }`}
             ></div>
-            <GroupOutlined className="w-3.5 h-3.5 text-gray-600 dark:text-gray-300" />
+            <GroupOutlined className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600 dark:text-gray-300" />
             <span className="text-xs text-gray-700 dark:text-gray-200 font-medium">
               {visitorsCount}
             </span>
