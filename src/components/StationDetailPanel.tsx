@@ -352,14 +352,14 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       
       {/* Bottom Action Buttons - Outside the card */}
       <div className="mt-4 flex justify-center gap-3" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
-        <button
-          onClick={handleWeChatScan}
-          className="bg-green-500 text-white hover:bg-green-600 p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95"
-          aria-label="微信扫一扫"
-          type="button"
-        >
-          <QrCodeScannerOutlined className="h-6 w-6" />
-        </button>
+          <button
+            onClick={handleWeChatScan}
+            className="bg-white dark:bg-gray-800 text-green-500 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 p-4 rounded-full shadow-lg transition-all duration-200 min-w-[56px] min-h-[56px] flex items-center justify-center hover:scale-105 active:scale-95"
+            aria-label="微信扫一扫"
+            type="button"
+          >
+            <QrCodeScannerOutlined className="h-6 w-6" />
+          </button>
         
         <button
           onClick={handleFavoriteToggle}
