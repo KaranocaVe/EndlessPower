@@ -4,7 +4,6 @@ import MapView from './components/MapView'
 import FavoritesView from './components/FavoritesView'
 import ErrorOverlay from './components/ErrorOverlay'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
-import VisitorsCounter from './components/VisitorsCounter'
 import VersionInfo from './components/VersionInfo'
 import { useStationStore } from './store/stationStore'
 import { useErrorStore } from './store/errorStore'
@@ -57,8 +56,6 @@ function App() {
       {/* PWAInstallPrompt 已集成到 Header 中，这里只保留更新提示 */}
       <PWAUpdatePrompt />
       
-      {/* 访问者计数器 */}
-      <VisitorsCounter />
       
       {/* 版本信息 (仅开发模式) */}
       <VersionInfo />
