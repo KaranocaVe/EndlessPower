@@ -279,3 +279,61 @@ input:focus {
 .dark .dev-panel-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #6b7280;
 }
+
+/* 缩放滑块样式 */
+.zoom-slider {
+  background: linear-gradient(to right, #3b82f6 0%, #3b82f6 25%, #4b5563 25%, #4b5563 100%);
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.zoom-slider::-webkit-slider-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.zoom-slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.zoom-slider::-moz-range-thumb:hover {
+  background: #2563eb;
+  transform: scale(1.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.zoom-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #4b5563;
+}
+
+/* 更新滑块进度颜色 */
+.zoom-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #4b5563;
+}
