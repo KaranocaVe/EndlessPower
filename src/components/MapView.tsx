@@ -84,7 +84,7 @@ const ZoomControls: React.FC = () => {
   }
   
   return (
-    <div className="absolute bottom-4 left-4 z-[2001] hidden md:flex items-center gap-3 backdrop-blur-sm rounded-full px-4 py-2" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
+    <div className="absolute bottom-4 left-4 z-[2001] hidden md:flex items-center gap-3 bg-black bg-opacity-60 backdrop-blur-sm rounded-full px-4 py-2">
       {/* 缩小按钮 */}
       <button
         onClick={handleZoomOut}
@@ -106,7 +106,7 @@ const ZoomControls: React.FC = () => {
           step="0.1"
           value={currentZoom}
           onChange={handleZoomChange}
-          className="w-24 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer zoom-slider"
+          className="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer zoom-slider"
           style={{
             background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((currentZoom - 1) / 4) * 100}%, #4b5563 ${((currentZoom - 1) / 4) * 100}%, #4b5563 100%)`
           }}
@@ -651,8 +651,7 @@ const MapView: React.FC = () => {
       {/* 地图模态框 */}
       {showMapModal && (
         <div 
-          className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
-          style={{ backgroundColor: 'rgba(72, 72, 72, 0.85)' }}
+          className="fixed inset-0 z-[2000] bg-black bg-opacity-75 flex items-center justify-center p-4"
           onClick={() => setShowMapModal(false)}
         >
           <div 
@@ -666,8 +665,7 @@ const MapView: React.FC = () => {
           >
             <button
               onClick={() => setShowMapModal(false)}
-              className="absolute top-4 right-4 z-[2001] text-white rounded-full p-2 hover:bg-white hover:bg-opacity-20 transition-all"
-              style={{ backgroundColor: 'rgba(72, 72, 72, 0.6)' }}
+              className="absolute top-4 right-4 z-[2001] bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-75 transition-all"
               aria-label="关闭地图"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

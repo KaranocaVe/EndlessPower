@@ -295,6 +295,7 @@ input:focus {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
+  margin-top: -6px; /* 垂直居中到轨道 */
 }
 
 .zoom-slider::-webkit-slider-thumb:hover {
@@ -317,6 +318,7 @@ input:focus {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
   border: none;
+  margin-top: 0; /* Firefox 自动居中 */
 }
 
 .zoom-slider::-moz-range-thumb:hover {
@@ -325,15 +327,15 @@ input:focus {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
-.zoom-slider::-moz-range-track {
-  height: 8px;
-  border-radius: 4px;
+/* 更新滑块进度颜色 */
+.zoom-slider::-webkit-slider-runnable-track {
+  height: 4px; /* 减少轨道高度，让小点居中更明显 */
+  border-radius: 2px;
   background: #4b5563;
 }
 
-/* 更新滑块进度颜色 */
-.zoom-slider::-webkit-slider-runnable-track {
-  height: 8px;
-  border-radius: 4px;
+.zoom-slider::-moz-range-track {
+  height: 4px; /* Firefox 轨道高度 */
+  border-radius: 2px;
   background: #4b5563;
 }
