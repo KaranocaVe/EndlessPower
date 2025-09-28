@@ -663,9 +663,10 @@ const MapView: React.FC = () => {
                   className="max-w-full max-h-[85vh] object-contain select-none"
                   draggable={false}
                 />
-                {/* 缩放控制条 - 只在桌面端显示 */}
-                <ZoomControls />
               </TransformComponent>
+              
+              {/* 缩放控制条 - 锚定在窗口，只在桌面端显示 */}
+              <ZoomControls />
             </TransformWrapper>
           </div>
         </div>
