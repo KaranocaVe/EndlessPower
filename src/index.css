@@ -282,7 +282,7 @@ input:focus {
 
 /* 缩放滑块样式 */
 .zoom-slider {
-  background: linear-gradient(to right, #3b82f6 0%, #3b82f6 25%, #4b5563 25%, #4b5563 100%);
+  background: #4b5563;
 }
 
 .zoom-slider::-webkit-slider-thumb {

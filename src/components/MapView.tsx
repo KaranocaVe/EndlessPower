@@ -24,43 +24,67 @@ const MAP_CENTER: [number, number] = [30.754365, 103.936107]
 // 缩放控制组件（只在桌面端显示）
 const ZoomControls: React.FC = () => {
   const { zoomIn, zoomOut, resetTransform } = useControls()
-  const [zoomLevel, setZoomLevel] = useState(1)
+  const [currentZoom, setCurrentZoom] = useState(1)
+  
+  // 监听缩放变化，通过定时器同步状态
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // 通过DOM元素获取当前变换状态
+      const transformElement = document.querySelector('.react-transform-component') as HTMLElement
+      if (transformElement) {
+        const transform = transformElement.style.transform
+        const scaleMatch = transform.match(/scale\(([^)]+)\)/)
+        if (scaleMatch) {
+          const scale = parseFloat(scaleMatch[1])
+          if (Math.abs(scale - currentZoom) > 0.01) {
+            setCurrentZoom(Math.round(scale * 10) / 10) // 四舍五入到一位小数
+          }
+        }
+      }
+    }, 100)
+    
+    return () => clearInterval(interval)
+  }, [currentZoom])
   
   const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newZoom = parseFloat(event.target.value)
-    setZoomLevel(newZoom)
+    setCurrentZoom(newZoom)
     
-    // 使用zoomToElement API进行缩放
-    if (newZoom > zoomLevel) {
-      const steps = Math.ceil((newZoom - zoomLevel) / 0.2)
-      for (let i = 0; i < steps; i++) {
-        setTimeout(() => zoomIn(0.2, 50), i * 50)
-      }
-    } else if (newZoom < zoomLevel) {
-      const steps = Math.ceil((zoomLevel - newZoom) / 0.2)
-      for (let i = 0; i < steps; i++) {
-        setTimeout(() => zoomOut(0.2, 50), i * 50)
+    // 计算需要的缩放步骤
+    const diff = newZoom - currentZoom
+    if (Math.abs(diff) > 0.1) {
+      const steps = Math.round(Math.abs(diff) / 0.2)
+      const stepDelay = 50
+      
+      if (diff > 0) {
+        // 放大
+        for (let i = 0; i < steps; i++) {
+          setTimeout(() => zoomIn(0.2, stepDelay), i * stepDelay)
+        }
+      } else {
+        // 缩小  
+        for (let i = 0; i < steps; i++) {
+          setTimeout(() => zoomOut(0.2, stepDelay), i * stepDelay)
+        }
       }
     }
   }
   
   const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.2, 5))
     zoomIn(0.2, 200)
   }
   
   const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 0.2, 1))
     zoomOut(0.2, 200)
   }
   
   const handleReset = () => {
-    setZoomLevel(1)
+    setCurrentZoom(1)
     resetTransform(200)
   }
   
   return (
-    <div className="absolute bottom-4 left-4 z-[2001] hidden md:flex items-center gap-3 bg-black bg-opacity-60 backdrop-blur-sm rounded-full px-4 py-2">
+    <div className="absolute bottom-4 left-4 z-[2001] hidden md:flex items-center gap-3 backdrop-blur-sm rounded-full px-4 py-2" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
       {/* 缩小按钮 */}
       <button
         onClick={handleZoomOut}
@@ -74,15 +98,18 @@ const ZoomControls: React.FC = () => {
       
       {/* 缩放滑块 */}
       <div className="flex items-center gap-2">
-        <span className="text-white text-xs font-mono">{Math.round(zoomLevel * 100)}%</span>
+        <span className="text-white text-xs font-mono">{Math.round(currentZoom * 100)}%</span>
         <input
           type="range"
           min="1"
           max="5"
           step="0.1"
-          value={zoomLevel}
+          value={currentZoom}
           onChange={handleZoomChange}
           className="w-24 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer zoom-slider"
+          style={{
+            background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((currentZoom - 1) / 4) * 100}%, #4b5563 ${((currentZoom - 1) / 4) * 100}%, #4b5563 100%)`
+          }}
         />
       </div>
       
@@ -624,16 +651,23 @@ const MapView: React.FC = () => {
       {/* 地图模态框 */}
       {showMapModal && (
         <div 
-          className="fixed inset-0 z-[2000] bg-black bg-opacity-75 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4"
+          style={{ backgroundColor: 'rgba(72, 72, 72, 0.85)' }}
           onClick={() => setShowMapModal(false)}
         >
           <div 
-            className="relative w-full max-w-4xl max-h-[85vh] bg-black rounded-lg shadow-xl overflow-hidden"
+            className="relative w-full max-w-4xl rounded-lg shadow-xl overflow-hidden flex items-center justify-center"
+            style={{ 
+              backgroundColor: '#484848', 
+              height: '85vh',
+              maxHeight: '85vh'
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setShowMapModal(false)}
-              className="absolute top-4 right-4 z-[2001] bg-black bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-75 transition-all"
+              className="absolute top-4 right-4 z-[2001] text-white rounded-full p-2 hover:bg-white hover:bg-opacity-20 transition-all"
+              style={{ backgroundColor: 'rgba(72, 72, 72, 0.6)' }}
               aria-label="关闭地图"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -654,13 +688,13 @@ const MapView: React.FC = () => {
               smooth={true}
             >
               <TransformComponent
-                wrapperClass="w-full flex items-center justify-center"
-                contentClass="w-full flex items-center justify-center"
+                wrapperClass="w-full h-full flex items-center justify-center"
+                contentClass="flex items-center justify-center"
               >
                 <img 
                   src="/map.jpg" 
                   alt="校园地图" 
-                  className="max-w-full max-h-[85vh] object-contain select-none"
+                  className="max-w-full max-h-full object-contain select-none"
                   draggable={false}
                 />
               </TransformComponent>
