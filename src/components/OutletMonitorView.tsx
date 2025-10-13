@@ -112,10 +112,16 @@ const OutletMonitorView: React.FC<OutletMonitorViewProps> = ({ onBack }) => {
       const status = await fetchOutletStatus(currentTarget.outlet.outletNo)
       
       if (status && status.outlet) {
-        // 解析功率信息
-        const powerStr = status.powerFee?.billingPower || '0kW'
-        const powerMatch = powerStr.match(/(\d+\.?\d*)/)
-        const power = powerMatch ? parseFloat(powerMatch[1]) : 0
+        // 解析功率信息（支持 W 和 kW 两种单位）
+        const powerStr = status.powerFee?.billingPower || '0W'
+        const powerMatch = powerStr.match(/(\d+\.?\d*)\s*(kW|W)/i)
+        let power = 0
+        if (powerMatch) {
+          const value = parseFloat(powerMatch[1])
+          const unit = powerMatch[2].toLowerCase()
+          // 统一转换为 W（瓦特）
+          power = unit === 'kw' ? value * 1000 : value
+        }
 
         const data: MonitorData = {
           timestamp: Date.now(),
@@ -424,7 +430,7 @@ const PowerChart: React.FC<{ data: MonitorData[] }> = ({ data }) => {
     for (let i = 0; i <= 5; i++) {
       const value = maxPower - (powerRange / 5) * i
       const y = padding.top + (chartHeight / 5) * i
-      ctx.fillText(`${value.toFixed(1)} kW`, padding.left - 10, y)
+      ctx.fillText(`${value.toFixed(0)} W`, padding.left - 10, y)
     }
 
     // 绘制X轴标签（时间）- 基于真实时间戳
@@ -566,8 +572,8 @@ const DataStats: React.FC<{ data: MonitorData[] }> = ({ data }) => {
     
     for (let i = 1; i < data.length; i++) {
       const timeDiff = (data[i].timestamp - data[i - 1].timestamp) / (1000 * 60 * 60) // 转换为小时
-      const avgPowerInterval = (data[i].power + data[i - 1].power) / 2 // 梯形法则：取平均功率
-      totalEnergy += avgPowerInterval * timeDiff
+      const avgPowerInterval = (data[i].power + data[i - 1].power) / 2 // 梯形法则：取平均功率（W）
+      totalEnergy += (avgPowerInterval / 1000) * timeDiff // 转换为 kWh
     }
     
     return totalEnergy
@@ -580,6 +586,28 @@ const DataStats: React.FC<{ data: MonitorData[] }> = ({ data }) => {
     ? Math.round((latestData.timestamp - data[0].timestamp) / (1000 * 60)) // 转换为分钟
     : 0
 
+  // 电量自适应显示（Wh 或 kWh）
+  const formatEnergy = (energyKWh: number) => {
+    if (energyKWh < 1) {
+      // 小于 1 kWh 时显示为 Wh
+      return `${(energyKWh * 1000).toFixed(0)} Wh`
+    } else {
+      return `${energyKWh.toFixed(2)} kWh`
+    }
+  }
+
+  // 单价自适应显示（元/Wh 或 元/kWh）
+  const formatUnitPrice = (totalFee: number, energyKWh: number) => {
+    if (energyKWh <= 0) return ''
+    const pricePerKWh = totalFee / energyKWh
+    if (energyKWh < 1) {
+      // 小于 1 kWh 时显示为 元/Wh
+      return `¥${(pricePerKWh / 1000).toFixed(4)}/Wh`
+    } else {
+      return `¥${pricePerKWh.toFixed(2)}/kWh`
+    }
+  }
+
   return (
     <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -589,13 +617,13 @@ const DataStats: React.FC<{ data: MonitorData[] }> = ({ data }) => {
           <div className="space-y-1">
             <div className="flex items-baseline justify-between">
               <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                {latestData.power.toFixed(2)} kW
+                {latestData.power.toFixed(0)} W
               </span>
             </div>
             <div className="flex items-baseline justify-between text-xs text-gray-600 dark:text-gray-300">
-              <span>平均 {avgPower.toFixed(2)} kW</span>
+              <span>平均 {avgPower.toFixed(0)} W</span>
               <span className="text-gray-400 dark:text-gray-500">|</span>
-              <span>峰值 {maxPower.toFixed(2)} kW</span>
+              <span>峰值 {maxPower.toFixed(0)} W</span>
             </div>
           </div>
         </div>
@@ -604,7 +632,7 @@ const DataStats: React.FC<{ data: MonitorData[] }> = ({ data }) => {
         <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-3 rounded-lg border border-green-200/50 dark:border-green-700/50">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">总电量</div>
           <div className="text-lg font-bold text-green-600 dark:text-green-400">
-            {totalEnergy.toFixed(2)} kWh
+            {formatEnergy(totalEnergy)}
           </div>
         </div>
 
@@ -628,7 +656,7 @@ const DataStats: React.FC<{ data: MonitorData[] }> = ({ data }) => {
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">费用</div>
           <div className="flex items-baseline justify-between">
             <span className="text-lg font-bold text-orange-600 dark:text-orange-400">¥{latestData.fee.toFixed(2)}</span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">{totalEnergy > 0 ? `¥${(latestData.fee / totalEnergy).toFixed(2)}/kWh` : ''}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{formatUnitPrice(latestData.fee, totalEnergy)}</span>
           </div>
         </div>
       </div>
