@@ -17,9 +17,127 @@ import DraggableStationMarkerUniversal from './DraggableStationMarkerUniversal'
 import RefreshOutlined from '@mui/icons-material/RefreshOutlined'
 import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
 import DeveloperModeOutlined from '@mui/icons-material/DeveloperModeOutlined'
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import { TransformWrapper, TransformComponent, useControls } from 'react-zoom-pan-pinch'
 
 const MAP_CENTER: [number, number] = [30.754365, 103.936107]
+
+// 缩放控制组件（只在桌面端显示）
+const ZoomControls: React.FC = () => {
+  const { zoomIn, zoomOut, resetTransform } = useControls()
+  const [currentZoom, setCurrentZoom] = useState(1)
+  
+  // 监听缩放变化，通过定时器同步状态
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // 通过DOM元素获取当前变换状态
+      const transformElement = document.querySelector('.react-transform-component') as HTMLElement
+      if (transformElement) {
+        const transform = transformElement.style.transform
+        const scaleMatch = transform.match(/scale\(([^)]+)\)/)
+        if (scaleMatch) {
+          const scale = parseFloat(scaleMatch[1])
+          if (Math.abs(scale - currentZoom) > 0.01) {
+            setCurrentZoom(Math.round(scale * 10) / 10) // 四舍五入到一位小数
+          }
+        }
+      }
+    }, 100)
+    
+    return () => clearInterval(interval)
+  }, [currentZoom])
+  
+  const handleZoomChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newZoom = parseFloat(event.target.value)
+    setCurrentZoom(newZoom)
+    
+    // 计算需要的缩放步骤
+    const diff = newZoom - currentZoom
+    if (Math.abs(diff) > 0.1) {
+      const steps = Math.round(Math.abs(diff) / 0.2)
+      const stepDelay = 50
+      
+      if (diff > 0) {
+        // 放大
+        for (let i = 0; i < steps; i++) {
+          setTimeout(() => zoomIn(0.2, stepDelay), i * stepDelay)
+        }
+      } else {
+        // 缩小  
+        for (let i = 0; i < steps; i++) {
+          setTimeout(() => zoomOut(0.2, stepDelay), i * stepDelay)
+        }
+      }
+    }
+  }
+  
+  const handleZoomIn = () => {
+    zoomIn(0.2, 200)
+  }
+  
+  const handleZoomOut = () => {
+    zoomOut(0.2, 200)
+  }
+  
+  const handleReset = () => {
+    setCurrentZoom(1)
+    resetTransform(200)
+  }
+  
+  return (
+    <div className="absolute bottom-4 left-4 z-[2001] hidden md:flex items-center gap-3 bg-black bg-opacity-60 backdrop-blur-sm rounded-full px-4 py-2">
+      {/* 缩小按钮 */}
+      <button
+        onClick={handleZoomOut}
+        className="text-white hover:text-gray-300 transition-colors p-1"
+        aria-label="缩小"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+        </svg>
+      </button>
+      
+      {/* 缩放滑块 */}
+      <div className="flex items-center gap-2">
+        <span className="text-white text-xs font-mono">{Math.round(currentZoom * 100)}%</span>
+        <input
+          type="range"
+          min="1"
+          max="5"
+          step="0.1"
+          value={currentZoom}
+          onChange={handleZoomChange}
+          className="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer zoom-slider"
+          style={{
+            background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${((currentZoom - 1) / 4) * 100}%, #4b5563 ${((currentZoom - 1) / 4) * 100}%, #4b5563 100%)`
+          }}
+        />
+      </div>
+      
+      {/* 放大按钮 */}
+      <button
+        onClick={handleZoomIn}
+        className="text-white hover:text-gray-300 transition-colors p-1"
+        aria-label="放大"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+      
+      {/* 重置按钮 */}
+      <div className="w-px h-4 bg-gray-600 mx-1"></div>
+      <button
+        onClick={handleReset}
+        className="text-white hover:text-gray-300 transition-colors p-1"
+        aria-label="重置缩放"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </button>
+    </div>
+  )
+}
 
 const MapView: React.FC = () => {
   // SEO优化
@@ -537,7 +655,12 @@ const MapView: React.FC = () => {
           onClick={() => setShowMapModal(false)}
         >
           <div 
-            className="relative w-full max-w-4xl max-h-[85vh] bg-black rounded-lg shadow-xl overflow-hidden"
+            className="relative w-full max-w-4xl rounded-lg shadow-xl overflow-hidden flex items-center justify-center"
+            style={{ 
+              backgroundColor: '#484848', 
+              height: '85vh',
+              maxHeight: '85vh'
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -563,16 +686,19 @@ const MapView: React.FC = () => {
               smooth={true}
             >
               <TransformComponent
-                wrapperClass="w-full flex items-center justify-center"
-                contentClass="w-full flex items-center justify-center"
+                wrapperClass="w-full h-full flex items-center justify-center"
+                contentClass="flex items-center justify-center"
               >
                 <img 
                   src="/map.jpg" 
                   alt="校园地图" 
-                  className="max-w-full max-h-[85vh] object-contain select-none"
+                  className="max-w-full max-h-full object-contain select-none"
                   draggable={false}
                 />
               </TransformComponent>
+              
+              {/* 缩放控制条 - 锚定在窗口，只在桌面端显示 */}
+              <ZoomControls />
             </TransformWrapper>
           </div>
         </div>

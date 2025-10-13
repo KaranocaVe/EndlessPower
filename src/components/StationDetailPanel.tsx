@@ -4,10 +4,12 @@ import { Station, Outlet, OutletStatus } from '../types/station'
 import { fetchStationOutlets, fetchOutletStatus } from '../utils/api'
 import { useFavoritesStore } from '../store/favoritesStore'
 import { useErrorStore } from '../store/errorStore'
+import { useMonitorStore } from '../store/monitorStore'
 import LoadingSpinner from './LoadingSpinner'
 import StarOutlined from '@mui/icons-material/StarOutlined'
 import StarBorderOutlined from '@mui/icons-material/StarBorderOutlined'
 import QrCodeScannerOutlined from '@mui/icons-material/QrCodeScannerOutlined'
+import TimelineOutlined from '@mui/icons-material/TimelineOutlined'
 
 interface StationDetailPanelProps {
   station: Station | null
@@ -26,6 +28,7 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
   
   const { isFavorite, addFavorite, removeFavorite, canAddMore } = useFavoritesStore()
   const { showError } = useErrorStore()
+  const { setMonitorTarget } = useMonitorStore()
 
   useEffect(() => {
     if (!station) {
@@ -106,6 +109,25 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     }
   }
 
+  // 处理点击插座，跳转到监视页面
+  const handleMonitorOutlet = (outlet: Outlet, outletName: string) => {
+    if (!station) return
+
+    // 设置监视目标
+    setMonitorTarget({
+      stationId: station.stationId,
+      stationName: station.stationName,
+      outlet: outlet,
+      outletName: outletName
+    })
+
+    // 触发切换到监视视图
+    window.dispatchEvent(new Event('switchToMonitor'))
+    
+    // 关闭当前面板
+    onClose()
+  }
+
   const renderOutletCard = (outlet: Outlet, status: OutletStatus | null) => {
     const isAvailable = status?.outlet?.iCurrentChargingRecordId === 0
     
@@ -142,6 +164,9 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
       return outlet.outletSerialNo?.toString() || name.substring(0, 2) || '?'
     }
     const serial = extractNumber(outletName)
+    
+    // 完整的插座名称用于监视页面
+    const fullOutletName = `${outletName}`
     
     if (!status || !status.outlet) {
       return (
@@ -204,7 +229,17 @@ const StationDetailPanel: React.FC<StationDetailPanelProps> = ({ station, onClos
     )
 
     return (
-      <div key={outlet.outletId} className={`rounded-xl p-2.5 border transition-all duration-300 h-24 shadow-md hover:shadow-lg ${cardClasses}`}>
+      <div 
+        key={outlet.outletId} 
+        className={`rounded-xl p-2.5 border transition-all duration-300 h-24 shadow-md hover:shadow-lg cursor-pointer relative group ${cardClasses}`}
+        onClick={() => handleMonitorOutlet(outlet, fullOutletName)}
+        title="点击监视此插座"
+      >
+        {/* 监视图标提示 - 居中显示 */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/10 dark:bg-black/20 rounded-xl pointer-events-none">
+          <TimelineOutlined className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+        </div>
+        
         <div className="flex justify-between items-center gap-1.5 mb-1.5">
           <div className="flex items-center gap-1.5 flex-1 min-w-0">
             <div className="flex-1 min-w-0 overflow-hidden relative">
