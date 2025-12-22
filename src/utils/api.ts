@@ -59,11 +59,22 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
       const data: ApiResponse<T> = await response.json()
       if (data.code === "1") {
         if (ENABLE_DEBUG) console.log(`✅ 直接请求成功`)
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('api-using-real-data'))
+        }
         return data.data
       }
     }
   } catch (error) {
     if (ENABLE_DEBUG) console.warn(`❌ 直接请求失败，尝试代理服务`, error)
+  }
+
+  // 相对路径无法通过第三方代理转发
+  if (url.startsWith('/')) {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('api-fallback-to-simulation'))
+    }
+    return getSimulatedData<T>(url)
   }
   
   // 尝试每个代理服务
@@ -86,7 +97,7 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
           throw new Error(`HTTP error: ${response.status}`)
         }
         
-        const result = await response.json()
+        const result = (await response.json()) as any
         if (result.status?.http_code !== 200) {
           throw new Error(`Proxy error: ${result.status?.http_code}`)
         }
@@ -107,6 +118,9 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
         }
         
         if (ENABLE_DEBUG) console.log(`✅ 代理成功: ${proxy.url}`)
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('api-using-real-data'))
+        }
         return data.data
       } else {
         // 其他代理服务的标准处理
@@ -131,6 +145,9 @@ async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | 
         }
         
         if (ENABLE_DEBUG) console.log(`✅ 代理成功: ${proxy.url}`)
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('api-using-real-data'))
+        }
         return data.data
       }
     } catch (error) {
