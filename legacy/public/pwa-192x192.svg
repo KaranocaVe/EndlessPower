@@ -1,0 +1,10 @@
+<!-- This is a placeholder icon file -->
+<!-- Replace with actual 192x192 PNG icon -->
+<!-- Use the icon generator at scripts/generate-icons.html -->
+<!-- Or use online tools to create proper PWA icons -->
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" fill="#3B82F6" rx="28.799999999999997"/>
+  <text x="96" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="19.200000000000003" font-weight="bold" fill="white" dy="0.35em">EP</text>
+  <text x="96" y="153.60000000000002" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.600000000000001" fill="white">192x192</text>
+</svg>
