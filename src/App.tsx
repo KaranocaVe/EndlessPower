@@ -11,6 +11,7 @@ import SettingsModal from './components/SettingsModal'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 import Hud from './components/Hud'
+import { UsersIcon } from './components/icons'
 
 type ViewType = 'map' | 'favorites' | 'monitor'
 
@@ -71,13 +72,14 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
         isHidden={currentView === 'monitor' || settingsOpen}
       >
-        {(isConnected || visitorsCount > 0) && (
-          <div className="hud-top" aria-label="在线人数">
-            <Chip color={isConnected ? 'success' : 'default'} variant="secondary" size="sm">
-              在线 {visitorsCount}
-            </Chip>
-          </div>
-        )}
+        <div className="hud-top" aria-label="在线人数">
+          <Chip color={isConnected ? 'success' : 'default'} variant="secondary" size="sm">
+            <span className="online-chip">
+              <UsersIcon size={14} aria-hidden="true" />
+              <span className="online-chip-value">{isConnected ? visitorsCount : '—'}</span>
+            </span>
+          </Chip>
+        </div>
       </Hud>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
