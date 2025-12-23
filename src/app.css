@@ -197,8 +197,9 @@
 .bottom-nav {
   pointer-events: auto;
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 12px;
+  right: 12px;
+  margin: 0 auto;
   bottom: var(--hud-bottom);
   z-index: 45;
   width: calc(100% - 24px);
@@ -831,6 +832,14 @@
   line-height: 1;
   opacity: 0.55;
   margin-top: 2px;
+}
+
+@media (max-width: 520px) {
+  .outlet-item-sub {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.25;
+  }
 }
 
 .outlet-empty {
