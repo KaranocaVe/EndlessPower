@@ -17,8 +17,8 @@ name = "VISITORS_COUNTER"
 class_name = "VisitorsCounter"
 
 [[migrations]]
-tag = "v2"
-new_sqlite_classes = ["VisitorsCounter"]
+tag = "v1"
+deleted_classes = []
 
 [env.dev]
 name = "endlesspower"

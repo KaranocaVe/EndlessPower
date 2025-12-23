@@ -20,10 +20,10 @@ command = "npm run build"
 name = "VISITORS_COUNTER"
 class_name = "VisitorsCounter"
 
-# 迁移配置 - 添加新的 Durable Object 类
+# 迁移配置 - Durable Object 类已存在，无需新建
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["VisitorsCounter"]
+deleted_classes = []
 
 # 开发环境配置
 [env.dev]
