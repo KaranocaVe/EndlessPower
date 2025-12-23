@@ -1,7 +1,5 @@
 # EndlessPower（v2）- 充电桩实时查询地图
 
-旧版项目已迁移至 `legacy/`，当前目录为全新重写版本（React + Vite + TypeScript）。
-
 ## ✨ 功能
 
 - **地图显示**：MapLibre + CARTO 矢量底图，支持 **3D 建筑**（立体楼块）
