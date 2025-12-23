@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Button, Card, Modal } from '@heroui/react'
+import { Button, Modal } from '@heroui/react'
 import type { Outlet, OutletStatus, Station } from '../types/station'
 import { fetchOutletStatus, fetchStationOutlets } from '../utils/api'
 import { useFavoritesStore } from '../store/favoritesStore'
 import { useErrorStore } from '../store/errorStore'
 import { useMonitorStore } from '../store/monitorStore'
 import LoadingSpinner from './LoadingSpinner'
-import { HeartIcon, MonitorIcon, QrCodeIcon } from './icons'
+import { HeartIcon, QrCodeIcon } from './icons'
 
 type StationDetailModalProps = {
   station: Station | null
@@ -105,25 +105,23 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
       <Modal.Backdrop variant="blur">
         <Modal.Container placement="bottom" size="cover" scroll="inside">
           <Modal.Dialog className="ep-station-dialog">
-            <div className="ep-sheet-handle" aria-hidden="true" />
-            <Modal.Header className="ep-modal-header ep-station-header">
-              <div className="ep-station-title">
+            <div style={{ width: 44, height: 4, borderRadius: 999, margin: '10px auto 2px', background: 'rgba(148, 163, 184, 0.35)' }} aria-hidden="true" />
+            <Modal.Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, paddingTop: 6, paddingBottom: 12 }}>
+              <div style={{ minWidth: 0 }}>
                 <Modal.Heading>{station?.stationName ?? '充电站'}</Modal.Heading>
-                <div className="ep-station-subtitle">{station?.address ?? ''}</div>
+                <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station?.address ?? ''}</div>
               </div>
               <Modal.CloseTrigger aria-label="关闭" />
             </Modal.Header>
-            <Modal.Body className="ep-station-body">
+            <Modal.Body style={{ display: 'grid', gap: 14 }}>
               {station && (
-                <div className="ep-station-actions">
-                  <Button variant={stationIsFavorite ? 'primary' : 'secondary'} onPress={handleToggleFavorite}>
-                    <span className="ep-btn-icon" aria-hidden="true">
-                      <HeartIcon size={18} />
-                    </span>
-                    {stationIsFavorite ? '已收藏' : '收藏'}
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <Button variant={stationIsFavorite ? 'primary' : 'secondary'} onPress={handleToggleFavorite} aria-label={stationIsFavorite ? '已收藏' : '收藏'}>
+                    <HeartIcon size={18} />
                   </Button>
                   <Button
                     variant="secondary"
+                    aria-label="微信扫一扫"
                     onPress={() => {
                       try {
                         window.location.href = 'weixin://scanqrcode'
@@ -132,45 +130,27 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
                       }
                     }}
                   >
-                    <span className="ep-btn-icon" aria-hidden="true">
-                      <QrCodeIcon size={18} />
-                    </span>
-                    微信扫一扫
+                    <QrCodeIcon size={18} />
                   </Button>
                 </div>
               )}
 
-              <div className="ep-station-summary">
-                <Card className="ep-station-stat">
-                  <Card.Content>
-                    <div className="ep-stat-label">总插座</div>
-                    <div className="ep-stat-value">{outletSummary.total}</div>
-                  </Card.Content>
-                </Card>
-                <Card className="ep-station-stat is-success">
-                  <Card.Content>
-                    <div className="ep-stat-label">可用</div>
-                    <div className="ep-stat-value is-success">{outletSummary.available}</div>
-                  </Card.Content>
-                </Card>
-                <Card className="ep-station-stat is-busy">
-                  <Card.Content>
-                    <div className="ep-stat-label">占用</div>
-                    <div className="ep-stat-value is-busy">{outletSummary.occupied}</div>
-                  </Card.Content>
-                </Card>
+              <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
+                <span>总插座 <strong>{outletSummary.total}</strong></span>
+                <span style={{ color: 'var(--success)' }}>可用 <strong>{outletSummary.available}</strong></span>
+                <span style={{ color: 'var(--danger)' }}>占用 <strong>{outletSummary.occupied}</strong></span>
               </div>
 
               {loading ? (
-                <div className="ep-station-loading">
+                <div style={{ padding: '12px 0' }}>
                   <LoadingSpinner label="加载插座信息…" />
                 </div>
               ) : sortedOutlets.length === 0 ? (
-                <div className="ep-station-empty">该充电站暂无插座信息。</div>
+                <div style={{ padding: '12px 0', opacity: 0.8 }}>该充电站暂无插座信息。</div>
               ) : (
                 <>
-                  <div className="ep-station-hint">点击插座卡片进入监控</div>
-                  <div className="ep-outlet-grid" data-testid="outlet-grid">
+                  <div style={{ fontSize: 12, opacity: 0.8 }}>点击插座卡片进入监控</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }} data-testid="outlet-grid">
                     {sortedOutlets.map((outlet) => {
                       const status = statusByOutletNo[outlet.outletNo] ?? null
                       const available = isOutletAvailable(status)
@@ -181,33 +161,50 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
                         outlet.outletNo
 
                       const label = `插座 ${name}`
+                      const cardStyle: React.CSSProperties = {
+                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 10,
+                        padding: 14,
+                        borderRadius: 14,
+                        border: `1px solid ${available ? 'var(--ep-success-border)' : 'var(--ep-danger-border)'}`,
+                        background: available ? 'var(--ep-success-soft)' : 'var(--ep-danger-soft)',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        minHeight: 72
+                      }
                       return (
                         <button
                           key={outlet.outletId}
                           type="button"
-                          className={`ep-outlet-card ${available ? 'is-available' : 'is-occupied'}`}
-                          data-status={available ? 'available' : 'occupied'}
+                          style={cardStyle}
                           onClick={() => handleMonitorOutlet(outlet, label)}
                         >
-                          <span className="ep-outlet-hover" aria-hidden="true">
-                            <MonitorIcon size={20} />
-                          </span>
-                          <div className="ep-outlet-card-top">
-                            <div className="ep-outlet-name">{label}</div>
-                            <div className={`ep-outlet-badge ${available ? 'is-available' : 'is-occupied'}`}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                            <div style={{ fontWeight: 650, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</div>
+                            <div style={{
+                              padding: '4px 8px',
+                              borderRadius: 999,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              whiteSpace: 'nowrap',
+                              background: available ? 'var(--ep-success-soft)' : 'var(--ep-danger-soft)',
+                              color: available ? 'var(--success)' : 'var(--danger)'
+                            }}>
                               {available ? '可用' : '占用'}
                             </div>
                           </div>
-                          <div className="ep-outlet-card-bottom">
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 12 }}>
                             {!status ? (
-                              <span className="ep-muted">状态未知</span>
+                              <span style={{ opacity: 0.8 }}>状态未知</span>
                             ) : available ? (
-                              <span className="ep-muted">空闲中</span>
+                              <span style={{ opacity: 0.8 }}>空闲中</span>
                             ) : (
                               <>
-                                <span className="ep-kpi">{status.powerFee?.billingPower ?? '未知'}</span>
-                                <span className="ep-kpi">¥{(status.usedfee ?? 0).toFixed(2)}</span>
-                                <span className="ep-kpi">{status.usedmin ?? 0} 分钟</span>
+                                <span style={{ opacity: 0.9, fontVariantNumeric: 'tabular-nums' }}>{status.powerFee?.billingPower ?? '未知'}</span>
+                                <span style={{ opacity: 0.9, fontVariantNumeric: 'tabular-nums' }}>¥{(status.usedfee ?? 0).toFixed(2)}</span>
+                                <span style={{ opacity: 0.9, fontVariantNumeric: 'tabular-nums' }}>{status.usedmin ?? 0} 分钟</span>
                               </>
                             )}
                           </div>
