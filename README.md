@@ -39,11 +39,15 @@ npm test
 
 ```bash
 npm run build
-npm run deploy
-npm run deploy:prod
 ```
+
+> Cloudflare 的构建环境目前使用 `npm@10`，它在安装 `wrangler`（依赖 `workerd`）时会触发 `Invalid Version` 的已知问题。
+> 因此本项目不再把 `wrangler` 放进依赖里；使用 Cloudflare 的 Git 集成/控制台发布即可。
+> 另外建议在 Cloudflare 项目环境变量里设置 `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`，避免安装依赖时下载浏览器（构建不需要跑 E2E）。
+>
+> 如果你需要本地手动发布，请自行安装 `wrangler` CLI（建议使用 `npm@11+` 或 `pnpm`），然后运行：
+> `wrangler deploy --env dev` / `wrangler deploy --env production`。
 
 ## 🔧 环境变量
 
 - `VITE_MAP_STYLE`：覆盖地图样式 URL（用于 E2E / 自定义底图）
-
