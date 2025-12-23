@@ -39,16 +39,16 @@ export default function SearchBar({ onStationSelect }: SearchBarProps) {
   }
 
   return (
-    <div className="ep-search" ref={containerRef}>
+    <div className="search" ref={containerRef}>
       <SearchField
         aria-label="搜索充电站"
         value={searchKeyword}
         onChange={setSearchKeyword}
         onFocusChange={(focused) => setOpen(focused)}
-        className="ep-search-field"
+        className="search-field"
         data-testid="search-field"
       >
-        <SearchField.Group className="ep-search-group">
+        <SearchField.Group className="search-group">
           <SearchField.SearchIcon />
           <SearchField.Input placeholder={isUsingSimulatedData ? '搜索充电站（模拟数据）…' : '搜索充电站…'} />
           <SearchField.ClearButton />
@@ -56,10 +56,10 @@ export default function SearchBar({ onStationSelect }: SearchBarProps) {
       </SearchField>
 
       {open && (
-        <Card className="ep-search-dropdown">
-          <Card.Content className="ep-search-dropdown-content">
+        <Card className="search-dropdown">
+          <Card.Content className="search-dropdown-content">
             {suggestions.length === 0 ? (
-              <div className="ep-search-empty">当前没有可用充电桩</div>
+              <div className="search-empty">当前没有可用充电桩</div>
             ) : (
               <ListBox
                 aria-label="可用充电桩列表"
@@ -68,14 +68,14 @@ export default function SearchBar({ onStationSelect }: SearchBarProps) {
               >
                 {suggestions.map((station) => (
                   <ListBox.Item key={station.stationId} id={String(station.stationId)} textValue={station.stationName}>
-                    <div className="ep-search-item">
-                      <div className="ep-search-item-main">
-                        <div className="ep-search-item-title">{station.stationName}</div>
-                        <div className="ep-search-item-subtitle">{station.address}</div>
+                    <div className="search-item">
+                      <div className="search-item-main">
+                        <div className="search-item-title">{station.stationName}</div>
+                        <div className="search-item-subtitle">{station.address}</div>
                       </div>
-                      <div className="ep-search-item-meta">
-                        <span className="ep-search-item-free">{station.freeNum ?? 0}</span>
-                        <span className="ep-search-item-total">/{station.switchType ?? '-'}</span>
+                      <div className="search-item-meta">
+                        <span className="search-item-free">{station.freeNum ?? 0}</span>
+                        <span className="search-item-total">/{station.switchType ?? '-'}</span>
                       </div>
                     </div>
                   </ListBox.Item>
@@ -88,4 +88,3 @@ export default function SearchBar({ onStationSelect }: SearchBarProps) {
     </div>
   )
 }
-

@@ -24,12 +24,12 @@ export default function PWAUpdatePrompt() {
 
   if (offlineReady) {
     return (
-      <div className="ep-toast" role="status" aria-live="polite">
-        <Card className="ep-toast-card is-success">
-          <Card.Content className="ep-toast-content">
-            <div className="ep-toast-text">
-              <div className="ep-toast-title">应用已准备好离线使用</div>
-              <div className="ep-toast-sub">你可以在无网络时继续打开此页面。</div>
+      <div className="toast" role="status" aria-live="polite">
+        <Card className="toast-card is-success">
+          <Card.Content className="toast-content">
+            <div className="toast-text">
+              <div className="toast-title">应用已准备好离线使用</div>
+              <div className="toast-sub">你可以在无网络时继续打开此页面。</div>
             </div>
             <Button variant="secondary" onPress={() => setOfflineReady(false)}>
               关闭
@@ -43,14 +43,14 @@ export default function PWAUpdatePrompt() {
   if (!showUpdatePrompt) return null
 
   return (
-    <div className="ep-toast" role="status" aria-live="polite">
-      <Card className="ep-toast-card is-info">
-        <Card.Content className="ep-toast-content">
-          <div className="ep-toast-text">
-            <div className="ep-toast-title">发现新版本</div>
-            <div className="ep-toast-sub">更新以获取最新功能和修复。</div>
+    <div className="toast" role="status" aria-live="polite">
+      <Card className="toast-card is-info">
+        <Card.Content className="toast-content">
+          <div className="toast-text">
+            <div className="toast-title">发现新版本</div>
+            <div className="toast-sub">更新以获取最新功能和修复。</div>
           </div>
-          <div className="ep-toast-actions">
+          <div className="toast-actions">
             <Button
               variant="primary"
               onPress={() => {

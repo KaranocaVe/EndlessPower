@@ -83,14 +83,14 @@ export default function PWAInstallPrompt() {
   }
 
   return (
-    <div className="ep-toast is-bottom" role="status" aria-live="polite">
-      <Card className="ep-toast-card is-info">
-        <Card.Content className="ep-toast-content">
-          <div className="ep-toast-text">
-            <div className="ep-toast-title">安装到桌面</div>
-            <div className="ep-toast-sub">离线可用，更快打开。</div>
+    <div className="toast is-bottom" role="status" aria-live="polite">
+      <Card className="toast-card is-info">
+        <Card.Content className="toast-content">
+          <div className="toast-text">
+            <div className="toast-title">安装到桌面</div>
+            <div className="toast-sub">离线可用，更快打开。</div>
           </div>
-          <div className="ep-toast-actions">
+          <div className="toast-actions">
             <Button variant="primary" onPress={handleInstall}>
               安装
             </Button>

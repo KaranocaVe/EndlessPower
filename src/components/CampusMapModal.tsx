@@ -16,15 +16,15 @@ export default function CampusMapModal({ isOpen, onClose }: CampusMapModalProps)
     <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Modal.Backdrop variant="blur">
         <Modal.Container placement="center" size="full" scroll="inside">
-          <Modal.Dialog className="ep-campus-dialog">
-            <Modal.Header className="ep-modal-header ep-campus-header">
-              <div className="ep-campus-header-title">
+          <Modal.Dialog className="campus-dialog">
+            <Modal.Header className="app-modal-header campus-header">
+              <div className="campus-header-title">
                 <Modal.Heading>校园地图</Modal.Heading>
-                <div className="ep-campus-subtitle">双指缩放 · 拖动浏览</div>
+                <div className="campus-subtitle">双指缩放 · 拖动浏览</div>
               </div>
               <Modal.CloseTrigger aria-label="关闭" />
             </Modal.Header>
-            <Modal.Body className="ep-campus-body">
+            <Modal.Body className="campus-body">
               <TransformWrapper
                 initialScale={1}
                 minScale={1}
@@ -38,16 +38,16 @@ export default function CampusMapModal({ isOpen, onClose }: CampusMapModalProps)
                 onTransformed={(_ref, state) => setScale(state.scale)}
               >
                 {({ zoomIn, zoomOut, resetTransform, centerView }) => (
-                  <div className="ep-campus-stage" role="img" aria-label="校园地图，可缩放拖动查看">
-                    <TransformComponent wrapperClass="ep-campus-transform" contentClass="ep-campus-transform-content">
-                      <img className="ep-campus-image" src="/map.jpg" alt="校园地图" draggable={false} />
+                  <div className="campus-stage" role="img" aria-label="校园地图，可缩放拖动查看">
+                    <TransformComponent wrapperClass="campus-transform" contentClass="campus-transform-content">
+                      <img className="campus-image" src="/map.jpg" alt="校园地图" draggable={false} />
                     </TransformComponent>
 
-                    <div className="ep-campus-controls" aria-label="缩放控制">
-                      <Chip variant="secondary" size="sm" className="ep-campus-zoom-chip">
+                    <div className="campus-controls" aria-label="缩放控制">
+                      <Chip variant="secondary" size="sm" className="campus-zoom-chip">
                         {zoomLabel}
                       </Chip>
-                      <ButtonGroup variant="secondary" size="md" className="ep-campus-controls-group" hideSeparator>
+                      <ButtonGroup variant="secondary" size="md" className="campus-controls-group" hideSeparator>
                         <Button isIconOnly aria-label="缩小" onPress={() => zoomOut(0.4, 180)}>
                           <MinusIcon size={18} />
                         </Button>

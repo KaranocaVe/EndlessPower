@@ -60,16 +60,16 @@ export default function FavoriteStationCard({ station, refreshTrigger }: Favorit
   const pinned = isPinned(station.stationId)
 
   return (
-    <Card className="ep-fav-card">
-      <Card.Header className="ep-fav-card-header">
-        <div className="ep-fav-card-headings">
-          <Card.Title className="ep-fav-card-title">
+    <Card className="fav-card">
+      <Card.Header className="fav-card-header">
+        <div className="fav-card-headings">
+          <Card.Title className="fav-card-title">
             {station.stationName}
-            {pinned && <span className="ep-fav-pin">置顶</span>}
+            {pinned && <span className="fav-pin">置顶</span>}
           </Card.Title>
-          <Card.Description className="ep-fav-card-subtitle">{station.address}</Card.Description>
+          <Card.Description className="fav-card-subtitle">{station.address}</Card.Description>
         </div>
-        <div className="ep-fav-card-actions">
+        <div className="fav-card-actions">
           <Button
             variant={pinned ? 'primary' : 'secondary'}
             onPress={() => (pinned ? unpinFavorite(station.stationId) : pinFavorite(station.stationId))}
@@ -82,24 +82,24 @@ export default function FavoriteStationCard({ station, refreshTrigger }: Favorit
         </div>
       </Card.Header>
 
-      <Card.Content className="ep-fav-card-content">
-        <div className="ep-fav-summary">
-          <div className="ep-fav-summary-item">
-            <div className="ep-fav-summary-label">总插座</div>
-            <div className="ep-fav-summary-value">{summary.total}</div>
+      <Card.Content className="fav-card-content">
+        <div className="fav-summary">
+          <div className="fav-summary-item">
+            <div className="fav-summary-label">总插座</div>
+            <div className="fav-summary-value">{summary.total}</div>
           </div>
-          <div className="ep-fav-summary-item">
-            <div className="ep-fav-summary-label">可用</div>
-            <div className="ep-fav-summary-value is-success">{summary.available}</div>
+          <div className="fav-summary-item">
+            <div className="fav-summary-label">可用</div>
+            <div className="fav-summary-value is-success">{summary.available}</div>
           </div>
-          <div className="ep-fav-summary-item">
-            <div className="ep-fav-summary-label">占用</div>
-            <div className="ep-fav-summary-value is-warning">{summary.occupied}</div>
+          <div className="fav-summary-item">
+            <div className="fav-summary-label">占用</div>
+            <div className="fav-summary-value is-warning">{summary.occupied}</div>
           </div>
         </div>
 
         {outlets.length > 0 && (
-          <div className="ep-fav-expand">
+          <div className="fav-expand">
             <Button variant="secondary" onPress={() => setExpanded((v) => !v)}>
               {expanded ? '收起详情' : '展开详情'}
             </Button>
@@ -107,13 +107,13 @@ export default function FavoriteStationCard({ station, refreshTrigger }: Favorit
         )}
 
         {expanded && (
-          <div className="ep-fav-outlets">
+          <div className="fav-outlets">
             {loading ? (
               <LoadingSpinner label="加载中…" />
             ) : outlets.length === 0 ? (
-              <div className="ep-muted">该充电站暂无插座信息。</div>
+              <div className="muted">该充电站暂无插座信息。</div>
             ) : (
-              <div className="ep-outlet-grid">
+              <div className="outlet-grid">
                 {outlets
                   .slice()
                   .sort((a, b) => (a.outletSerialNo ?? 0) - (b.outletSerialNo ?? 0))
@@ -127,23 +127,23 @@ export default function FavoriteStationCard({ station, refreshTrigger }: Favorit
                       outlet.outletNo
 
                     return (
-                      <div key={outlet.outletId} className={`ep-outlet-card ep-outlet-card-static ${available ? 'is-available' : 'is-occupied'}`}>
-                        <div className="ep-outlet-card-top">
-                          <div className="ep-outlet-name">{`插座 ${name}`}</div>
-                          <div className={`ep-outlet-badge ${available ? 'is-available' : 'is-occupied'}`}>
+                      <div key={outlet.outletId} className={`outlet-card is-static ${available ? 'is-available' : 'is-occupied'}`}>
+                        <div className="outlet-card-top">
+                          <div className="outlet-name">{`插座 ${name}`}</div>
+                          <div className={`outlet-badge ${available ? 'is-available' : 'is-occupied'}`}>
                             {available ? '可用' : '占用'}
                           </div>
                         </div>
-                        <div className="ep-outlet-card-bottom">
+                        <div className="outlet-card-bottom">
                           {!status ? (
-                            <span className="ep-muted">状态未知</span>
+                            <span className="muted">状态未知</span>
                           ) : available ? (
-                            <span className="ep-muted">空闲中</span>
+                            <span className="muted">空闲中</span>
                           ) : (
                             <>
-                              <span className="ep-kpi">{status.powerFee?.billingPower ?? '未知'}</span>
-                              <span className="ep-kpi">¥{(status.usedfee ?? 0).toFixed(2)}</span>
-                              <span className="ep-kpi">{status.usedmin ?? 0} 分钟</span>
+                              <span className="kpi">{status.powerFee?.billingPower ?? '未知'}</span>
+                              <span className="kpi">¥{(status.usedfee ?? 0).toFixed(2)}</span>
+                              <span className="kpi">{status.usedmin ?? 0} 分钟</span>
                             </>
                           )}
                         </div>
@@ -158,4 +158,3 @@ export default function FavoriteStationCard({ station, refreshTrigger }: Favorit
     </Card>
   )
 }
-

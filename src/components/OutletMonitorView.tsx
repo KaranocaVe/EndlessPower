@@ -207,8 +207,8 @@ export default function OutletMonitorView({ onBack }: OutletMonitorViewProps) {
 
   if (!currentTarget) {
     return (
-      <div className="ep-monitor-empty">
-        <Card className="ep-monitor-empty-card">
+      <div className="monitor-empty">
+        <Card className="monitor-empty-card">
           <Card.Header>
             <Card.Title>未选择插座</Card.Title>
             <Card.Description>请先在地图中选择充电站插座进入监控。</Card.Description>
@@ -224,19 +224,19 @@ export default function OutletMonitorView({ onBack }: OutletMonitorViewProps) {
   }
 
   return (
-    <div className="ep-monitor" data-testid="monitor-view">
-      <div className="ep-page-inner ep-monitor-inner">
-        <div className="ep-monitor-header">
+    <div className="monitor-view" data-testid="monitor-view">
+      <div className="page-inner monitor-inner">
+        <div className="monitor-header">
           <Button variant="secondary" onPress={onBack}>
             返回
           </Button>
 
-          <div className="ep-monitor-title">
-            <div className="ep-monitor-station">{currentTarget.stationName}</div>
-            <div className="ep-monitor-outlet">{currentTarget.outletName}</div>
+          <div className="monitor-title">
+            <div className="monitor-station">{currentTarget.stationName}</div>
+            <div className="monitor-outlet">{currentTarget.outletName}</div>
           </div>
 
-          <div className="ep-monitor-actions">
+          <div className="monitor-actions">
             <Button variant={isMonitoring ? 'danger' : 'primary'} onPress={() => setMonitoring(!isMonitoring)}>
               {isMonitoring ? '停止' : '开始'}
             </Button>
@@ -249,8 +249,8 @@ export default function OutletMonitorView({ onBack }: OutletMonitorViewProps) {
           </div>
         </div>
 
-        <div className="ep-monitor-toolbar">
-          <div className="ep-monitor-interval">
+        <div className="monitor-toolbar">
+          <div className="monitor-interval">
             <span>轮询间隔</span>
             <Select
               aria-label="轮询间隔"
@@ -259,7 +259,7 @@ export default function OutletMonitorView({ onBack }: OutletMonitorViewProps) {
                 const next = Number(String(key))
                 if (Number.isFinite(next)) setPollInterval(next)
               }}
-              className="ep-monitor-select"
+              className="monitor-select"
             >
               <Select.Trigger aria-label="轮询间隔">
                 <Select.Value />
@@ -286,52 +286,52 @@ export default function OutletMonitorView({ onBack }: OutletMonitorViewProps) {
             </Select>
           </div>
 
-          <div className="ep-monitor-meta">
-            <span className="ep-muted">采样 {monitorHistory.length} 次</span>
-            {latest && <span className="ep-muted">最近 {formatTime(latest.timestamp)}</span>}
+          <div className="monitor-meta">
+            <span className="muted">采样 {monitorHistory.length} 次</span>
+            {latest && <span className="muted">最近 {formatTime(latest.timestamp)}</span>}
           </div>
         </div>
 
         {error && (
-          <div className="ep-monitor-error" role="alert">
+          <div className="monitor-error" role="alert">
             {error}
           </div>
         )}
 
-        <div className="ep-monitor-chart">
+        <div className="monitor-chart">
           {loading && <LoadingSpinner label="获取数据…" />}
           <PowerChart data={monitorHistory} />
         </div>
 
         {latest && stats && (
-          <div className="ep-monitor-stats">
-            <Card className="ep-monitor-stat">
+          <div className="monitor-stats">
+            <Card className="monitor-stat">
               <Card.Content>
-                <div className="ep-stat-label">当前功率</div>
-                <div className="ep-stat-value">{latest.power.toFixed(0)} W</div>
-                <div className="ep-stat-sub">
+                <div className="stat-label">当前功率</div>
+                <div className="stat-value">{latest.power.toFixed(0)} W</div>
+                <div className="stat-sub">
                   平均 {stats.avgPower.toFixed(0)} W · 峰值 {stats.maxPower.toFixed(0)} W
                 </div>
               </Card.Content>
             </Card>
-            <Card className="ep-monitor-stat">
+            <Card className="monitor-stat">
               <Card.Content>
-                <div className="ep-stat-label">总电量</div>
-                <div className="ep-stat-value is-success">{energyText}</div>
+                <div className="stat-label">总电量</div>
+                <div className="stat-value is-success">{energyText}</div>
               </Card.Content>
             </Card>
-            <Card className="ep-monitor-stat">
+            <Card className="monitor-stat">
               <Card.Content>
-                <div className="ep-stat-label">时长</div>
-                <div className="ep-stat-value">{latest.duration} 分钟</div>
-                <div className="ep-stat-sub">监视 {stats.monitorDuration} 分钟</div>
+                <div className="stat-label">时长</div>
+                <div className="stat-value">{latest.duration} 分钟</div>
+                <div className="stat-sub">监视 {stats.monitorDuration} 分钟</div>
               </Card.Content>
             </Card>
-            <Card className="ep-monitor-stat">
+            <Card className="monitor-stat">
               <Card.Content>
-                <div className="ep-stat-label">费用</div>
-                <div className="ep-stat-value is-warning">¥{latest.fee.toFixed(2)}</div>
-                <div className="ep-stat-sub">{unitPriceText}</div>
+                <div className="stat-label">费用</div>
+                <div className="stat-value is-warning">¥{latest.fee.toFixed(2)}</div>
+                <div className="stat-sub">{unitPriceText}</div>
               </Card.Content>
             </Card>
           </div>
@@ -450,5 +450,5 @@ const PowerChart: React.FC<{ data: MonitorData[] }> = ({ data }) => {
     }
   }, [data])
 
-  return <canvas ref={canvasRef} className="ep-monitor-canvas" />
+  return <canvas ref={canvasRef} className="monitor-canvas" />
 }

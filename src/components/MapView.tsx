@@ -294,7 +294,7 @@ export default function MapView() {
     }
 
     const el = document.createElement('div')
-    el.className = 'ep-user-marker'
+    el.className = 'user-marker'
     const marker = userMarkerRef.current ?? new maplibregl.Marker({ element: el, anchor: 'center' })
     marker.setLngLat([userLocation[1], userLocation[0]]).addTo(map)
     userMarkerRef.current = marker
@@ -311,7 +311,7 @@ export default function MapView() {
     stationMarkersRef.current = displayStations.map((station) => {
       const el = document.createElement('button')
       el.type = 'button'
-      el.className = 'ep-station-marker'
+      el.className = 'station-marker'
       el.style.backgroundColor = getStationMarkerColor(station)
       el.setAttribute('aria-label', station.stationName)
       el.addEventListener('click', () => setSelectedStation(station))
@@ -354,18 +354,18 @@ export default function MapView() {
   const showLoadingOverlay = isLocating || (isLoading && !hasAnyStations)
 
   return (
-    <div className="ep-map" data-testid="map-view">
-      <div className="ep-map-canvas" ref={mapContainerRef} data-testid="map-canvas" />
+    <div className="map-view" data-testid="map-view">
+      <div className="map-canvas" ref={mapContainerRef} data-testid="map-canvas" />
 
       {mapError && (
-        <div className="ep-toast" role="alert" aria-live="polite">
-          <Card className="ep-toast-card">
-            <Card.Content className="ep-toast-content">
-              <div className="ep-toast-text">
-                <div className="ep-toast-title">地图加载失败</div>
-                <div className="ep-toast-sub">{mapError}</div>
+        <div className="toast" role="alert" aria-live="polite">
+          <Card className="toast-card">
+            <Card.Content className="toast-content">
+              <div className="toast-text">
+                <div className="toast-title">地图加载失败</div>
+                <div className="toast-sub">{mapError}</div>
               </div>
-              <div className="ep-toast-actions">
+              <div className="toast-actions">
                 <Button
                   variant="primary"
                   onPress={() => {
@@ -384,8 +384,8 @@ export default function MapView() {
         </div>
       )}
 
-      <div className="ep-map-hud">
-        <div className="ep-map-top">
+      <div className="map-overlay">
+        <div className="map-top">
           <SearchBar
             onStationSelect={(station) => {
               const map = mapRef.current
@@ -395,12 +395,12 @@ export default function MapView() {
           />
         </div>
 
-        <div className={`ep-map-controls ${hideMapControls ? 'is-hidden' : ''}`}>
+        <div className={`map-controls ${hideMapControls ? 'is-hidden' : ''}`}>
           <Button
             isIconOnly
             size="lg"
             variant="secondary"
-            className="ep-map-fab"
+            className="fab"
             onPress={() => setCampusOpen(true)}
             aria-label="校园地图"
           >
@@ -411,7 +411,7 @@ export default function MapView() {
             isIconOnly
             size="lg"
             variant="secondary"
-            className="ep-map-fab ep-map-fab-scan"
+            className="fab fab-scan"
             onPress={() => {
               try {
                 window.location.href = 'weixin://scanqrcode'
@@ -428,7 +428,7 @@ export default function MapView() {
             isIconOnly
             size="lg"
             variant="primary"
-            className={`ep-map-fab ep-map-fab-refresh ${isLoading || isRefreshing || isLocating ? 'is-loading' : ''}`}
+            className={`fab fab-refresh ${isLoading || isRefreshing || isLocating ? 'is-loading' : ''}`}
             onPress={handleRefresh}
             isDisabled={refreshDisabled}
             aria-label={!refreshReady ? '刷新冷却中' : isLoading || isRefreshing || isLocating ? '刷新中' : '刷新并定位'}
@@ -438,7 +438,7 @@ export default function MapView() {
         </div>
 
         {showLoadingOverlay && (
-          <div className="ep-map-loading">
+          <div className="map-center">
             <LoadingSpinner label="刷新状态…" />
           </div>
         )}

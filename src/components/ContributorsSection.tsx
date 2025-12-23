@@ -6,51 +6,51 @@ export default function ContributorsSection() {
   const { contributors, repoStats, stats, isLoading, error, lastUpdated, refresh } = useContributors()
 
   return (
-    <div className="ep-contrib">
-      <div className="ep-contrib-header">
-        <div className="ep-contrib-title">项目贡献者</div>
+    <div className="contrib">
+      <div className="contrib-header">
+        <div className="contrib-title">项目贡献者</div>
         <Button variant="secondary" onPress={refresh} isDisabled={isLoading}>
           {isLoading ? '加载中…' : '刷新'}
         </Button>
       </div>
 
-      {error && <div className="ep-contrib-error">{error}</div>}
+      {error && <div className="contrib-error">{error}</div>}
 
       {repoStats && (
-        <div className="ep-contrib-stats">
-          <Card className="ep-contrib-stat">
+        <div className="contrib-stats">
+          <Card className="contrib-stat">
             <Card.Content>
-              <div className="ep-contrib-number is-warning">{repoStats.stars}</div>
-              <div className="ep-contrib-label">Stars</div>
+              <div className="contrib-number is-warning">{repoStats.stars}</div>
+              <div className="contrib-label">Stars</div>
             </Card.Content>
           </Card>
-          <Card className="ep-contrib-stat">
+          <Card className="contrib-stat">
             <Card.Content>
-              <div className="ep-contrib-number is-success">{stats.totalContributors}</div>
-              <div className="ep-contrib-label">贡献者</div>
+              <div className="contrib-number is-success">{stats.totalContributors}</div>
+              <div className="contrib-label">贡献者</div>
             </Card.Content>
           </Card>
-          <Card className="ep-contrib-stat">
+          <Card className="contrib-stat">
             <Card.Content>
-              <div className="ep-contrib-number">{repoStats.forks}</div>
-              <div className="ep-contrib-label">Forks</div>
+              <div className="contrib-number">{repoStats.forks}</div>
+              <div className="contrib-label">Forks</div>
             </Card.Content>
           </Card>
         </div>
       )}
 
       {isLoading ? (
-        <div className="ep-contrib-loading">
+        <div className="contrib-loading">
           <LoadingSpinner label="加载贡献者…" />
         </div>
       ) : (
         <>
-          <div className="ep-contrib-grid">
+          <div className="contrib-grid">
             {contributors.slice(0, 12).map((c) => (
               <button
                 key={c.id}
                 type="button"
-                className="ep-contrib-avatar"
+                className="contrib-avatar"
                 aria-label={`查看 ${c.login} 的 GitHub 主页`}
                 onClick={() => window.open(c.html_url, '_blank', 'noopener,noreferrer')}
               >
@@ -69,13 +69,12 @@ export default function ContributorsSection() {
           </div>
 
           {contributors.length > 12 && (
-            <div className="ep-contrib-more">还有 {contributors.length - 12} 位贡献者</div>
+            <div className="contrib-more">还有 {contributors.length - 12} 位贡献者</div>
           )}
 
-          {lastUpdated && <div className="ep-contrib-updated">最后更新：{lastUpdated.toLocaleString()}</div>}
+          {lastUpdated && <div className="contrib-updated">最后更新：{lastUpdated.toLocaleString()}</div>}
         </>
       )}
     </div>
   )
 }
-

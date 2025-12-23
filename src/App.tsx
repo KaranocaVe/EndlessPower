@@ -58,8 +58,8 @@ export default function App() {
   }, [])
 
   return (
-    <div className="ep-root">
-      <main className="ep-main">
+    <div className="app-root">
+      <main className="app-main">
         {currentView === 'map' && <MapView />}
         {currentView === 'favorites' && <FavoritesView onOpenMap={() => setCurrentView('map')} />}
         {currentView === 'monitor' && <OutletMonitorView onBack={() => setCurrentView('map')} />}
@@ -72,7 +72,7 @@ export default function App() {
         isHidden={currentView === 'monitor'}
       >
         {(isConnected || visitorsCount > 0) && (
-          <div className="ep-hud-top" aria-label="在线人数">
+          <div className="hud-top" aria-label="在线人数">
             <Chip color={isConnected ? 'success' : 'default'} variant="secondary" size="sm">
               在线 {visitorsCount}
             </Chip>
@@ -85,14 +85,14 @@ export default function App() {
       {enablePwaUi && !isAutomated && <PWAInstallPrompt />}
 
       {error && (
-        <div className="ep-error-overlay" role="alert">
-          <Card className="ep-error-card">
-            <Card.Header className="ep-error-header">
+        <div className="alert-overlay" role="alert">
+          <Card className="alert-card">
+            <Card.Header className="alert-header">
               <Card.Title>提示</Card.Title>
             </Card.Header>
-            <Card.Content className="ep-error-body">
-              <div className="ep-error-text">{error}</div>
-              <div className="ep-error-actions">
+            <Card.Content className="alert-body">
+              <div className="alert-text">{error}</div>
+              <div className="alert-actions">
                 <Button variant="primary" onPress={clearError}>
                   知道了
                 </Button>

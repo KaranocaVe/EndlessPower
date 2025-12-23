@@ -34,18 +34,18 @@ export default function FavoritesView({ onOpenMap }: FavoritesViewProps) {
   const canRefresh = Date.now() - lastRefresh >= REFRESH_COOLDOWN
 
   return (
-    <div className="ep-fav-view" data-testid="favorites-view">
-      <div className="ep-page-inner">
-        <div className="ep-fav-header">
-          <div className="ep-fav-title">
-            <div className="ep-fav-title-main">我的收藏</div>
-            <div className="ep-fav-title-sub">{favoriteStations.length > 0 ? `${favoriteStations.length} 个充电站` : '还没有收藏'}</div>
+    <div className="favorites-view" data-testid="favorites-view">
+      <div className="page-inner">
+        <div className="favorites-header">
+          <div className="favorites-title">
+            <div className="favorites-title-main">我的收藏</div>
+            <div className="favorites-title-sub">{favoriteStations.length > 0 ? `${favoriteStations.length} 个充电站` : '还没有收藏'}</div>
           </div>
-          <div className="ep-fav-header-actions">
+          <div className="favorites-header-actions">
             {onOpenMap && (
               <Button variant="secondary" onPress={onOpenMap} aria-label="去地图">
                 <MapIcon size={18} />
-                <span className="ep-btn-text">地图</span>
+                <span className="button-text">地图</span>
               </Button>
             )}
             <Button
@@ -55,18 +55,18 @@ export default function FavoritesView({ onOpenMap }: FavoritesViewProps) {
               aria-label="刷新"
             >
               <RefreshIcon size={18} />
-              <span className="ep-btn-text">刷新</span>
+              <span className="button-text">刷新</span>
             </Button>
           </div>
         </div>
 
         {favoriteStations.length === 0 ? (
-          <div className="ep-fav-empty">
-            <div className="ep-fav-empty-icon" aria-hidden="true">
+          <div className="favorites-empty">
+            <div className="favorites-empty-icon" aria-hidden="true">
               <HeartIcon size={28} />
             </div>
-            <div className="ep-fav-empty-title">还没有收藏的充电桩</div>
-            <div className="ep-fav-empty-sub">在地图上点选充电桩，然后点击"收藏"按钮即可添加到这里。</div>
+            <div className="favorites-empty-title">还没有收藏的充电桩</div>
+            <div className="favorites-empty-sub">在地图上点选充电桩，然后点击"收藏"按钮即可添加到这里。</div>
             {onOpenMap && (
               <Button variant="primary" onPress={onOpenMap} style={{ marginTop: 8 }}>
                 去地图查看
@@ -74,7 +74,7 @@ export default function FavoritesView({ onOpenMap }: FavoritesViewProps) {
             )}
           </div>
         ) : (
-          <div className="ep-fav-grid">
+          <div className="favorites-grid">
             {favoriteStations.map((station) => (
               <FavoriteStationCard key={station.stationId} station={station} refreshTrigger={lastRefresh} />
             ))}

@@ -6,12 +6,11 @@ type LoadingSpinnerProps = {
 
 function LoadingSpinner({ label = '加载中…' }: LoadingSpinnerProps) {
   return (
-    <div className="ep-spinner" role="status" aria-live="polite" aria-label={label}>
-      <span className="ep-spinner-dot" aria-hidden="true" />
-      <span className="ep-spinner-text">{label}</span>
+    <div className="loading-pill" role="status" aria-live="polite" aria-label={label}>
+      <span className="loading-dot" aria-hidden="true" />
+      <span className="loading-text">{label}</span>
     </div>
   )
 }
 
 export default memo(LoadingSpinner)
-
