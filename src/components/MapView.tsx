@@ -26,6 +26,58 @@ const MAP_STYLE_OVERRIDE = (import.meta.env.VITE_MAP_STYLE as string | undefined
 
 const CARTO_CANONICAL_HOST = 'basemaps.cartocdn.com'
 const CARTO_TILE_HOST_RE = /^tiles(?:-[a-d])?\.basemaps\.cartocdn\.com$/i
+const MAP_STATE_STORAGE_KEY = 'map-view-state-v1'
+
+type MapViewState = {
+  center: [number, number] // [lng, lat]
+  zoom: number
+  pitch: number
+  bearing: number
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value)
+}
+
+function readMapViewState(): MapViewState | null {
+  try {
+    const raw = localStorage.getItem(MAP_STATE_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as Partial<MapViewState>
+    const center = parsed.center
+    if (!Array.isArray(center) || center.length !== 2) return null
+    const [lng, lat] = center
+    if (!isFiniteNumber(lng) || !isFiniteNumber(lat)) return null
+    if (!isFiniteNumber(parsed.zoom) || !isFiniteNumber(parsed.pitch) || !isFiniteNumber(parsed.bearing)) return null
+
+    return {
+      center: [lng, lat],
+      zoom: Math.min(22, Math.max(0, parsed.zoom)),
+      pitch: Math.min(85, Math.max(0, parsed.pitch)),
+      bearing: ((parsed.bearing + 180) % 360) - 180
+    }
+  } catch {
+    return null
+  }
+}
+
+function writeMapViewState(state: MapViewState) {
+  try {
+    localStorage.setItem(MAP_STATE_STORAGE_KEY, JSON.stringify(state))
+  } catch {
+    // ignore
+  }
+}
+
+function snapshotMapViewState(map: maplibregl.Map): MapViewState {
+  const center = map.getCenter()
+  return {
+    center: [center.lng, center.lat],
+    zoom: map.getZoom(),
+    pitch: map.getPitch(),
+    bearing: map.getBearing()
+  }
+}
 
 function rewriteCartoUrl(url: string) {
   try {
@@ -146,6 +198,7 @@ export default function MapView() {
   const mapRef = useRef<maplibregl.Map | null>(null)
   const stationMarkersRef = useRef<maplibregl.Marker[]>([])
   const userMarkerRef = useRef<maplibregl.Marker | null>(null)
+  const restoredViewRef = useRef(false)
 
   const [mapError, setMapError] = useState<string | null>(null)
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
@@ -184,13 +237,16 @@ export default function MapView() {
     if (!mapContainerRef.current) return
     if (mapRef.current) return
 
+    const savedView = readMapViewState()
+    restoredViewRef.current = Boolean(savedView)
+
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: styleUrl,
-      center: [MAP_CENTER[1], MAP_CENTER[0]],
-      zoom: 16,
-      pitch: 60,
-      bearing: -20,
+      center: savedView?.center ?? [MAP_CENTER[1], MAP_CENTER[0]],
+      zoom: savedView?.zoom ?? 16,
+      pitch: savedView?.pitch ?? 60,
+      bearing: savedView?.bearing ?? -20,
       maxPitch: 85,
       attributionControl: false,
       transformRequest: (url, resourceType) => {
@@ -217,12 +273,25 @@ export default function MapView() {
       if (import.meta.env.DEV) console.error('MapLibre error', event)
     })
 
+    let saveTimer: number | null = null
+    const scheduleSave = () => {
+      if (saveTimer) window.clearTimeout(saveTimer)
+      saveTimer = window.setTimeout(() => writeMapViewState(snapshotMapViewState(map)), 250)
+    }
+
+    map.on('moveend', scheduleSave)
+    map.on('rotateend', scheduleSave)
+    map.on('pitchend', scheduleSave)
+    map.on('zoomend', scheduleSave)
+
     mapRef.current = map
   }, [isDark, styleUrl])
 
   useEffect(() => {
     createMap()
     return () => {
+      const map = mapRef.current
+      if (map) writeMapViewState(snapshotMapViewState(map))
       stationMarkersRef.current.forEach((m) => m.remove())
       stationMarkersRef.current = []
       userMarkerRef.current?.remove()
@@ -279,7 +348,9 @@ export default function MapView() {
     const map = mapRef.current
     if (!map) return
     if (!userLocation) return
+    if (restoredViewRef.current) return
     map.easeTo({ center: [userLocation[1], userLocation[0]], zoom: 16, duration: 800 })
+    restoredViewRef.current = true
   }, [userLocation])
 
   // 渲染用户位置 Marker
@@ -331,6 +402,7 @@ export default function MapView() {
             async (pos) => {
               const loc: [number, number] = [pos.coords.latitude, pos.coords.longitude]
               setStoreUserLocation(loc)
+              mapRef.current?.easeTo({ center: [loc[1], loc[0]], zoom: 16, duration: 800 })
               await refreshStations(loc[0], loc[1])
               resolve()
             },

@@ -1,17 +1,32 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Button, Modal } from '@heroui/react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Button, Chip, Modal } from '@heroui/react'
 import type { Outlet, OutletStatus, Station } from '../types/station'
 import { fetchOutletStatus, fetchStationOutlets } from '../utils/api'
 import { useFavoritesStore } from '../store/favoritesStore'
 import { useErrorStore } from '../store/errorStore'
 import { useMonitorStore } from '../store/monitorStore'
 import LoadingSpinner from './LoadingSpinner'
-import { HeartIcon, QrCodeIcon } from './icons'
+import { HeartIcon, QrCodeIcon, RefreshIcon } from './icons'
 
 type StationDetailModalProps = {
   station: Station | null
   isOpen: boolean
   onClose: () => void
+}
+
+type OutletFilter = 'all' | 'available' | 'occupied' | 'unknown'
+const OUTLET_FILTER_STORAGE_KEY = 'outlet-filter'
+
+function parseOutletFilter(value: string | null): OutletFilter {
+  if (value === 'available' || value === 'occupied' || value === 'unknown') return value
+  return 'all'
+}
+
+function formatTimeHHmm(timestamp: number) {
+  const date = new Date(timestamp)
+  const hh = String(date.getHours()).padStart(2, '0')
+  const mm = String(date.getMinutes()).padStart(2, '0')
+  return `${hh}:${mm}`
 }
 
 function isOutletAvailable(status: OutletStatus | null) {
@@ -22,26 +37,32 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
   const [outlets, setOutlets] = useState<Outlet[]>([])
   const [statusByOutletNo, setStatusByOutletNo] = useState<Record<string, OutletStatus | null>>({})
   const [loading, setLoading] = useState(false)
+  const [filter, setFilter] = useState<OutletFilter>(() => {
+    try {
+      return parseOutletFilter(localStorage.getItem(OUTLET_FILTER_STORAGE_KEY))
+    } catch {
+      return 'all'
+    }
+  })
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null)
+  const requestIdRef = useRef(0)
 
   const { isFavorite, addFavorite, removeFavorite, canAddMore } = useFavoritesStore()
   const { showError } = useErrorStore()
   const { setMonitorTarget } = useMonitorStore()
 
-  useEffect(() => {
-    if (!isOpen || !station) return
-    const stationId = station.stationId
-
-    let cancelled = false
-    async function run() {
+  const loadStationDetails = useCallback(
+    async (stationId: number) => {
+      const requestId = ++requestIdRef.current
       setLoading(true)
       try {
         const stationOutlets = await fetchStationOutlets(stationId)
-        if (cancelled) return
+        if (requestIdRef.current !== requestId) return
         setOutlets(stationOutlets)
 
         if (stationOutlets.length > 0) {
           const res = await Promise.all(stationOutlets.map((o) => fetchOutletStatus(o.outletNo)))
-          if (cancelled) return
+          if (requestIdRef.current !== requestId) return
           const nextMap: Record<string, OutletStatus | null> = {}
           stationOutlets.forEach((outlet, index) => {
             nextMap[outlet.outletNo] = res[index] ?? null
@@ -50,26 +71,63 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
         } else {
           setStatusByOutletNo({})
         }
+        setLastUpdatedAt(Date.now())
       } catch (e) {
-        if (!cancelled) showError('加载充电站详情失败')
+        if (requestIdRef.current === requestId) showError('加载充电站详情失败')
       } finally {
-        if (!cancelled) setLoading(false)
+        if (requestIdRef.current === requestId) setLoading(false)
       }
-    }
+    },
+    [showError]
+  )
 
-    run()
+  useEffect(() => {
+    if (!isOpen || !station) return
+    void loadStationDetails(station.stationId)
     return () => {
-      cancelled = true
+      requestIdRef.current += 1
     }
-  }, [isOpen, station, showError])
+  }, [isOpen, loadStationDetails, station])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(OUTLET_FILTER_STORAGE_KEY, filter)
+    } catch {
+      // ignore
+    }
+  }, [filter])
 
   const stationIsFavorite = station ? isFavorite(station.stationId) : false
 
-  const outletSummary = useMemo(() => {
-    const total = outlets.length
-    const available = Object.values(statusByOutletNo).filter((s) => isOutletAvailable(s)).length
-    return { total, available, occupied: Math.max(0, total - available) }
-  }, [outlets.length, statusByOutletNo])
+  const sortedOutlets = useMemo(() => {
+    return [...outlets].sort((a, b) => (a.outletSerialNo ?? 0) - (b.outletSerialNo ?? 0))
+  }, [outlets])
+
+  const outletCounts = useMemo(() => {
+    const all = sortedOutlets.length
+    let available = 0
+    let occupied = 0
+    let unknown = 0
+    for (const outlet of sortedOutlets) {
+      const status = statusByOutletNo[outlet.outletNo] ?? null
+      if (!status) {
+        unknown += 1
+        continue
+      }
+      if (isOutletAvailable(status)) available += 1
+      else occupied += 1
+    }
+    return { all, available, occupied, unknown }
+  }, [sortedOutlets, statusByOutletNo])
+
+  const visibleOutlets = useMemo(() => {
+    if (filter === 'all') return sortedOutlets
+    return sortedOutlets.filter((outlet) => {
+      const status = statusByOutletNo[outlet.outletNo] ?? null
+      if (!status) return filter === 'unknown'
+      return filter === (isOutletAvailable(status) ? 'available' : 'occupied')
+    })
+  }, [filter, sortedOutlets, statusByOutletNo])
 
   const handleToggleFavorite = () => {
     if (!station) return
@@ -96,123 +154,161 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
     onClose()
   }
 
-  const sortedOutlets = useMemo(() => {
-    return [...outlets].sort((a, b) => (a.outletSerialNo ?? 0) - (b.outletSerialNo ?? 0))
-  }, [outlets])
+  const handleRefresh = async () => {
+    if (!station) return
+    await loadStationDetails(station.stationId)
+  }
 
   return (
     <Modal isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
       <Modal.Backdrop variant="blur">
-        <Modal.Container placement="bottom" size="cover" scroll="inside">
-          <Modal.Dialog className="ep-station-dialog">
-            <div style={{ width: 44, height: 4, borderRadius: 999, margin: '10px auto 2px', background: 'rgba(148, 163, 184, 0.35)' }} aria-hidden="true" />
-            <Modal.Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, paddingTop: 6, paddingBottom: 12 }}>
-              <div style={{ minWidth: 0 }}>
+        <Modal.Container placement="bottom" size="lg" scroll="inside">
+          <Modal.Dialog className="station-dialog">
+            <div className="sheet-handle" aria-hidden="true" />
+
+            <Modal.Header className="station-header app-modal-header">
+              <div className="station-title">
                 <Modal.Heading>{station?.stationName ?? '充电站'}</Modal.Heading>
-                <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station?.address ?? ''}</div>
+                <div className="station-subtitle">{station?.address ?? ''}</div>
               </div>
               <Modal.CloseTrigger aria-label="关闭" />
             </Modal.Header>
-            <Modal.Body style={{ display: 'grid', gap: 14 }}>
-              {station && (
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <Button variant={stationIsFavorite ? 'primary' : 'secondary'} onPress={handleToggleFavorite} aria-label={stationIsFavorite ? '已收藏' : '收藏'}>
-                    <HeartIcon size={18} />
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    aria-label="微信扫一扫"
-                    onPress={() => {
-                      try {
-                        window.location.href = 'weixin://scanqrcode'
-                      } catch {
-                        // ignore
-                      }
-                    }}
-                  >
-                    <QrCodeIcon size={18} />
-                  </Button>
-                </div>
-              )}
 
-              <div style={{ display: 'flex', gap: 16, fontSize: 14 }}>
-                <span>总插座 <strong>{outletSummary.total}</strong></span>
-                <span style={{ color: 'var(--success)' }}>可用 <strong>{outletSummary.available}</strong></span>
-                <span style={{ color: 'var(--danger)' }}>占用 <strong>{outletSummary.occupied}</strong></span>
-              </div>
+            <Modal.Body className="station-body">
+              <div className="station-actions" aria-label="站点操作">
+                <Button
+                  isIconOnly
+                  variant={stationIsFavorite ? 'primary' : 'secondary'}
+                  onPress={handleToggleFavorite}
+                  aria-label={stationIsFavorite ? '取消收藏' : '收藏'}
+                >
+                  <HeartIcon size={20} />
+                </Button>
+                <Button
+                  isIconOnly
+                  variant="secondary"
+                  aria-label="扫码"
+                  onPress={() => {
+                    try {
+                      window.location.href = 'weixin://scanqrcode'
+                    } catch {
+                      // ignore
+                    }
+                  }}
+                >
+                  <QrCodeIcon size={20} />
+                </Button>
+                <Button
+                  isIconOnly
+                  variant="secondary"
+                  onPress={handleRefresh}
+                  isDisabled={loading}
+                  aria-label="刷新"
+                  className={loading ? 'is-loading' : undefined}
+                >
+                  <RefreshIcon size={20} />
+                </Button>
+	              </div>
 
-              {loading ? (
-                <div style={{ padding: '12px 0' }}>
+	              {sortedOutlets.length > 0 && (
+	                <div className="station-filter-row" aria-label="插座筛选">
+	                  <div className="segment" role="tablist">
+	                    {([
+	                      ['all', `全部 ${outletCounts.all}`],
+	                      ['available', `可用 ${outletCounts.available}`],
+	                      ['occupied', `占用 ${outletCounts.occupied}`],
+	                      ['unknown', `未知 ${outletCounts.unknown}`]
+	                    ] as const).map(([key, label]) => (
+	                      <button
+	                        key={key}
+	                        type="button"
+	                        role="tab"
+	                        aria-selected={filter === key}
+	                        className={`segment-item ${filter === key ? 'is-active' : ''}`}
+	                        onClick={() => setFilter(key)}
+	                      >
+	                        {label}
+	                      </button>
+	                    ))}
+	                  </div>
+
+	                  {lastUpdatedAt && (
+	                    <div className="station-updated muted" aria-label="数据更新时间">
+	                      更新 {formatTimeHHmm(lastUpdatedAt)}
+	                    </div>
+	                  )}
+	                </div>
+	              )}
+
+              {loading && sortedOutlets.length === 0 ? (
+                <div className="station-loading">
                   <LoadingSpinner label="加载插座信息…" />
                 </div>
               ) : sortedOutlets.length === 0 ? (
-                <div style={{ padding: '12px 0', opacity: 0.8 }}>该充电站暂无插座信息。</div>
+                <div className="station-empty muted">该充电站暂无插座信息。</div>
               ) : (
-                <>
-                  <div style={{ fontSize: 12, opacity: 0.8 }}>点击插座卡片进入监控</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10 }} data-testid="outlet-grid">
-                    {sortedOutlets.map((outlet) => {
-                      const status = statusByOutletNo[outlet.outletNo] ?? null
-                      const available = isOutletAvailable(status)
-                      const name =
-                        status?.outlet?.vOutletName?.replace('插座', '').trim() ||
-                        outlet.vOutletName?.replace('插座', '').trim() ||
-                        outlet.outletSerialNo?.toString() ||
-                        outlet.outletNo
+                <div className="outlet-section">
+                  <div className="station-hint">选择插座进入监控</div>
+                  {loading && (
+                    <div className="outlet-loading muted" aria-label="刷新中">
+                      正在刷新…
+                    </div>
+                  )}
+                  <div className="outlet-list" data-testid="outlet-grid">
+                    {visibleOutlets.length === 0 ? (
+                      <div className="outlet-empty muted" role="status" aria-live="polite">
+                        当前筛选下没有插座
+                      </div>
+                    ) : (
+                      visibleOutlets.map((outlet) => {
+                        const status = statusByOutletNo[outlet.outletNo] ?? null
+                        const available = status ? isOutletAvailable(status) : false
+                        const statusKind: OutletFilter = !status ? 'unknown' : available ? 'available' : 'occupied'
+                        const name =
+                          status?.outlet?.vOutletName?.replace('插座', '').trim() ||
+                          outlet.vOutletName?.replace('插座', '').trim() ||
+                          outlet.outletSerialNo?.toString() ||
+                          outlet.outletNo
 
-                      const label = `插座 ${name}`
-                      const cardStyle: React.CSSProperties = {
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 10,
-                        padding: 14,
-                        borderRadius: 14,
-                        border: `1px solid ${available ? 'var(--ep-success-border)' : 'var(--ep-danger-border)'}`,
-                        background: available ? 'var(--ep-success-soft)' : 'var(--ep-danger-soft)',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        minHeight: 72
-                      }
-                      return (
-                        <button
-                          key={outlet.outletId}
-                          type="button"
-                          style={cardStyle}
-                          onClick={() => handleMonitorOutlet(outlet, label)}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                            <div style={{ fontWeight: 650, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</div>
-                            <div style={{
-                              padding: '4px 8px',
-                              borderRadius: 999,
-                              fontSize: 12,
-                              fontWeight: 700,
-                              whiteSpace: 'nowrap',
-                              background: available ? 'var(--ep-success-soft)' : 'var(--ep-danger-soft)',
-                              color: available ? 'var(--success)' : 'var(--danger)'
-                            }}>
-                              {available ? '可用' : '占用'}
+                        const label = `插座 ${name}`
+                        const subtitle = (() => {
+                          if (!status) return '未获取状态'
+                          if (available) return '空闲中'
+                          const power = status.powerFee?.billingPower ?? '未知功率'
+                          const fee = `¥${(status.usedfee ?? 0).toFixed(2)}`
+                          const duration = `${status.usedmin ?? 0} 分钟`
+                          return `${power} · ${fee} · ${duration}`
+                        })()
+
+                        const statusChip = (() => {
+                          if (!status) return <Chip variant="secondary" size="sm">未知</Chip>
+                          if (available) return <Chip color="success" variant="secondary" size="sm">可用</Chip>
+                          return <Chip color="warning" variant="secondary" size="sm">占用</Chip>
+                        })()
+
+                        return (
+                          <button
+                            key={outlet.outletId}
+                            type="button"
+                            className={`outlet-item is-${statusKind}`}
+                            onClick={() => handleMonitorOutlet(outlet, label)}
+                          >
+                            <div className="outlet-item-main">
+                              <div className="outlet-item-title">{label}</div>
+                              <div className="outlet-item-sub muted">{subtitle}</div>
                             </div>
-                          </div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, fontSize: 12 }}>
-                            {!status ? (
-                              <span style={{ opacity: 0.8 }}>状态未知</span>
-                            ) : available ? (
-                              <span style={{ opacity: 0.8 }}>空闲中</span>
-                            ) : (
-                              <>
-                                <span style={{ opacity: 0.9, fontVariantNumeric: 'tabular-nums' }}>{status.powerFee?.billingPower ?? '未知'}</span>
-                                <span style={{ opacity: 0.9, fontVariantNumeric: 'tabular-nums' }}>¥{(status.usedfee ?? 0).toFixed(2)}</span>
-                                <span style={{ opacity: 0.9, fontVariantNumeric: 'tabular-nums' }}>{status.usedmin ?? 0} 分钟</span>
-                              </>
-                            )}
-                          </div>
-                        </button>
-                      )
-                    })}
+                            <div className="outlet-item-meta">
+                              {statusChip}
+                              <span className="outlet-item-arrow" aria-hidden="true">
+                                ›
+                              </span>
+                            </div>
+                          </button>
+                        )
+                      })
+                    )}
                   </div>
-                </>
+                </div>
               )}
             </Modal.Body>
           </Modal.Dialog>
