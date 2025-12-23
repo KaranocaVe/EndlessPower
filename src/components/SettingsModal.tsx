@@ -134,7 +134,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     <Text style={{ fontWeight: 500, display: 'block' }}>自动刷新</Text>
                     <Text style={{ fontSize: 12, opacity: 0.6 }}>定期更新充电桩状态</Text>
                   </div>
-                  <Switch isSelected={autoRefresh} onChange={setAutoRefresh}>
+                  <Switch isSelected={autoRefresh} onChange={setAutoRefresh} aria-label="自动刷新">
                     <Switch.Control><Switch.Thumb /></Switch.Control>
                   </Switch>
                 </div>
@@ -144,17 +144,17 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     <Text style={{ fontWeight: 500, display: 'block' }}>显示无可用站点</Text>
                     <Text style={{ fontSize: 12, opacity: 0.6 }}>关闭后仅展示可用</Text>
                   </div>
-                  <Switch isSelected={showUnavailableStations} onChange={setShowUnavailableStations}>
+                  <Switch isSelected={showUnavailableStations} onChange={setShowUnavailableStations} aria-label="显示无可用站点">
                     <Switch.Control><Switch.Thumb /></Switch.Control>
                   </Switch>
                 </div>
 
                 <div style={rowStyle}>
                   <div>
-                    <Text style={{ fontWeight: 500, display: 'block' }}>坐标纠偏</Text>
+                    <Text style={{ fontWeight: 500, display: 'block' }}>中国坐标纠偏</Text>
                     <Text style={{ fontSize: 12, opacity: 0.6 }}>GCJ-02 转 WGS84</Text>
                   </div>
-                  <Switch isSelected={chinaCoordFix} onChange={setChinaCoordFix}>
+                  <Switch isSelected={chinaCoordFix} onChange={setChinaCoordFix} aria-label="中国坐标纠偏">
                     <Switch.Control><Switch.Thumb /></Switch.Control>
                   </Switch>
                 </div>
