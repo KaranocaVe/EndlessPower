@@ -21,13 +21,13 @@ export default function SearchBar({ onStationSelect }: SearchBarProps) {
   }, [stations])
 
   useEffect(() => {
-    const onDocPointerDown = (event: MouseEvent) => {
+    const onDocPointerDown = (event: PointerEvent) => {
       const target = event.target as Node | null
       if (!target) return
       if (!containerRef.current?.contains(target)) setOpen(false)
     }
-    document.addEventListener('mousedown', onDocPointerDown)
-    return () => document.removeEventListener('mousedown', onDocPointerDown)
+    document.addEventListener('pointerdown', onDocPointerDown)
+    return () => document.removeEventListener('pointerdown', onDocPointerDown)
   }, [])
 
   const handleSelect = (stationId: number) => {
@@ -44,7 +44,7 @@ export default function SearchBar({ onStationSelect }: SearchBarProps) {
         aria-label="搜索充电站"
         value={searchKeyword}
         onChange={setSearchKeyword}
-        onFocusChange={(focused) => setOpen(focused)}
+        onFocusChange={(focused) => focused && setOpen(true)}
         className="search-field"
         data-testid="search-field"
       >
