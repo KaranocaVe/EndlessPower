@@ -73,6 +73,15 @@ test('loads map and search', async ({ page }) => {
   await expect(page.getByRole('button', { name: '清水河校区充电站（测试）' })).toBeVisible()
 })
 
+test('selecting search suggestion opens station modal', async ({ page }) => {
+  await expect(page.getByTestId('map-view')).toBeVisible()
+
+  await page.getByTestId('search-field').click()
+  await page.getByRole('option', { name: /清水河校区充电站（测试）/ }).click()
+
+  await expect(page.getByRole('heading', { name: '清水河校区充电站（测试）' })).toBeVisible()
+})
+
 test('opens station modal and enters monitor view', async ({ page }) => {
   const marker = page.getByRole('button', { name: '清水河校区充电站（测试）' })
   await expect(marker).toBeVisible()
@@ -92,17 +101,17 @@ test('adds favorite and shows in favorites view', async ({ page }) => {
   await marker.dispatchEvent('click')
 
   await expect(page.getByRole('heading', { name: '清水河校区充电站（测试）' })).toBeVisible()
-  await page.locator('.ep-station-actions').getByRole('button', { name: '收藏' }).click()
+  await page.locator('.station-actions').getByRole('button', { name: '收藏' }).click()
   await page.getByRole('button', { name: '关闭' }).click()
   await page.locator('[data-slot="modal-backdrop"]').first().waitFor({ state: 'hidden' })
 
-  await page.locator('.ep-tabbar').getByRole('tab', { name: '收藏' }).click()
+  await page.locator('.bottom-nav').getByRole('tab', { name: '收藏' }).click()
   await expect(page.getByTestId('favorites-view')).toBeVisible()
   await expect(page.getByText('清水河校区充电站（测试）')).toBeVisible()
 })
 
 test('opens settings modal', async ({ page }) => {
-  await page.locator('.ep-tabbar').getByRole('tab', { name: '设置' }).click()
+  await page.locator('.bottom-nav').getByRole('tab', { name: '设置' }).click()
   await expect(page.getByRole('heading', { name: '设置' })).toBeVisible()
   await expect(page.getByRole('button', { name: '完成' })).toBeVisible()
 
