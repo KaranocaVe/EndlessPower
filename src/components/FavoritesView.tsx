@@ -4,6 +4,7 @@ import { useFavoritesStore } from '../store/favoritesStore'
 import { useStationStore } from '../store/stationStore'
 import type { Station } from '../types/station'
 import FavoriteStationCard from './FavoriteStationCard'
+import { HeartIcon, MapIcon, RefreshIcon } from './icons'
 
 type FavoritesViewProps = {
   onOpenMap?: () => void
@@ -42,20 +43,35 @@ export default function FavoritesView({ onOpenMap }: FavoritesViewProps) {
           </div>
           <div className="ep-fav-header-actions">
             {onOpenMap && (
-              <Button variant="secondary" onPress={onOpenMap}>
-                去地图
+              <Button variant="secondary" onPress={onOpenMap} aria-label="去地图">
+                <MapIcon size={18} />
+                <span className="ep-btn-text">地图</span>
               </Button>
             )}
-            <Button variant="primary" onPress={() => canRefresh && setLastRefresh(Date.now())} isDisabled={!canRefresh}>
-              刷新
+            <Button
+              variant="primary"
+              onPress={() => canRefresh && setLastRefresh(Date.now())}
+              isDisabled={!canRefresh}
+              aria-label="刷新"
+            >
+              <RefreshIcon size={18} />
+              <span className="ep-btn-text">刷新</span>
             </Button>
           </div>
         </div>
 
         {favoriteStations.length === 0 ? (
           <div className="ep-fav-empty">
+            <div className="ep-fav-empty-icon" aria-hidden="true">
+              <HeartIcon size={28} />
+            </div>
             <div className="ep-fav-empty-title">还没有收藏的充电桩</div>
-            <div className="ep-fav-empty-sub">在地图上点选充电桩，然后点击“收藏”。</div>
+            <div className="ep-fav-empty-sub">在地图上点选充电桩，然后点击"收藏"按钮即可添加到这里。</div>
+            {onOpenMap && (
+              <Button variant="primary" onPress={onOpenMap} style={{ marginTop: 8 }}>
+                去地图查看
+              </Button>
+            )}
           </div>
         ) : (
           <div className="ep-fav-grid">

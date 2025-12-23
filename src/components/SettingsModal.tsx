@@ -77,10 +77,36 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   <Card.Title>外观</Card.Title>
                 </Card.Header>
                 <Card.Content className="ep-settings-card-content">
-                  <RadioGroup value={theme} onChange={(v) => setTheme(v as any)} aria-label="主题模式">
-                    <Radio value="auto">跟随系统</Radio>
-                    <Radio value="light">亮色</Radio>
-                    <Radio value="dark">暗色</Radio>
+                  <div className="ep-settings-row">
+                    <div className="ep-settings-row-text">
+                      <div className="ep-settings-row-title">主题模式</div>
+                    </div>
+                  </div>
+                  <RadioGroup
+                    value={theme}
+                    onChange={(v) => setTheme(v as any)}
+                    aria-label="主题模式"
+                    orientation="horizontal"
+                    className="ep-theme-radio-group"
+                  >
+                    <Radio value="auto">
+                      <Radio.Control>
+                        <Radio.Indicator />
+                      </Radio.Control>
+                      <Radio.Content>跟随系统</Radio.Content>
+                    </Radio>
+                    <Radio value="light">
+                      <Radio.Control>
+                        <Radio.Indicator />
+                      </Radio.Control>
+                      <Radio.Content>亮色</Radio.Content>
+                    </Radio>
+                    <Radio value="dark">
+                      <Radio.Control>
+                        <Radio.Indicator />
+                      </Radio.Control>
+                      <Radio.Content>暗色</Radio.Content>
+                    </Radio>
                   </RadioGroup>
                 </Card.Content>
               </Card>
@@ -138,7 +164,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                       <div className="ep-settings-row-title">自动刷新</div>
                       <div className="ep-settings-row-sub">定期更新充电桩状态</div>
                     </div>
-                    <Switch aria-label="自动刷新" isSelected={autoRefresh} onChange={setAutoRefresh} />
+                    <Switch aria-label="自动刷新" isSelected={autoRefresh} onChange={setAutoRefresh}>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch>
                   </div>
 
                   <div className="ep-settings-row">
@@ -150,7 +180,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                       aria-label="显示无可用插座的充电桩"
                       isSelected={showUnavailableStations}
                       onChange={setShowUnavailableStations}
-                    />
+                    >
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch>
                   </div>
 
                   <div className="ep-settings-row">
@@ -158,7 +192,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                       <div className="ep-settings-row-title">中国坐标纠偏</div>
                       <div className="ep-settings-row-sub">将 GCJ-02 转为 WGS84 以匹配 Carto 矢量底图</div>
                     </div>
-                    <Switch aria-label="中国坐标纠偏" isSelected={chinaCoordFix} onChange={setChinaCoordFix} />
+                    <Switch aria-label="中国坐标纠偏" isSelected={chinaCoordFix} onChange={setChinaCoordFix}>
+                      <Switch.Control>
+                        <Switch.Thumb />
+                      </Switch.Control>
+                    </Switch>
                   </div>
 
                   <div className="ep-settings-row ep-settings-row-block">

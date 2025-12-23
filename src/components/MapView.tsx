@@ -428,7 +428,7 @@ export default function MapView() {
             isIconOnly
             size="lg"
             variant="primary"
-            className="ep-map-fab"
+            className={`ep-map-fab ep-map-fab-refresh ${isLoading || isRefreshing || isLocating ? 'is-loading' : ''}`}
             onPress={handleRefresh}
             isDisabled={refreshDisabled}
             aria-label={!refreshReady ? '刷新冷却中' : isLoading || isRefreshing || isLocating ? '刷新中' : '刷新并定位'}
