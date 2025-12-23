@@ -69,7 +69,7 @@ export default function App() {
         currentView={currentView}
         onViewChange={setCurrentView}
         onOpenSettings={() => setSettingsOpen(true)}
-        isHidden={currentView === 'monitor'}
+        isHidden={currentView === 'monitor' || settingsOpen}
       >
         {(isConnected || visitorsCount > 0) && (
           <div className="hud-top" aria-label="在线人数">
