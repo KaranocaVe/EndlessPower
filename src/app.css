@@ -1449,29 +1449,28 @@
 /* Campus map */
 .campus-dialog {
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  margin: 0;
 }
 
-.campus-header-title {
-  min-width: 0;
-}
-
-.campus-subtitle {
-  font-size: 12px;
-  opacity: 0.75;
-  margin-top: 2px;
+.campus-close-wrapper {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  right: calc(12px + var(--safe-right));
+  z-index: 10;
 }
 
 .campus-body {
   padding: 0;
+  height: 100%;
 }
 
 .campus-stage {
   position: relative;
   width: 100%;
-  height: calc(100vh - 120px);
-  height: calc(100dvh - 120px);
+  height: 100%;
   background: var(--stage-bg);
   overflow: hidden;
 }
@@ -1491,13 +1490,51 @@
   -webkit-user-drag: none;
 }
 
+.campus-zoom-level {
+  position: absolute;
+  top: calc(12px + var(--safe-top));
+  left: calc(12px + var(--safe-left));
+  padding: 6px 10px;
+  background: var(--surface);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: var(--shadow-elev);
+  pointer-events: none;
+}
+
 .campus-controls {
   position: absolute;
   right: calc(12px + var(--safe-right));
   bottom: calc(12px + var(--safe-bottom));
-  display: grid;
-  gap: 10px;
-  justify-items: end;
+  display: flex;
+  gap: 8px;
+  background: var(--surface);
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-elev);
+}
+
+.campus-control-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.campus-control-btn:hover {
+  background: var(--soft-hover);
+}
+
+.campus-control-btn:active {
+  background: var(--soft-active);
 }
 .station-filter-row .station-updated {
   flex-shrink: 0;
