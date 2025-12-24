@@ -4,6 +4,7 @@ import { Button, Card } from '@heroui/react'
 import { useStationStore } from '../store/stationStore'
 import { useSettingsStore } from '../store/settingsStore'
 import { useThemeStore } from '../store/themeStore'
+import { useVisitorsCount } from '../hooks/useVisitorsCount'
 import type { Station } from '../types/station'
 import { getColorForAvailability } from '../utils/api'
 import SearchBar from './SearchBar'
@@ -207,6 +208,7 @@ export default function MapView() {
 
   const { isDark } = useThemeStore()
   const { showUnavailableStations, autoRefresh, refreshInterval, baseMapStyle } = useSettingsStore()
+  const { visitorsCount, isConnected } = useVisitorsCount()
   const {
     stations: allStations,
     getFilteredStations,
@@ -464,6 +466,8 @@ export default function MapView() {
               map?.easeTo({ center: [station.longitude, station.latitude], zoom: 18, duration: 800 })
               setSelectedStation(station)
             }}
+            visitorsCount={visitorsCount}
+            isConnected={isConnected}
           />
         </div>
 

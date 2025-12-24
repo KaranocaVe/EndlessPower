@@ -273,10 +273,10 @@ export default function StationDetailModal({ station, isOpen, onClose }: Station
                         const subtitle = (() => {
                           if (available) return '空闲中'
                           if (!status) return '未获取状态'
-                          const power = status.powerFee?.billingPower ?? '未知功率'
-                          const fee = `¥${(status.usedfee ?? 0).toFixed(2)}`
-                          const duration = `${status.usedmin ?? 0}分钟`
-                          return `${power} · ${fee} · ${duration}`
+                          const power = status.powerFee?.billingPower ?? '?'
+                          const fee = (status.usedfee ?? 0).toFixed(2)
+                          const duration = status.usedmin ?? 0
+                          return `${power} ${fee}元 ${duration}分`
                         })()
 
                         const statusChip = (() => {

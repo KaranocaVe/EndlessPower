@@ -468,6 +468,13 @@
   width: 100%;
 }
 
+.search-online-chip {
+  flex-shrink: 0;
+  padding: 0 6px;
+  height: 28px;
+  min-width: 32px;
+}
+
 .search-group {
   border-radius: 999px !important;
   background: var(--surface);
@@ -878,14 +885,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 8px;
-    line-height: 1.3;
-  }
-
-  .outlet-item-sub span {
-    display: inline;
+    letter-spacing: -0.02em;
   }
 }
 

@@ -72,14 +72,16 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
         isHidden={currentView === 'monitor' || settingsOpen}
       >
-        <div className="hud-top" aria-label="在线人数">
-          <Chip color={isConnected ? 'success' : 'default'} variant="secondary" size="sm">
-            <span className="online-chip">
-              <UsersIcon size={14} aria-hidden="true" />
-              <span className="online-chip-value">{isConnected ? visitorsCount : '—'}</span>
-            </span>
-          </Chip>
-        </div>
+        {currentView !== 'map' && (
+          <div className="hud-top" aria-label="在线人数">
+            <Chip color={isConnected ? 'success' : 'default'} variant="secondary" size="sm">
+              <span className="online-chip">
+                <UsersIcon size={14} aria-hidden="true" />
+                <span className="online-chip-value">{isConnected ? visitorsCount : '—'}</span>
+              </span>
+            </Chip>
+          </div>
+        )}
       </Hud>
 
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
