@@ -214,7 +214,7 @@
     max-width: none;
     transform: none;
     box-sizing: border-box;
-    padding-right: 92px;
+    padding-right: 76px;
   }
 }
 
@@ -709,6 +709,12 @@
   overflow: auto;
   position: relative;
   z-index: 1;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.segment::-webkit-scrollbar {
+  display: none;
 }
 
 .segment-item {
@@ -1414,9 +1420,11 @@
 
 .toast-title {
   font-weight: 750;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .toast-sub {

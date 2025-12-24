@@ -258,7 +258,6 @@ export default function MapView() {
       antialias: true
     } as any)
 
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right')
     map.addControl(new maplibregl.ScaleControl({ maxWidth: 100, unit: 'metric' }), 'bottom-left')
     map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-left')
 
