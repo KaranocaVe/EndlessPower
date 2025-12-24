@@ -384,7 +384,8 @@ export default function MapView() {
       el.type = 'button'
       el.className = 'station-marker'
       el.style.backgroundColor = getStationMarkerColor(station)
-      el.setAttribute('aria-label', station.stationName)
+      el.textContent = String(station.freeNum ?? 0)
+      el.setAttribute('aria-label', `${station.stationName}，可用${station.freeNum ?? 0}个`)
       el.addEventListener('click', () => setSelectedStation(station))
       return new maplibregl.Marker({ element: el, anchor: 'center' })
         .setLngLat([station.longitude, station.latitude])

@@ -444,6 +444,14 @@
   border: 2px solid white;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.28);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .station-marker:focus-visible {
