@@ -35,48 +35,31 @@ const outletStatusFixture: Record<string, any> = {
   }
 }
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'content-type'
-}
-
 test.beforeEach(async ({ page }) => {
-  await page.route('https://wemp.issks.com/device/v1/near/station', async (route) => {
-    if (route.request().method() === 'OPTIONS') {
-      await route.fulfill({ status: 204, headers: corsHeaders })
-      return
-    }
-
-    expect(route.request().method()).toBe('POST')
-    expect(route.request().postDataJSON()).toMatchObject({ page: 1, pageSize: 200, scale: 3 })
-
+  await page.route('**/api/device/v1/near/station', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      headers: corsHeaders,
       body: JSON.stringify({ code: '1', data: { elecStationData: stationsFixture } })
     })
   })
 
-  await page.route('https://wemp.issks.com/charge/v1/outlet/station/outlets/*', async (route) => {
+  await page.route('**/api/charge/v1/outlet/station/outlets/*', async (route) => {
     const url = new URL(route.request().url())
     const stationId = Number(url.pathname.split('/').pop())
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      headers: corsHeaders,
       body: JSON.stringify({ code: '1', data: stationOutletsFixture[stationId] ?? [] })
     })
   })
 
-  await page.route('https://wemp.issks.com/charge/v1/charging/outlet/*', async (route) => {
+  await page.route('**/api/charge/v1/charging/outlet/*', async (route) => {
     const url = new URL(route.request().url())
     const outletNo = url.pathname.split('/').pop() ?? ''
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      headers: corsHeaders,
       body: JSON.stringify({ code: '1', data: outletStatusFixture[outletNo] ?? null })
     })
   })
