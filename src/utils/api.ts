@@ -15,156 +15,47 @@ import { ENABLE_DEBUG } from '../config/environment'
 import { gcj02ToWgs84, isInChina, wgs84ToGcj02 } from './coords'
 
 const JITTER_AMOUNT = 0.0004
+const DEFAULT_API_BASE_URL = 'https://wemp.issks.com'
+const API_BASE_URL = ((import.meta.env.VITE_API_BASE_URL as string | undefined) || DEFAULT_API_BASE_URL).replace(/\/+$/, '')
+const API_REQUEST_TIMEOUT_MS = 8_000
 
-// CORS代理列表（按优先级排序）
-const CORS_PROXIES = [
-  { 
-    url: 'https://api.codetabs.com/v1/proxy?quest=',
-    type: 'direct'
-  },
-  { 
-    url: 'https://cors-anywhere.herokuapp.com/',
-    type: 'direct'
-  },
-  { 
-    url: 'https://api.allorigins.win/get?url=',
-    type: 'allorigins'
-  },
-  { 
-    url: 'https://cors.bridged.cc/',
-    type: 'direct'
-  },
-  { 
-    url: 'https://proxy.cors.sh/',
-    type: 'direct'
-  }
-]
+function getApiUrl(path: string) {
+  return `${API_BASE_URL}/${path.replace(/^\/+/, '')}`
+}
 
-// CORS代理和基础API函数
-async function fetchAPI<T>(url: string, options: RequestInit = {}): Promise<T | null> {
-  
-  // 首先尝试直接请求（可能在某些环境下可行）
+// 上游当前允许官网跨域访问；直连可避开 Cloudflare Worker 回源 522。
+async function fetchAPI<T>(path: string, options: RequestInit = {}): Promise<T | null> {
+  const url = getApiUrl(path)
+  const controller = new AbortController()
+  const timeoutId = globalThis.setTimeout(() => controller.abort(), API_REQUEST_TIMEOUT_MS)
+
   try {
     if (ENABLE_DEBUG) console.log(`🔄 尝试直接请求: ${url}`)
     const response = await fetch(url, {
       ...options,
       mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-      }
+      signal: controller.signal
     })
-    
-    if (response.ok) {
-      const data: ApiResponse<T> = await response.json()
-      if (data.code === "1") {
-        if (ENABLE_DEBUG) console.log(`✅ 直接请求成功`)
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('api-using-real-data'))
-        }
-        return data.data
-      }
-    }
-  } catch (error) {
-    if (ENABLE_DEBUG) console.warn(`❌ 直接请求失败，尝试代理服务`, error)
-  }
 
-  // 相对路径无法通过第三方代理转发
-  if (url.startsWith('/')) {
+    if (!response.ok) throw new Error(`HTTP error: ${response.status}`)
+
+    const data: ApiResponse<T> = await response.json()
+    if (data.code !== '1') throw new Error(data.msg || 'API error')
+
+    if (ENABLE_DEBUG) console.log('✅ 直接请求成功')
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('api-using-real-data'))
+    }
+    return data.data
+  } catch (error) {
+    console.error('💥 上游API请求失败，返回模拟数据', error)
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('api-fallback-to-simulation'))
     }
-    return getSimulatedData<T>(url)
+    return getSimulatedData<T>(path)
+  } finally {
+    globalThis.clearTimeout(timeoutId)
   }
-  
-  // 尝试每个代理服务
-  for (const proxy of CORS_PROXIES) {
-    try {
-      if (ENABLE_DEBUG) console.log(`🔄 尝试代理: ${proxy.url}`)
-      let response: Response
-      
-      if (proxy.type === 'allorigins') {
-        // AllOrigins 需要特殊处理
-        const proxyUrl = `${proxy.url}${encodeURIComponent(url)}`
-        response = await fetch(proxyUrl, { 
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`)
-        }
-        
-        const result = (await response.json()) as any
-        if (result.status?.http_code !== 200) {
-          throw new Error(`Proxy error: ${result.status?.http_code}`)
-        }
-        
-        // 尝试解析内容
-        let contents = result.contents
-        if (typeof contents === 'string') {
-          try {
-            contents = JSON.parse(contents)
-        } catch {
-          throw new Error('JSON 解析失败')
-        }
-        }
-        
-        const data: ApiResponse<T> = contents
-        if (data.code !== "1") {
-          throw new Error(data.msg || 'API error')
-        }
-        
-        if (ENABLE_DEBUG) console.log(`✅ 代理成功: ${proxy.url}`)
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('api-using-real-data'))
-        }
-        return data.data
-      } else {
-        // 其他代理服务的标准处理
-        const proxyUrl = `${proxy.url}${url}`
-        response = await fetch(proxyUrl, {
-          method: options.method || 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-            ...options.headers
-          },
-          body: options.body
-        })
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`)
-        }
-        
-        const data: ApiResponse<T> = await response.json()
-        if (data.code !== "1") {
-          throw new Error(data.msg || 'API error')
-        }
-        
-        if (ENABLE_DEBUG) console.log(`✅ 代理成功: ${proxy.url}`)
-        if (typeof window !== 'undefined') {
-          window.dispatchEvent(new CustomEvent('api-using-real-data'))
-        }
-        return data.data
-      }
-    } catch (error) {
-      if (ENABLE_DEBUG) console.warn(`❌ 代理失败: ${proxy.url}`, error)
-      continue
-    }
-  }
-  
-  // 所有代理都失败了，返回模拟数据
-  console.error(`💥 所有CORS代理都失败了，返回模拟数据`)
-  
-  // 通知 store 使用了模拟数据
-  if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('api-fallback-to-simulation'))
-  }
-  
-  return getSimulatedData<T>(url)
 }
 
 // 模拟数据生成器
@@ -225,7 +116,7 @@ export async function fetchNearStations(
 ): Promise<Station[]> {
   if (ENABLE_DEBUG) console.log('🔍 开始获取附近充电站...', { lat, lng })
   
-  const url = '/api/device/v1/near/station'
+  const path = '/device/v1/near/station'
 
   const coordFix = options.coordFix ?? true
   const requestCoord = coordFix && isInChina(lat, lng) ? wgs84ToGcj02(lat, lng) : { lat, lng }
@@ -240,7 +131,7 @@ export async function fetchNearStations(
     userLongitude: requestCoord.lng
   }
   
-  const data = await fetchAPI<NearStationsResponse>(url, {
+  const data = await fetchAPI<NearStationsResponse>(path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json;charset=UTF-8' },
     body: JSON.stringify(body)
@@ -268,15 +159,15 @@ export async function fetchNearStations(
 
 // 获取充电站插座信息
 export async function fetchStationOutlets(stationId: number): Promise<Outlet[]> {
-  const url = `/api/charge/v1/outlet/station/outlets/${stationId}`
-  const data = await fetchAPI<Outlet[]>(url)
+  const path = `/charge/v1/outlet/station/outlets/${stationId}`
+  const data = await fetchAPI<Outlet[]>(path)
   return data || []
 }
 
 // 获取插座状态
 export async function fetchOutletStatus(outletNo: string): Promise<OutletStatus | null> {
-  const url = `/api/charge/v1/charging/outlet/${outletNo}`
-  return await fetchAPI<OutletStatus>(url)
+  const path = `/charge/v1/charging/outlet/${outletNo}`
+  return await fetchAPI<OutletStatus>(path)
 }
 
 // 应用坐标抖动以避免重叠
