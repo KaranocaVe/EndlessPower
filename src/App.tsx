@@ -10,6 +10,7 @@ import OutletMonitorView from './components/OutletMonitorView'
 import SettingsModal from './components/SettingsModal'
 import PWAUpdatePrompt from './components/PWAUpdatePrompt'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
+import DomainMigrationNotice from './components/DomainMigrationNotice'
 import Hud from './components/Hud'
 import { UsersIcon } from './components/icons'
 
@@ -87,6 +88,7 @@ export default function App() {
       <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
       {enablePwaUi && !isAutomated && <PWAUpdatePrompt />}
       {enablePwaUi && !isAutomated && <PWAInstallPrompt />}
+      <DomainMigrationNotice />
 
       {error && (
         <div className="alert-overlay" role="alert">
