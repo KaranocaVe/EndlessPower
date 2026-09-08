@@ -55,7 +55,7 @@ export default function SearchBar({ onStationSelect, visitorsCount, isConnected 
           <SearchField.SearchIcon />
           <SearchField.Input placeholder={isUsingSimulatedData ? '搜索充电站（模拟数据）…' : '搜索充电站…'} />
           {visitorsCount !== undefined && (
-            <Chip color={isConnected ? 'success' : 'default'} variant="flat" size="sm" className="search-online-chip">
+            <Chip color={isConnected ? 'success' : 'default'} variant="secondary" size="sm" className="search-online-chip">
               <span className="online-chip">
                 <UsersIcon size={14} aria-hidden="true" />
                 <span className="online-chip-value">{isConnected ? visitorsCount : '—'}</span>

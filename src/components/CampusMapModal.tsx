@@ -17,7 +17,7 @@ export default function CampusMapModal({ isOpen, onClose }: CampusMapModalProps)
         <Modal.Container placement="center" size="full" scroll="inside">
           <Modal.Dialog className="campus-dialog">
             <div className="campus-close-wrapper">
-              <Button isIconOnly variant="flat" size="sm" onPress={onClose} aria-label="关闭">
+              <Button isIconOnly variant="secondary" size="sm" onPress={onClose} aria-label="关闭">
                 <XIcon size={20} />
               </Button>
             </div>
@@ -43,13 +43,13 @@ export default function CampusMapModal({ isOpen, onClose }: CampusMapModalProps)
                     <div className="campus-zoom-level">{Math.round(scale * 100)}%</div>
 
                     <div className="campus-controls" aria-label="缩放控制">
-                      <button className="campus-control-btn" aria-label="缩小" onPress={() => zoomOut(0.4, 180)}>
+                      <button type="button" className="campus-control-btn" aria-label="缩小" onClick={() => zoomOut(0.4, 180)}>
                         <MinusIcon size={18} />
                       </button>
-                      <button className="campus-control-btn" aria-label="适应" onPress={() => { resetTransform(180); centerView(1, 180) }}>
+                      <button type="button" className="campus-control-btn" aria-label="适应" onClick={() => { resetTransform(180); centerView(1, 180) }}>
                         <FitIcon size={18} />
                       </button>
-                      <button className="campus-control-btn" aria-label="放大" onPress={() => zoomIn(0.4, 180)}>
+                      <button type="button" className="campus-control-btn" aria-label="放大" onClick={() => zoomIn(0.4, 180)}>
                         <PlusIcon size={18} />
                       </button>
                     </div>
