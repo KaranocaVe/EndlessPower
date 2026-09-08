@@ -36,7 +36,18 @@ export default function CampusMapModal({ isOpen, onClose }: CampusMapModalProps)
               >
                 {({ zoomIn, zoomOut, resetTransform, centerView }) => (
                   <div className="campus-stage" role="img" aria-label="校园地图">
-                    <TransformComponent wrapperClass="campus-transform" contentClass="campus-transform-content">
+                    <TransformComponent
+                      wrapperClass="campus-transform"
+                      contentClass="campus-transform-content"
+                      wrapperStyle={{ width: '100%', height: '100%' }}
+                      contentStyle={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
                       <img className="campus-image" src="/map.jpg" alt="" draggable={false} />
                     </TransformComponent>
 
