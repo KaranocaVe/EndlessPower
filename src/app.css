@@ -226,12 +226,12 @@
 .bottom-nav {
   pointer-events: auto;
   position: fixed;
-  left: 12px;
-  right: 12px;
+  left: calc(12px + var(--safe-left));
+  right: calc(12px + var(--safe-right));
   margin: 0 auto;
   bottom: var(--hud-bottom);
   z-index: 45;
-  width: calc(100% - 24px);
+  width: auto;
   max-width: 460px;
 }
 
