@@ -246,6 +246,7 @@ export default function MapView() {
     getFilteredStations,
     isLoading,
     isRefreshing,
+    lastRefresh,
     refreshStations,
     canRefresh,
     userLocation,
@@ -257,11 +258,15 @@ export default function MapView() {
   const hideMapControls = Boolean(selectedStation || campusOpen)
   const hasAnyStations = allStations.length > 0
 
-  // 冷却结束后主动触发重渲染，避免刷新按钮永久停留在禁用状态。
+  // 冷却结束时主动触发一次重渲染，避免刷新按钮永久停留在禁用状态。
   useEffect(() => {
-    const id = window.setInterval(() => setRefreshClock((value) => value + 1), 1_000)
-    return () => window.clearInterval(id)
-  }, [])
+    const cooldownMs = Math.max(3_000, refreshInterval * 1_000)
+    const remainingMs = lastRefresh + cooldownMs - Date.now()
+    if (remainingMs <= 0) return
+
+    const id = window.setTimeout(() => setRefreshClock((value) => value + 1), remainingMs + 20)
+    return () => window.clearTimeout(id)
+  }, [lastRefresh, refreshInterval])
 
   const displayStations = useMemo(() => {
     // 使用缓存数据时（灰色状态），显示所有站点，不过滤
