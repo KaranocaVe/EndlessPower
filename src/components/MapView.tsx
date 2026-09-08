@@ -235,6 +235,7 @@ export default function MapView() {
   const [selectedStation, setSelectedStation] = useState<Station | null>(null)
   const [campusOpen, setCampusOpen] = useState(false)
   const [isLocating, setIsLocating] = useState(false)
+  const [refreshClock, setRefreshClock] = useState(0)
 
   const { isDark } = useThemeStore()
   const showError = useErrorStore((state) => state.showError)
@@ -255,6 +256,12 @@ export default function MapView() {
   const stations = getFilteredStations()
   const hideMapControls = Boolean(selectedStation || campusOpen)
   const hasAnyStations = allStations.length > 0
+
+  // 冷却结束后主动触发重渲染，避免刷新按钮永久停留在禁用状态。
+  useEffect(() => {
+    const id = window.setInterval(() => setRefreshClock((value) => value + 1), 1_000)
+    return () => window.clearInterval(id)
+  }, [])
 
   const displayStations = useMemo(() => {
     // 使用缓存数据时（灰色状态），显示所有站点，不过滤
@@ -471,8 +478,9 @@ export default function MapView() {
           navigator.geolocation.getCurrentPosition(
             async (pos) => {
               const loc: [number, number] = [pos.coords.latitude, pos.coords.longitude]
+              // 手动刷新不应触发“首次定位自动居中”。
+              restoredViewRef.current = true
               setStoreUserLocation(loc)
-              mapRef.current?.easeTo({ center: [loc[1], loc[0]], zoom: 16, duration: 800 })
               await refreshStations(loc[0], loc[1])
               resolve()
             },
@@ -491,7 +499,7 @@ export default function MapView() {
     }
   }
 
-  const refreshReady = canRefresh()
+  const refreshReady = useMemo(() => canRefresh(), [canRefresh, refreshClock])
   const refreshDisabled = isLoading || isRefreshing || isLocating || !refreshReady
   const showLoadingOverlay = isLocating || (isLoading && !hasAnyStations)
   const loadingLabel = isLocating && !isRefreshing ? '正在定位…' : '刷新状态…'
@@ -588,7 +596,7 @@ export default function MapView() {
             className={`fab fab-refresh ${isLoading || isRefreshing || isLocating ? 'is-loading' : ''}`}
             onPress={handleRefresh}
             isDisabled={refreshDisabled}
-            aria-label={!refreshReady ? '刷新冷却中' : isLoading || isRefreshing || isLocating ? '刷新中' : '刷新并定位'}
+            aria-label={!refreshReady ? '刷新冷却中' : isLoading || isRefreshing || isLocating ? '刷新中' : '刷新'}
           >
             <RefreshIcon size={22} />
           </Button>
