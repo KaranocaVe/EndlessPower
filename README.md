@@ -15,7 +15,7 @@
 - HeroUI v3：`@heroui/react` + `@heroui/styles`
 - MapLibre GL JS
 - Zustand
-- Cloudflare Workers（静态资源 + `/api/*` 反代 + 访问者计数 WebSocket）
+- Cloudflare Workers（静态资源 + 访问者计数 WebSocket）
 - Playwright（E2E）
 
 > 说明：项目不依赖 Tailwind 做 UI 开发，但 HeroUI v3 的样式构建仍需要 Tailwind 作为构建依赖。
