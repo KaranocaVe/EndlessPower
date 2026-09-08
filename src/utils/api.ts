@@ -62,75 +62,15 @@ async function fetchAPI<T>(path: string, options: RequestInit = {}): Promise<T |
       throw new ApiError(data.msg || 'API error', url, { code: data.code })
     }
     if (ENABLE_DEBUG) console.log(`✅ 请求成功`)
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('api-using-real-data'))
-    }
     return data.data
   } catch (error) {
-    if (import.meta.env.DEV && import.meta.env.VITE_USE_SIMULATED_DATA === '1') {
-      console.warn(`API 请求失败，开发模式使用模拟数据`, error)
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('api-fallback-to-simulation'))
-      }
-      return getSimulatedData<T>(path)
-    }
-
     throw error instanceof Error ? error : new ApiError('API 请求失败', url)
   }
 }
 
-// 模拟数据生成器
-function getSimulatedData<T>(url: string): T | null {
-  // 为充电桩接口返回模拟数据
-  if (url.includes('/near/station')) {
-    return {
-      elecStationData: [
-        {
-          stationId: 1,
-          stationName: '清水河校区充电站（模拟）',
-          address: '四川省成都市高新西区西源大道2006号',
-          latitude: 30.754736739439924,
-          longitude: 103.92946279311207,
-          freeNum: 2
-        },
-        {
-          stationId: 2,
-          stationName: '电子科大充电站（模拟）',
-          address: '四川省成都市成华区建设北路二段',
-          latitude: 30.765,
-          longitude: 103.935,
-          freeNum: 1
-        }
-      ]
-    } as T
-  }
-  
-  // 为插座状态接口返回模拟数据
-  if (url.includes('/station/outlet')) {
-    return [
-      {
-        outletId: 1,
-        outletNo: '01',
-        outletSerialNo: 1,
-        vOutletName: '插座01',
-        iCurrentChargingRecordId: 0
-      },
-      {
-        outletId: 2,
-        outletNo: '02',
-        outletSerialNo: 2,
-        vOutletName: '插座02',
-        iCurrentChargingRecordId: 123
-      }
-    ] as T
-  }
-  
-  return null
-}
-
 // 获取附近充电站
 export async function fetchNearStations(
-  // 默认位置（WGS84）：由旧版模拟/默认点(GCJ-02)换算得到
+  // 默认位置（WGS84）
   lat = 30.757444430112365,
   lng = 103.9273601548557,
   options: { coordFix?: boolean } = {}
