@@ -424,6 +424,10 @@
   color: var(--success);
 }
 
+.fab-locate {
+  color: var(--accent);
+}
+
 .map-center {
   position: absolute;
   left: 50%;
