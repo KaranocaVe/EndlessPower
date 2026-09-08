@@ -406,7 +406,8 @@
   box-shadow: var(--shadow-soft);
 }
 
-.fab-refresh.is-loading svg {
+.fab-refresh.is-loading svg,
+.fab-locate.is-loading svg {
   animation: appSpin 1s linear infinite;
 }
 

@@ -2,6 +2,7 @@ import type { LucideProps } from 'lucide-react'
 import {
   ChartNoAxesCombined,
   Heart,
+  LocateFixed,
   Map,
   Minus,
   Plus,
@@ -24,6 +25,10 @@ export function MapIcon(props: IconProps) {
 
 export function HeartIcon(props: IconProps) {
   return <Heart {...props} />
+}
+
+export function LocateIcon(props: IconProps) {
+  return <LocateFixed {...props} />
 }
 
 export function SettingsIcon(props: IconProps) {
